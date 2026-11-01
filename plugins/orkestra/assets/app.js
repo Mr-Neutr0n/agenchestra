@@ -1376,7 +1376,8 @@
     inp.focus();
   }
   // ================================================================ 15. Başlangıç
-  window.addEventListener('hashchange', () => { derinBaglanti(); gorunumCiz(); gerekler(rota()).forEach(y => getir(y)); document.getElementById('ana').focus({ preventScroll: true }); window.scrollTo(0, 0); });
+  const ALAN_DENEME = 6;
+  window.addEventListener('hashchange', () => { if (!V.alan) return; derinBaglanti(); gorunumCiz(); gerekler(rota()).forEach(y => getir(y)); document.getElementById('ana').focus({ preventScroll: true }); window.scrollTo(0, 0); });
   async function basla() {
     rayCiz();
     document.getElementById('ana').innerHTML = bos('Çalışma alanları yükleniyor', 'Sunucu yanıt verince liste gelir.', 'uyari').__h;
