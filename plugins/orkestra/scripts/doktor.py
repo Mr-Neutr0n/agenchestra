@@ -271,14 +271,50 @@ def k_git(b: Baglam) -> Sonuc:
     g = shutil.which("git")
     if not g:
         return _uyari("git bulunamadı (otomatik commit, yayın klonu ve iş şeridi çalışmaz)")
-    if b.proje and os.path.isdir(os.path.join(b.proje, ".git")):
+    if b.proje and os.path.exists(os.path.join(b.proje, ".git")):
         kod, cikti = _calistir(["git", "-C", b.proje, "rev-parse", "--is-inside-work-tree"], 30)
         if kod != 0 and "dubious ownership" in cikti:
             return _hata("git bu proje klasörünü güvenli saymıyor (safe.directory)", proje=b.proje)
+        sonuc = _k_git_fsmonitor(b.proje)
+        if sonuc:
+            return sonuc
     return _ok("git bulundu", yol=g)
 
 
+_GIT_BOOLEAN = {"true", "false", "yes", "no", "on", "off", "1", "0", ""}
+
+
+def _k_git_fsmonitor(proje: str) -> Optional[Sonuc]:
+    """core.fsmonitor boolean değilse git onu kabuk komutu olarak çalıştırır; bozuk değer her git komutunu
+    `cannot spawn` ile bozar. Geçerliliği tahmin etmez, `git status` ile dener (worktree'de de koşar)."""
+    kod, cikti = _calistir(["git", "-C", proje, "config", "--show-origin", "--get", "core.fsmonitor"], 30)
+    if kod != 0 or "	" not in cikti:
+        return None
+    kaynak, _, deger = cikti.strip().partition("	")
+    if deger.strip().lower() in _GIT_BOOLEAN:
+        return None
+    _, durum = _calistir(["git", "-C", proje, "status", "--porcelain"], 30)
+    if "cannot spawn" not in durum:
+        return None
+    return _hata(f"git core.fsmonitor değeri çalıştırılamıyor ({kaynak}); her git komutu hata verir",
+                 proje=proje, fsmonitor_kaynak=os.path.normpath(os.path.join(proje, kaynak[5:])) if kaynak.startswith("file:") else "",
+                 fsmonitor_deger=deger.strip())
+
+
 def o_git(b, s):
+    kaynak = s.ayrinti.get("fsmonitor_kaynak")
+    if kaynak:
+        deger = s.ayrinti.get("fsmonitor_deger", "")
+        argv = ["git", "config", "--file", kaynak, "--unset", "core.fsmonitor"]
+
+        def uygula():
+            kod, cikti = _calistir(argv, 30)
+            if kod != 0:
+                raise RuntimeError(cikti.strip())
+            return f"core.fsmonitor kaldırıldı: {kaynak}"
+        return Onarim("B", "bozuk core.fsmonitor satırını yazıldığı yapılandırma dosyasından kaldır",
+                      uygula, {"tur": "komut", "argv": ["git", "config", "--file", kaynak, "core.fsmonitor", deger]},
+                      komut=" ".join(argv))
     if s.ayrinti.get("proje"):
         p = s.ayrinti["proje"].replace("\\", "/")
         argv = ["git", "config", "--global", "--add", "safe.directory", p]
@@ -645,7 +681,12 @@ def calistir(a) -> int:
     proje = a.proje or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
     onay = None
     if a.duzelt and not a.evet and not a.json and sys.stdin.isatty():
-        onay = lambda ac: input(f"B sınıfı onarım (makineyi değiştirir): {ac}. Uygulansın mı? [e/H] ").strip().lower() in ("e", "evet", "y", "yes")
+        def onay(ac):
+            # Windows'ta Python < 3.12 NUL aygıtı için isatty() True döner: arka plan koşusunda giriş yoksa EOF "hayır" sayılır
+            try:
+                return input(f"B sınıfı onarım (makineyi değiştirir): {ac}. Uygulansın mı? [e/H] ").strip().lower() in ("e", "evet", "y", "yes")
+            except EOFError:
+                return False
     sonuc = kos(Baglam(proje=proje, kuru=a.kuru, proje_kod=not a.arka_plan), duzelt=a.duzelt, evet_b=a.evet, onay=onay)
     print(json.dumps(sonuc, ensure_ascii=False, indent=2) if a.json else metin(sonuc))
     return 1 if sonuc["zorunlu_hata"] else 0
