@@ -294,19 +294,9 @@ def denetci_kayitli_mi(klasor: str, ajan_kimligi: str) -> bool:
 
 
 def _kok_adaylari(klasor: str) -> list[str]:
-    """Doğrulama yolunun çözüleceği kökler: `.claude` taşıyan proje kökü (varsa) ve iş klasörü."""
-    kokler = []
-    d = os.path.abspath(klasor)
-    while True:
-        if os.path.isdir(os.path.join(d, ".claude")):
-            kokler.append(d)
-            break
-        ust = os.path.dirname(d)
-        if ust == d:
-            break
-        d = ust
-    kokler.append(os.path.abspath(klasor))
-    return kokler
+    """Doğrulama yolunun çözüleceği kökler: proje kökü (ork_lib.proje_dizini; iç içe `.claude/agent-memory` kök sayılmaz) ve iş klasörü."""
+    import ork_lib as L
+    return [L.proje_dizini(klasor, ortami_yoksay=True), os.path.abspath(klasor)]
 
 
 def llm_beyan_eksikleri(klasor: str, metin: str) -> tuple[list[str], bool]:
