@@ -12,4 +12,4 @@ Görevde bir hata ya da sapma görürsen: belirtiyi yamama, ilk sapmayı kanıtl
 
 ## Araç hatası anı
 
-Araç başarısız oldu: komutu körlemesine yineleme. Hatanın ilk sapmasını oku, nedenini kanıtla, sonra tek hedefli düzeltme yap. Kanıtlanmamış nedene 'kök neden' deme.
+Araç başarısız oldu: komutu körlemesine yineleme. Hatanın ilk sapmasını oku, nedenini kanıtla, sonra tek hedefli düzeltme yap. Kanıtlanmamış nedene 'kök neden' deme. Aracı ya da erişimi aşamıyorsan 'yapamam' yazmadan önce denenen komutu ve çıktısını an ('Denendi: … Engel: …'); denemeden yazılan yapamam iddiası sonradan yanlış çıkıyor (ADR-0153).

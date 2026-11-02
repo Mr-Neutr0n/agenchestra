@@ -1852,6 +1852,21 @@ def _onleme_yanit(sd: str, oid, inp: dict) -> None:
         return
 
 
+def _yapamam_yanit(sd: str, oid, inp: dict) -> None:
+    """ADR-0153 / P-045: yanıtta denenen komut ya da engel kanıtı olmadan yazılmış gerçek yapamama iddiası günlüğe
+    `kapi_golge / yapamam_kaniti` olarak yazılır. Yalnız ölçer (gölge): engellemez, uyarı vermez.
+    Ayar `ayarlar/yapamam_kaniti.json`; hatada sessiz geçer."""
+    try:
+        import yapamam_kaniti as YK
+        bulgu = YK.degerlendir(inp.get("last_assistant_message"), sd)
+        if bulgu:
+            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kapi_golge",
+                                                             "kapi": YK.KAPI, "is": _oturum_isi(sd, oid),
+                                                             **_kanit(bulgu["kalip"], bulgu["alinti"])})
+    except Exception:
+        return
+
+
 def _cikti_butce_yanit(sd: str, oid, inp: dict) -> None:
     """P-001 / ADR-0075: turun sohbet metni ölçülür. Her turda günlüğe `cikti_olcum` (rapor ortanca ve p90'ı bundan hesaplar),
     sınır aşımında `kapi_golge / cikti_butce` düşer; gölge modda engellemez. Ayar `ayarlar/cikti_butce.json`; hatada sessiz geçer."""
@@ -2102,6 +2117,7 @@ def stop(inp: dict):
         _auto_devam_yanit(sd, oid, inp)
         _kanitsiz_iddia_yanit(sd, oid, inp)
         _onleme_yanit(sd, oid, inp)
+        _yapamam_yanit(sd, oid, inp)
         _cikti_butce_yanit(sd, oid, inp)
         _cikti_sirasi_yanit(sd, oid, inp)
         _kapanis_kapisi(sd, oid, inp)

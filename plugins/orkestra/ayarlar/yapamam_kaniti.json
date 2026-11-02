@@ -1,0 +1,21 @@
+{
+  "aciklama": "ADR-0153 (P-045): yanıtta gerçek yapamama iddiası denenen komut ya da engel kanıtı olmadan yazılmışsa günlüğe kapi_golge / yapamam_kaniti düşer. Yalnız ölçer.",
+  "mod": "golge",
+  "mod_aciklama": "golge: yalnız gunluk.jsonl; engelleme ve kullanıcı uyarısı yok. İhlale geçiş P-028'e göre ayrı kararla: 30 tetik ve 0 yanlış pozitif (elle sınıflama) eşiği.",
+  "gecis_esigi": {"tetik": 30, "yanlis_pozitif": 0},
+  "iddia_kaliplari": [
+    "\\b(?:yapam[ae]m|yapam[ıi]yorum|yap[ıi]lamaz|yap[ıi]lam[ıi]yor|[çc]al[ıi][şs]t[ıi]ram[ıi]yorum)\\b",
+    "\\b(?:eri[şs]imim yok|eri[şs]emiyorum|arac[ıi]m yok|iznim yok|yetkim yok)\\b"
+  ],
+  "kanit_kaliplari": [
+    "denendi\\s*:",
+    "engel\\s*:",
+    "denedim",
+    "\\b(?:401|403|404|500)\\b",
+    "(?:exit|[çc][ıi]k[ıi][şs]) kodu",
+    "\\b(?:p-0\\d\\d|k-0\\d\\d|adr-\\d{3,4})\\b",
+    "doğrulanmad[ıi]",
+    "komut [çc][ıi]kt[ıi]s[ıi]",
+    "resolve-dnsname|nslookup"
+  ]
+}
