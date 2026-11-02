@@ -5,7 +5,7 @@ Bu dosya eklentiyi geliştirenler içindir. Kullanım kuralları için `KURALLAR
 ## Yayın akışı
 Oturumlar eklentiyi `~/.claude/plugins/cache/claude-orchestration/<plugin>/<sürüm>/` altındaki önbellek kopyasından yükler (göreli yol girdisine rağmen). Sürüm commit SHA'sıdır (12 hane); `version` alanı bilerek yoktur.
 
-1. Eklenti deposunda geliştir.
+1. Eklenti deposunda geliştir. Skill, ajan, ayar, hook ya da kural değiştirdiysen `python scripts/dokuman_uret.py` çalıştır; başvuru sayfaları (`docs/basvuru/`) güncellenir. `tests/test_dokuman_uret.py` eski başvuruyu reddeder.
 2. Değişikliği kendi dalında commitle; `main`'e yalnız `--ff-only` ya da PR ile gir (aşağıda "Yan işler").
 3. Uzak `main`'e push et (yalnız kullanıcının açık isteğiyle). Git hook'u yoktur; hiçbir betik yayın klonuna yazmaz.
 4. `orkestra guncelle` çalıştır: yayın klonu GitHub `origin`'den çekilir (klon kirliyse reddeder). Çalıştırmazsan `autoUpdate` ilk mesajdan en çok 10 dk sonra alır.
@@ -257,3 +257,9 @@ Kaynak: `scripts/sessionstart_kritik.py` (bağımsız ikinci SessionStart komutu
 - İzleme (gunluk.jsonl): `hook_basla` (hook başladı), `hook_sure` (+ `bolumler` ms, `yavas`), `baglam` (ana hook teslimi), `baglam_kritik` (kritik hook teslimi, `surum` etiketli), `kapi_golge` `sessionstart_yavas` (>10 sn, P-028).
 - Teşhis: `hook_basla` var, `baglam` yok = ana hook aşımı (H1); `hook_basla` yok = hook hiç çalışmadı (H2). Payda `tur=istek` kaydı olan oturumlardır; kayıt teslimi istemcinin aldığı bağlama eşit sayılmaz.
 - Testler: `tests/test_sessionstart_kritik.py`, `test_hook_sure_bolumler.py`, `test_durum_devral.py` (ipucu_say).
+
+## Bağsız ve onay bekleyen oturumda kabuk yazımı (ADR-0133, iş I-318)
+- Bağsız oturum kapısı (`hook._is_kapisi`) Write/Edit dalına ek olarak kabuk dalında da çalışır (`_bagsiz_kabuk_kapisi`): geçici dizin (scratchpad, %TEMP%, /tmp) ve `~/.claude` dışına yazan yönlendirme, tee, sed -i, cp/mv/rm, Set-Content ve yorumlayıcı kodundaki `open(..., 'w')`/`write_text` reddedilir. Hedef çıkarma `is_onay.kabuk_hedefleri` + `betik_yazimlari`; alt ajan çağrıları da kapsanır.
+- Mod: `ayarlar/bagsiz_kabuk.json` (`ihlal` varsayılan; proje ezmesi `.claude/orkestra/bagsiz_kabuk.json`); `golge` yalnız `kapi_golge` yazar, `ihlal` `kapi_ret` yazar. Kapatma `ORKESTRA_BAGSIZ_KABUK_KAPISI=0`; kapı hatasında serbest.
+- Onay kapısı (`is_onay.yazma_engeli`) proje dışındaki kalıcı yolu da (başka depo, eklenti kaynağı) reddeder; geçici dizin ve `~/.claude` serbest (`gecici_yol_mu`). Kabuk yazımı aynı işlevden geçer (`kabuk_yazma_engeli`).
+- En iyi çabadır: dolaylı yazım (betik dosyası içinde yazan `python x.py`) görülmez. Testler: `tests/test_bagsiz_kabuk_yazimi.py` (testte geçici kök `is_onay._gecici_kokler` ile proje dışına alınır).
