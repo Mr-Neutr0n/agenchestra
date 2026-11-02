@@ -80,11 +80,13 @@ def ana_agac_koku(d: str) -> str | None:
     return os.path.dirname(ortak)
 
 
-def proje_dizini(cwd: str | None = None) -> str:
+def proje_dizini(cwd: str | None = None, ortami_yoksay: bool = False) -> str:
     """CLAUDE_PROJECT_DIR > cwd'den yukarı .claude/orkestra arayışı > cwd. Bulunan klasör bağlı bir git worktree'siyse
     (oturum worktree'si: durum kopyası git dışı olduğundan ayrışır) ve ana ağaçta durum klasörü varsa ana ağaç döner;
-    hook, komut ve panel böylece tek durum kaynağını görür. `ORKESTRA_DURUM_YEREL=1` yerel kopyayı seçer (ADR-0033)."""
-    baslangic = os.environ.get("CLAUDE_PROJECT_DIR") or cwd or os.getcwd()
+    hook, komut ve panel böylece tek durum kaynağını görür. `ORKESTRA_DURUM_YEREL=1` yerel kopyayı seçer (ADR-0033).
+    `ortami_yoksay=True` verilen yolu esas alır (plan klasörü gibi açık bir yolun kökü: ortam onu ezmez); iç içe
+    `.claude/agent-memory` klasörleri kök sayılmaz, yalnız `.claude/orkestra` taşıyan klasör sayılır."""
+    baslangic = (None if ortami_yoksay else os.environ.get("CLAUDE_PROJECT_DIR")) or cwd or os.getcwd()
     d = os.path.abspath(baslangic)
     while True:
         if os.path.isdir(os.path.join(d, ".claude", "orkestra")):
