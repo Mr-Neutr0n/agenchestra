@@ -2,10 +2,11 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 120 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
+| `ORKESTRA_ACIK_SORU` | acik_soru.py |
 | `ORKESTRA_ADR_KAPISI` | isler.py |
 | `ORKESTRA_AGAC_KOKU` | ork_lib.py, orkestra.py |
 | `ORKESTRA_AJAN_KAPSAM` | ajan_kapsam.py, hook.py |
@@ -16,7 +17,6 @@ Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_BAGSIZ_KABUK_KAPISI` | hook.py |
 | `ORKESTRA_BASH` | cfg.py, doktor.py |
 | `ORKESTRA_BEKLEME_KAPISI` | bekleme_kapisi.py |
-| `ORKESTRA_BEKLEME_KAYDI` | bekleme_kaydi.py |
 | `ORKESTRA_BELGE_DUZELT` | belge_bicim.py |
 | `ORKESTRA_BIC_KAPISI` | is_sirasi.py |
 | `ORKESTRA_BILDIRIM` | bildirim.py, cfg.py, panel.py |
@@ -47,12 +47,9 @@ Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_HOME` | cfg.py, doktor.py, kaynak_kira.py |
 | `ORKESTRA_HOOK_KAYDI` | hook_kaydi.py |
 | `ORKESTRA_HOOK_ORNEK` | hook_kaydi.py |
-| `ORKESTRA_ICERIK_KAPISI` | hook.py |
-| `ORKESTRA_ICERIK_YASAK` | icerik_kapisi.py |
 | `ORKESTRA_ISTEK_DEFTERI_KAPISI` | istek_defteri.py |
 | `ORKESTRA_IS_KAPISI` | hook.py |
 | `ORKESTRA_IS_KLASOR_KOK` | isler.py |
-| `ORKESTRA_IS_TALEBI` | is_kaydi.py, is_talebi.py, test_paralel.py |
 | `ORKESTRA_IZIN` | izin_politikasi.py |
 | `ORKESTRA_IZOLE_UYARI` | on_kontrol.py |
 | `ORKESTRA_JIRA_BAGIMLILIK_KAPISI` | is_sirasi.py |
@@ -88,7 +85,6 @@ Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_OTO_COMMIT_ATIF` | oto_commit.py |
 | `ORKESTRA_OTO_COMMIT_BASH_YOLLAR` | oto_commit.py |
 | `ORKESTRA_OTURUM_BAKIM` | oturum_bakim.py |
-| `ORKESTRA_OTURUM_BUDAMA` | ozet.py |
 | `ORKESTRA_OTURUM_FARKINDALIK` | oturum_farkindalik.py |
 | `ORKESTRA_OTURUM_SATIRI_STOPTA` | hook.py |
 | `ORKESTRA_OZET_BASLIK_KAPISI` | isler.py |
@@ -109,6 +105,7 @@ Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_PROJE_ESLEME` | perspektif.py |
 | `ORKESTRA_PUSH_YASAK` | push_kapisi.py |
 | `ORKESTRA_PYTHON` | cfg.py, doktor.py, kur.py, ork_lib.py |
+| `ORKESTRA_REFLEKS` | refleks.py, refleks_hook.py |
 | `ORKESTRA_SECIM_HATIRLATMA` | secim_ekrani_hatirlatma.py |
 | `ORKESTRA_SEF_OZETI_KAPISI` | isler.py |
 | `ORKESTRA_SESSIZLIK_DK` | ozet.py |

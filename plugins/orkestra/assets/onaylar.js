@@ -20,7 +20,7 @@
   const S = { veri: null, tur: 'hepsi', gorunum: 'bekleyen', durum: 'hepsi', acik: new Set(), taslak: {}, hata: {}, yolda: new Set() };
   let K = null;
 
-  const kayitlar = () => (S.veri && Array.isArray(S.veri.kayitlar)) ? S.veri.kayitlar : [];
+  const kayitlar = () => (S.veri && Array.isArray(S.veri.kayitlar)) ? S.veri.kayitlar.filter(k => k.tur !== 'soru') : [];   // açık sorular Gelen kutusunda (P-053)
   const gorunumDurumlari = g => (GORUNUMLER.find(x => x[0] === g) || GORUNUMLER[0])[2];
   const gorunumde = (k, g) => gorunumDurumlari(g).includes(k.durum);
   const tabanAd = s => String(s ?? '').split(/[\\/]/).filter(Boolean).pop() || '';

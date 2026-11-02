@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 86 ayar; `açıklama yok` işaretli: 31.
+Toplam 86 ayar; `açıklama yok` işaretli: 30.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -15,7 +15,6 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `auto_kararlar` | ihlal | mod: golge = auto modundaki işin çalışma özetinde `## Otomatik kararlar` bölümü yok ya da boşsa uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, is kapat engellenmez; ihlal = bölüm olmadan özet doldurulmuş sayılmaz. |
 | `bagsiz_kabuk` | ihlal | mod: ihlal = bağsız oturumda geçici dizin dışına dosya yazan kabuk komutu reddedilir ve gunluk.jsonl'a kapi_ret düşer; golge = yalnız kapi_golge kaydı, iş engellenmez. |
 | `bekleme_kapisi` | golge | açıklama yok |
-| `bekleme_kaydi` | golge | açıklama yok |
 | `belge_bicim` | — | açıklama yok |
 | `belge_duzelt` | acik | açıklama yok |
 | `best_in_class` | ihlal | P-030 best in class kapısı. |
@@ -40,7 +39,6 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `iddia_dogrula` | — | iddia-dogrula skill varsayılanları. |
 | `is_baglama` | etkin | açıklama yok |
 | `is_esleme` | — | açıklama yok |
-| `is_talebi` | golge | mod: golge = aynı todo işi başka canlı oturumda ise uyarılır ve gunluk.jsonl'a kapi_golge/is_talebi düşer, hiçbir şey engellenmez; ihlal = ikinci talep reddedilir ve madde sahibe devredilir; kapali = kayıt yok. |
 | `istek_defteri` | golge | ADR-0112 istek defteri kapısı. |
 | `iz_kapsama` | — | açıklama yok |
 | `izin_politikasi` | genis | genis: kapı dışındaki her araç çağrısı onaysız (hook allow; kullanıcının settings deny/ask kuralları yine geçerli). |
@@ -58,6 +56,7 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `konu_defteri` | golge | ADR-0116 sohbet konu defteri. |
 | `konu_kaymasi` | etkin | Kayma sınıflayıcısı (I-297 P4, ADR-0114). |
 | `kpi_esikleri` | — | açıklama yok |
+| `kucuk_kademe` | golge | Küçük iş kademesi (ADR-0150, I-353). |
 | `kuyruk` | golge | mod: golge = oturum teslimi kuyruğa verilmeden (orkestra teslim kuyruk ekle) tam paket koşulduysa ya da kuyruk eksiği varsa uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, iş engellenmez; ihlal = eksik varsa reddedi… |
 | `main_kopya_kapisi` | golge | Korunan deponun birincil main kopyasına Edit/Write (I-302, ADR-0122). |
 | `mcp_kimlik` | — | MCP kimlik kaydı (ADR-0096, ADR-0097). |
@@ -78,6 +77,7 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `perspektif_zaman` | — | açıklama yok |
 | `plan_dogrulama` | ihlal | mod: golge = todo yazımı engellenmez, uyarı verilir ve gunluk.jsonl'a düşer; ihlal = engelli P<n> için todo yazımı reddedilir. |
 | `postgres_mcp` | — | postgres-mcp sarmalayıcısı (scripts/postgres_mcp.py) varsayılanları. |
+| `refleks` | acik | Refleks katmanı (ADR-0149): '/ok <komut>' modelsiz çalışır. |
 | `secim_ekrani_hatirlatma` | block | açıklama yok |
 | `sef_ozeti` | ihlal | İki katmanlı Şef Özeti kapısı (ADR-0085, ADR-0091). |
 | `sir_kaliplari` | — | açıklama yok |

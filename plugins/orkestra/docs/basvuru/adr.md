@@ -60,12 +60,8 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0135](../../../../adr/ADR-0135-cikti-sirasi-karar-en-sonda-ihlal-modunda.md) | Karar bekleyen konu yanıtın en sonunda; sıra kapısı ilk günden ihlal modunda | Kabul edildi |
 | [ADR-0136](../../../../adr/ADR-0136-kullanici-gorunumu-birlesik-belgeler-teslim-sirasi-ve-yol-secimi.md) | Kullanıcı görünümü, birleşik belgeler, teslim sırası; doğrulanabilir şey "doğrulanamayan" yazılmaz; yol seçimi kırılma noktasından başlar | Kabul edildi |
 | [ADR-0137](../../../../adr/ADR-0137-auto-modunda-karar-bolumu-yok-kapi-is-sahibini-sorar.md) | Auto modunda karar bölümü yok, kapı iş sahibini sorar | Kabul edildi |
-| [ADR-0138](../../../../adr/ADR-0138-oturumlar-arasi-is-talebi-ve-test-hatasi-atfi.md) | Oturumlar arası iş talebi (kira) ve test hatası atfı | Kabul edildi |
 | [ADR-0139](../../../../adr/ADR-0139-sinirsiz-bekleme-dongusu-kapisi.md) | Sınırsız bekleme döngüsü kapısı (PreToolUse, golge) | Kabul edildi |
 | [ADR-0140](../../../../adr/ADR-0140-hook-agir-isleri-kullanici-yolundan-cikar.md) | Hook'ta ağır işler kullanıcının bekleme yolundan çıkarılır | Kabul edildi |
-| [ADR-0141](../../../../adr/ADR-0141-basarisiz-olaylar-tek-defter.md) | Başarısız olaylar tek defterde (hata.jsonl) kayıtlanır | Önerildi |
-| [ADR-0142](../../../../adr/ADR-0142-entegrasyon-kuyrugu-tek-seritte-birlesik-tam-kosu.md) | Entegrasyon kuyruğu, tek şeritte birleşik tam koşu | Kabul edildi |
-| [ADR-0143](../../../../adr/ADR-0143-salt-okuma-hook-daraltma-ve-oturum-budama.md) | Salt okuma araçlarında PreToolUse kapatılır, oturumlar/ budanır, artımlı jsonl okuma ertelenir | Kabul edildi |
-| [ADR-0144](../../../../adr/ADR-0144-kapi-zorlu-kurallar-hook-yuklemeli.md) | Kapı ve şablonun zorladığı sekiz kural kural dosyasından çıkarılır (yukle: hook) | Kabul edildi |
-| [ADR-0145](../../../../adr/ADR-0145-yavas-oturum-uyarilari-bakim-onbellegi.md) | Yavaş SessionStart uyarıları bakım koşucusunda hesaplanır | Kabul edildi |
-| [ADR-0146](../../../../adr/ADR-0146-bekleme-sirasinda-bagimsiz-is.md) | ADR-0146-bekleme-sirasinda-bagimsiz-is | Kabul edildi |
+| [ADR-0149](../../../../adr/ADR-0149-refleks-katmani-modelsiz-hizli-komutlar.md) | Refleks katmanı: modelsiz hızlı komutlar | Kabul edildi |
+| [ADR-0150](../../../../adr/ADR-0150-kucuk-is-kademesi-golge.md) | Küçük iş kademesi (gölge) | Kabul edildi |
+| [ADR-0151](../../../../adr/ADR-0151-acik-sorular-gelen-kutusu.md) | Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur | Kabul edildi |

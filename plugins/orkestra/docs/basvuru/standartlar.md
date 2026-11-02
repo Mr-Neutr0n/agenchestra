@@ -21,10 +21,10 @@
 - `bulgu`: {baslik}: bulgu
 - `calisma_ozeti`: {baslik}: çalışma özeti ({tarih})
 - `jira_onerisi`: {baslik}: Jira güncelleme önerisi (Jira'ya yazılmadı)
-- `mevcut_durum`: {baslik}: mevcut durum ve bulgular
+- `mevcut_durum`: {baslik}: mevcut durum
 - `plan`: {baslik}
 - `plan_dogrulamali`: {baslik}: plan
 - `plan_sirali`: {baslik}: plan
 - `rapor`: {baslik}: rapor
-- `sozlesme`: {baslik}: sözleşme ve rapor
+- `sozlesme`: {baslik}: görev sözleşmesi
 - `todo`: {baslik}: yapılacaklar

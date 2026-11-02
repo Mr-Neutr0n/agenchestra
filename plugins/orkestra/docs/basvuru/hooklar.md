@@ -8,14 +8,12 @@ Kaynak: `hooks/hooks.json`; hepsi `scripts/hook.py <Olay>` çağırır.
 |---|---|---|
 | SessionStart | `—` | 2 |
 | UserPromptSubmit | `—` | 1 |
-| PreToolUse | `^(?!(?:Read|Grep|Glob|ToolSearch)$).*` | 1 |
-| PreToolUse | `Read|Grep|Glob` | 3 |
+| UserPromptSubmit | `—` | 1 |
+| PreToolUse | `.*` | 1 |
 | PostToolUse | `Skill|Agent|Task|Workflow|AskUserQuestion|mcp__ccd_session__start_session` | 1 |
 | PostToolUse | `Edit|Write|MultiEdit|NotebookEdit|Bash|PowerShell` | 1 |
 | PostToolUseFailure | `—` | 1 |
 | SubagentStart | `—` | 1 |
-| PermissionDenied | `—` | 1 |
-| StopFailure | `—` | 1 |
 | SubagentStop | `—` | 1 |
 | Stop | `—` | 1 |
 | Notification | `—` | 1 |

@@ -15,6 +15,7 @@ from __future__ import annotations
 import datetime
 import copy
 import glob
+import hashlib
 import json
 import os
 import re
@@ -24,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ork_lib as L  # noqa: E402
 import kapi_mod as KM  # noqa: E402
 
-TURLER = ("perspektif", "skill", "kural", "karar")
+TURLER = ("perspektif", "skill", "kural", "karar", "soru")
 DURUMLAR = ("bekliyor", "onaylandi", "reddedildi", "uygulaniyor", "uygulandi", "eskidi", "iptal")
 KURAL_DURUMLARI = ("oneri", "etkin", "reddedildi", "kaldirildi")
 KURAL_DOSYASI = "orkestra_kurallari.md"
@@ -36,6 +37,8 @@ ESKI_BITIS = "<!-- eklenti-kurallari:bitis -->"
 SKILL_MAX = 6000
 KAYNAK_MAX = 8000
 BAGLAM_MAX = 900
+SORU_OMUR_GUN = 14   # açık soru bu kadar gün yanıtsız kalırsa `eskidi` olur
+SORU_BAGLAM_MAX = 300
 
 
 # ---------------------------------------------------------------- yardımcılar
@@ -767,7 +770,8 @@ def sayac(sd: str) -> dict:
          "tur": {t: 0 for t in TURLER}}
     for k in _hepsi(sd):
         if k.get("durum") == "bekliyor":
-            s["bekliyor"] += 1
+            if k.get("tur") != "soru":   # soru karar değildir: yalnız tur.soru ve panel "Açık sorular" grubu sayar
+                s["bekliyor"] += 1
             s["tur"][k.get("tur", "karar")] = s["tur"].get(k.get("tur", "karar"), 0) + 1
         elif k.get("durum") in ("onaylandi", "uygulaniyor"):
             s["uygulanacak"] += 1
@@ -790,6 +794,120 @@ def iste(sd: str, baslik: str, metin: str, secenekler=None, tur: str = "karar", 
         return _yeni_kayit(sd, tur, baslik.strip(), metin or "", kaynak or oturum, anahtar, secenekler, oturum)
 
 
+# ---------------------------------------------------------------- açık sorular (P-053)
+#
+# Ajanın kullanıcıya sorduğu her soru tur="soru" kaydıdır. Sorulduğu anda açılır (hook), yanıtlanınca `uygulandi`,
+# "gerek yok" denince `iptal`, SORU_OMUR_GUN gün yanıtsız kalırsa `eskidi` olur. `bekliyor` kalan soru panelde
+# "Açık sorular" grubunda görünür. Soru "bekleyen karar" değildir: karar sayacını ve /orkestra:onay yönergesini etkilemez.
+
+def _soru_anahtar(oturum, metin: str) -> str:
+    norm = re.sub(r"\s+", " ", (metin or "").strip().lower())
+    return "soru:" + hashlib.sha1(f"{oturum or ''}|{norm}".encode("utf-8")).hexdigest()[:12]
+
+
+def soru_ac(sd: str, soru: str, secenekler=None, oturum=None, kaynak: str = "askuserquestion", is_id=None) -> dict:
+    """Soruyu açık soru olarak kaydeder; aynı oturumda aynı metin hâlâ açıksa o kayıt döner (idempotent)."""
+    soru = (soru or "").strip()
+    if not soru:
+        raise ValueError("soru metni boş olamaz.")
+    anahtar = _soru_anahtar(oturum, soru)
+    os.makedirs(_onay_dizini(sd), exist_ok=True)
+    with L.kilit(_kilit_yolu(sd)):
+        for k in _hepsi(sd):
+            if k.get("anahtar") == anahtar and k.get("durum") == "bekliyor":
+                return k
+        etiketler = [_kes(_tek_satir(str(e)), 80) for e in (secenekler or []) if str(e).strip()][:6]
+        return _yeni_kayit(sd, "soru", _kes(_tek_satir(soru), 120), soru[:KAYNAK_MAX], kaynak, anahtar, etiketler, oturum,
+                           ek={"is": is_id} if is_id else None)
+
+
+def _soru_eskit(sd: str) -> None:
+    """SORU_OMUR_GUN günden eski açık soruları `eskidi` yapar (liste şişmesin); tarihi okunamayan kayda dokunmaz."""
+    sinir = datetime.datetime.now().astimezone() - datetime.timedelta(days=SORU_OMUR_GUN)
+    eski = []
+    for k in _hepsi(sd):
+        if k.get("tur") == "soru" and k.get("durum") == "bekliyor":
+            try:
+                if datetime.datetime.fromisoformat(k.get("olusturma", "")) < sinir:
+                    eski.append(k["id"])
+            except ValueError:
+                continue
+    if not eski:
+        return
+    with L.kilit(_kilit_yolu(sd)):
+        for oid in eski:
+            k = _kayit_oku(sd, oid)
+            if k and k.get("durum") == "bekliyor":
+                k["durum"] = "eskidi"
+                _olay(k, "eskidi", f"{SORU_OMUR_GUN} gün yanıtsız")
+                _kayit_yaz(sd, k)
+
+
+def acik_sorular(sd: str, oturum=None) -> list[dict]:
+    """Yanıtlanmamış sorular, eskiden yeniye; `oturum` verilirse yalnız o oturumun soruları."""
+    if not os.path.isdir(_onay_dizini(sd)):
+        return []
+    _soru_eskit(sd)
+    out = [k for k in _hepsi(sd) if k.get("tur") == "soru" and k.get("durum") == "bekliyor"
+           and (oturum is None or k.get("oturum") == oturum)]
+    out.sort(key=lambda k: k.get("olusturma", ""))
+    return out
+
+
+def soru_yanitla(sd: str, id: str, yanit: str, kim: str = "panel") -> dict:
+    os.makedirs(_onay_dizini(sd), exist_ok=True)
+    with L.kilit(_kilit_yolu(sd)):
+        k = _gerekli(sd, id)
+        if k.get("tur") != "soru":
+            raise ValueError(f"{id} soru kaydı değil.")
+        if k["durum"] != "bekliyor":
+            raise ValueError(f"{id} bekliyor durumunda değil (şu an: {k['durum']}).")
+        yanit = (yanit or "").strip()
+        if not yanit:
+            raise ValueError("yanıt boş olamaz.")
+        k["karar"] = {"sonuc": "yanit", "secim": yanit[:500], "not": None, "zaman": _an(), "kim": kim}
+        k["durum"] = "uygulandi"
+        _olay(k, "yanitlandi", _kes(yanit, 120))
+        _kayit_yaz(sd, k)
+        return k
+
+
+def soru_yanitla_metinle(sd: str, oturum, soru: str, yanit: str, kim: str = "kullanici") -> dict | None:
+    """Aynı oturumun aynı metinli açık sorusunu yanıtlar (hook: AskUserQuestion yanıtı, wrap_up düğmesi); yoksa None."""
+    anahtar = _soru_anahtar(oturum, soru)
+    for k in _hepsi(sd):
+        if k.get("anahtar") == anahtar and k.get("durum") == "bekliyor":
+            return soru_yanitla(sd, k["id"], yanit, kim)
+    return None
+
+
+def soru_kapat(sd: str, id: str, not_: str = "gerek yok") -> dict:
+    """Soruyu yanıtsız kapatır ("gerek yok" ya da konuşmada yanıtlandı)."""
+    os.makedirs(_onay_dizini(sd), exist_ok=True)
+    with L.kilit(_kilit_yolu(sd)):
+        k = _gerekli(sd, id)
+        if k.get("tur") != "soru":
+            raise ValueError(f"{id} soru kaydı değil.")
+        if k["durum"] != "bekliyor":
+            raise ValueError(f"{id} bekliyor durumunda değil (şu an: {k['durum']}).")
+        k["durum"] = "iptal"
+        _olay(k, "iptal", not_)
+        _kayit_yaz(sd, k)
+        return k
+
+
+def acik_soru_satiri(sd: str, oturum) -> str:
+    """Ajanın bağlamına giren tek satır: bu oturumun yanıtlanmamış soruları (en çok 300 karakter); yoksa ''."""
+    sorular = acik_sorular(sd, oturum)
+    if not sorular:
+        return ""
+    ilk = "; ".join(f"{k['id']} {_kisalt(k['baslik'], 70)}" for k in sorular[:3])
+    ek = f" (+{len(sorular) - 3})" if len(sorular) > 3 else ""
+    metin = (f"Yanıtsız açık soru {len(sorular)}: {ilk}{ek}. Kullanıcı yanıtladıysa `orkestra onay soru-kapat <id>`; "
+             f"yanıtlamadıysa soruyu düğmeyle yeniden sor.")
+    return metin if len(metin) <= SORU_BAGLAM_MAX else metin[: SORU_BAGLAM_MAX - 1] + "…"
+
+
 def _gerekli(sd: str, id: str) -> dict:
     k = _kayit_oku(sd, id)
     if not k:
@@ -803,6 +921,8 @@ def karar_ver(sd: str, id: str, sonuc: str, secim=None, not_=None, kim: str = "p
     os.makedirs(_onay_dizini(sd), exist_ok=True)
     with L.kilit(_kilit_yolu(sd)):
         k = _gerekli(sd, id)
+        if k.get("tur") == "soru":
+            raise ValueError(f"{id} açık soru; onay/ret değil, soru_yanitla ya da soru_kapat ile kapanır.")
         if k["durum"] != "bekliyor":
             raise ValueError(f"{id} bekliyor durumunda değil (şu an: {k['durum']}); karar verilemez.")
         if sonuc == "onay" and k.get("secenekler"):
@@ -972,7 +1092,7 @@ def _bu_oturumun(k: dict, oturum: str) -> bool:
 
 def _calistir_yonergesi(sd: str, oturum: str) -> str:
     """Bekleyen karar kalmadıysa ve onaylı kayıt varsa ajana /orkestra:onay'ı çalıştırma talimatı; yoksa ''."""
-    kayitlar = [k for k in _hepsi(sd) if _bu_oturumun(k, oturum)]
+    kayitlar = [k for k in _hepsi(sd) if _bu_oturumun(k, oturum) and k.get("tur") != "soru"]
     if any(k.get("durum") == "bekliyor" for k in kayitlar):
         return ""
     onayli = [k for k in kayitlar if k.get("durum") == "onaylandi"]
@@ -984,13 +1104,27 @@ def _calistir_yonergesi(sd: str, oturum: str) -> str:
 
 
 def baglam_metni(sd: str, oturum: str, olay: str) -> str:
-    """Hook'un ajana eklediği kısa metin (en çok 900 karakter); söyleyecek şey yoksa ''."""
+    """Hook'un ajana eklediği kısa metin; söyleyecek şey yoksa ''. Karar metni en çok 900 karakter, açık soru satırı
+    (SessionStart ve UserPromptSubmit) ayrıca en çok 300 karakterdir ve açık soru yokken boştur."""
+    ham = _baglam_metni_ham(sd, oturum, olay)
+    if olay in ("SessionStart", "UserPromptSubmit"):
+        try:
+            satir = acik_soru_satiri(sd, oturum)
+        except Exception:  # noqa: BLE001 - hatırlatma hook'u düşürmez
+            satir = ""
+        if satir:
+            return (ham + " " + satir).strip()
+    return ham
+
+
+def _baglam_metni_ham(sd: str, oturum: str, olay: str) -> str:
+    """Hook'un ajana eklediği karar metni (en çok 900 karakter); söyleyecek şey yoksa ''."""
     if not os.path.isdir(_onay_dizini(sd)):
         return ""
     if olay == "SessionStart":
         kayitlar = _hepsi(sd)
         uygulanacak = [k for k in kayitlar if k.get("durum") == "onaylandi" and _bu_oturumun(k, oturum)]
-        bekleyen = sum(1 for k in kayitlar if k.get("durum") == "bekliyor")
+        bekleyen = sum(1 for k in kayitlar if k.get("durum") == "bekliyor" and k.get("tur") != "soru")
         parcalar = []
         yonerge = _calistir_yonergesi(sd, oturum)
         if yonerge:
@@ -1013,7 +1147,7 @@ def baglam_metni(sd: str, oturum: str, olay: str) -> str:
                 kz = (k.get("karar") or {}).get("zaman", "")
                 if not kz or kz <= son:
                     continue
-                if k.get("tur") == "karar" and k.get("oturum") and k.get("oturum") != oturum:
+                if k.get("tur") in ("karar", "soru") and k.get("oturum") and k.get("oturum") != oturum:
                     continue
                 yeni.append((kz, k))
             yonerge = _calistir_yonergesi(sd, oturum)
@@ -1028,6 +1162,8 @@ def baglam_metni(sd: str, oturum: str, olay: str) -> str:
                     s = f"{k['id']} kararın: {cevap}"
                     if kr.get("not"):
                         s += f" (not: {_kisalt(kr['not'], 120)})"
+                elif k["tur"] == "soru":
+                    s = f"{k['id']} sorusuna yanıt: {_kisalt(str(kr.get('secim') or ''), 120)}"
                 else:
                     s = (f"{k['id']} [{k['tur']}] {'onaylandı' if kr.get('sonuc') == 'onay' else 'reddedildi'}: "
                          f"{_kisalt(k['baslik'], 60)}")

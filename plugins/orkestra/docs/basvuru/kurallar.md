@@ -62,4 +62,4 @@ Kaynak: `kurallar/eklenti_kurallari.json` (her projeye yüklenir). Tam metin kay
 | P-050 | Belgeler üretilip tamamlandıktan sonra, plan ya da auto modu fark etmeden, şu sırayla kullanıcıya verilir. |
 | P-051 | Veritabanı, kod, komut ya da API ile bakılabilen hiçbir şey belgede "Doğrulanamayanlar" bölümüne yazılmaz; belge yazılmadan önce bakılır. |
 | P-052 | İşte iki yol varsa (örn. |
-| P-053 | Bir şey beklenirken (kaynak kirası kuyruğu, arka plan görevi, CI koşusu, denetçi) ajan boşa durmaz. |
+| P-053 | Ajanın kullanıcıya sorduğu her soru kalıcı kaydedilir ve yanıtlanana kadar kaybolmaz; karar soruları her zaman düğmeyle sunulur. |

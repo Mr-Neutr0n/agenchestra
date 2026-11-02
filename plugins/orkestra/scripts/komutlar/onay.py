@@ -151,6 +151,18 @@ def cmd_onay(a):
     elif i == "iptal":
         k = _onay_calistir(lambda m: m.iptal(sd, a.id, a.not_))
         print(f"{k['id']} → {k['durum']}")
+    elif i == "soru-liste":
+        acik = onay.acik_sorular(sd)
+        for k in acik:
+            print(f"{k['id']} {k.get('oturum') or '-'} {k['baslik']}")
+        if not acik:
+            print("açık soru yok")
+    elif i == "soru-yanit":
+        k = _onay_calistir(lambda m: m.soru_yanitla(sd, a.id, a.yanit, kim="cli"))
+        print(f"{k['id']} → {k['durum']}")
+    elif i == "soru-kapat":
+        k = _onay_calistir(lambda m: m.soru_kapat(sd, a.id, a.not_ or "gerek yok"))
+        print(f"{k['id']} → {k['durum']}")
     elif i == "esitle":
         onay.esitle(sd)
         s = onay.sayac(sd)
@@ -325,6 +337,13 @@ def kaydet(alt):
     x.add_argument("id")
     x.add_argument("--not", dest="not_", required=True)
     on.add_parser("esitle")
+    on.add_parser("soru-liste", help="yanıtsız açık sorular")
+    x = on.add_parser("soru-yanit", help="açık soruyu yanıtla")
+    x.add_argument("id")
+    x.add_argument("--yanit", required=True)
+    x = on.add_parser("soru-kapat", help="açık soruyu yanıtsız kapat (yanıtlandı ya da gerek yok)")
+    x.add_argument("id")
+    x.add_argument("--not", dest="not_")
     x = on.add_parser("vaat", help="onay kaydına ölçülebilir vaat yaz (etki ölçümü)")
     x.add_argument("id")
     x.add_argument("--metin", required=True)

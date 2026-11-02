@@ -370,12 +370,14 @@
   function olcuGizle(ad, pencere) { const s = olcuGizli(); s.add(ad + '|' + pencere); depo.koy(OLCU_GIZLI, JSON.stringify([...s])); planla(); }
   function gelenOgeleri() {
     const on = d('/onaylar.json').veri, sm = d('/simdi.json').veri, oz = d('/ozet.json').veri, an = d('/analitik.json').veri;
-    const g = { karar: [], insan: [], teslim: [], sahipsiz: [], kart: [], olcu: [] };
+    const g = { soru: [], karar: [], insan: [], teslim: [], sahipsiz: [], kart: [], olcu: [] };
     const insanOnay = [], insanEtki = [];
     const gu = d(GUNC_YOL).veri;   // eklenti güncellemesi her zaman en üstte; "Sonra" yalnız 'yeni' durumunu gizler (koşu ve hata görünür kalır)
     if (gu && ['yeni', 'calisiyor', 'bitti', 'hata'].includes(gu.durum) && !(gu.durum === 'yeni' && gu.ertelendi)) g.karar.push({ tur: 'guncelleme', g: gu });
     if (on && on.acik !== false) {
-      (on.kayitlar || []).filter(k => k.durum === 'bekliyor' && !ertelenen.has(altAlan(k))).forEach(k => insanOnay.push({ tur: 'onay', k }));
+      // P-053: ajanın yanıtsız soruları ayrı grupta (karar onayı değil); yanıtlanana ya da kapatılana kadar kalır
+      (on.kayitlar || []).filter(k => k.tur === 'soru' && k.durum === 'bekliyor').forEach(k => g.soru.push({ tur: 'soru', k }));
+      (on.kayitlar || []).filter(k => k.tur !== 'soru' && k.durum === 'bekliyor' && !ertelenen.has(altAlan(k))).forEach(k => insanOnay.push({ tur: 'onay', k }));
       // uygulama ve perspektif eylemleri çalışma alanına özeldir: birleşik kipte her alan kendi satırını alır
       const ozetler = tumMu() ? (on.alan_ozetleri || []) : [{ alan: null, sayac: on.sayac, perspektif: on.perspektif, uygulama: on.uygulama }];
       // koşu sürerken kart kalır ama "uygulanıyor" gösterir; koşu kayıtları kapatınca sayaç sıfırlanır, kart kalkar
@@ -411,7 +413,7 @@
     return [...gruplar.values()].map(x => ({ ...x, zaman: zaman(x) })).sort((a, b) => b.zaman - a.zaman);
   }
   const insanSay = g => g.insan.reduce((n, x) => n + x.kararlar.length + (x.bekliyor ? 1 : 0), 0);
-  const gelenSayisi = () => { const g = gelenOgeleri(); return g.karar.length + insanSay(g) + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length; };
+  const gelenSayisi = () => { const g = gelenOgeleri(); return g.soru.length + g.karar.length + insanSay(g) + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length; };
 
   // Eklenti güncelleme kartı (ADR-0039): yeni | calisiyor | bitti | hata. Koşu LLM çağırmaz; aynı kod `orkestra update` ile çalışır.
   const kisaSha = s => String(s ?? '').slice(0, 7);
@@ -526,6 +528,15 @@
           <div class="meta"><span>${eski >= 1 ? Math.round(eski) + ' gündür hareketsiz' : 'son hareket ' + B.goreli(k.guncelleme)}</span><span>·</span><span>${k.isci ?? 0} işçi çağrısı</span><span>·</span><span>${B.paraP(k)}</span>${ipucu ? H`<span>·</span><span>${ipucu}</span>` : ''}</div></div>
         <div class="eylemler">${sohbet ? H`<button class="dugme ana-d kucuk" data-eylem="sohbet-ac" data-oturum="${sohbet}" data-ad="${k.baslik}" data-birincil>Sohbeti aç</button>` : ''}<a class="dugme kucuk" href="#/kart/${enc(k.id)}${ek('', k)}"${sohbet ? '' : ' data-birincil'}>İzi aç</a></div></article>`;
     }
+    if (o.tur === 'soru') {
+      const k = o.k, sec = (k.secenekler || []).filter(Boolean), al = k.alan?.id || '';
+      return H`<article class="oge oge-soru" data-gez data-soru="${k.id}" style="--renk:var(--uyari)">
+        <div class="simge">${simge('onay')}</div>
+        <div class="govde"><div class="baslik">${k.baslik}</div>
+          <div class="meta"><span>${k.id}</span><span>·</span><span>${B.goreli(k.olusturma)} soruldu</span>${alanRozeti(k)}</div>
+          ${sec.length ? H`<div class="eylemler">${sec.map((e, i) => H`<button class="dugme kucuk${i === 0 ? ' ana-d' : ''}" data-eylem="soru-yanit" data-id="${k.id}" data-alan="${al}" data-yanit="${e}">${e}</button>`)}</div>` : ''}</div>
+        <div class="eylemler"><button class="dugme kucuk" data-eylem="soru-kapat" data-id="${k.id}" data-alan="${al}" data-not="yanıtlandı">Yanıtlandı</button> <button class="dugme hayalet kucuk" data-eylem="soru-kapat" data-id="${k.id}" data-alan="${al}" data-not="gerek yok">Gerek yok</button></div></article>`;
+    }
     if (o.tur === 'olcu') {
       const [ad, f] = OLCU_AD[o.ad] || [o.ad, x => B.sayi(x, 2)];
       const pAd = pencereAd(o.pencere);
@@ -551,11 +562,11 @@
         ${karo('Açık iş', il ? B.sayi(acikIs) : '–', 'İşlere git →', '#/isler')}
         ${karo('Karar bekleyen', B.sayi(insanSay(g)), insanSay(g) ? 'sağda' : 'yok')}
       </div>` : '';
-    const toplam = g.karar.length + insanSay(g) + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length;
+    const toplam = g.soru.length + g.karar.length + insanSay(g) + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length;
     const grup = (baslik, liste) => liste.length ? H`<section class="gelen-grup"><h2>${baslik} <span class="say">${liste.length}</span></h2>${liste.map(ogeHtml)}</section>` : '';
     // Sol: sistem işleri ve kartlar (eskisi gibi). Sağ: insan kararı bekleyen işler, sohbete göre gruplu.
-    const sol = H`${grup('Karar ver', g.karar)}${grup('Teslim bekleyen kartlar', g.teslim)}${grup('Sahipsiz kartlar', g.sahipsiz)}${grup('Takılan kartlar', g.kart)}${grup('Hedef dışı ölçüler', g.olcu)}`;
-    const solVar = g.karar.length + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length > 0;
+    const sol = H`${grup('Açık sorular', g.soru)}${grup('Karar ver', g.karar)}${grup('Teslim bekleyen kartlar', g.teslim)}${grup('Sahipsiz kartlar', g.sahipsiz)}${grup('Takılan kartlar', g.kart)}${grup('Hedef dışı ölçüler', g.olcu)}`;
+    const solVar = g.soru.length + g.karar.length + g.teslim.length + g.sahipsiz.length + g.kart.length + g.olcu.length > 0;
     const govde = yuk || (toplam === 0
       ? bos('Gelen kutusu boş', 'Senden beklenen bir karar, yanıt ya da müdahale yok.')
       : H`<div class="gelen-bolum"><div class="gelen-sol yigin">${solVar ? sol : bos('Sistem işi yok', 'Güncelleme, kart ya da ölçü bekleyen bir şey yok.')}</div>${insanPanelHtml(g)}</div>`);
@@ -1128,6 +1139,20 @@
     setTimeout(kapat, sure);
   }
 
+  // P-053: açık soruyu yanıtla ya da kapat; kayıt hemen yazılır (karar gibi 5 sn beklemez), liste yenilenir
+  async function soruIsle(b) {
+    b.disabled = true;
+    const yanit = b.dataset.eylem === 'soru-yanit';
+    try {
+      await gonder('/onay', yanit ? { islem: 'soru-yanit', id: b.dataset.id, yanit: b.dataset.yanit } : { islem: 'soru-kapat', id: b.dataset.id, not: b.dataset.not || 'gerek yok' }, b.dataset.alan || undefined);
+      bildir(yanit ? `${b.dataset.id} yanıtlandı: ${b.dataset.yanit}` : `${b.dataset.id} kapatıldı.`);
+      getir('/onaylar.json', { taze: true });
+    } catch (e) {
+      b.disabled = false;
+      bildir(`${b.dataset.id} kaydedilemedi: ${e.message}`, { hata: true, sure: 8000 });
+    }
+  }
+
   function kararVer(id, sonuc, secim, alan) {
     const an = alan || undefined, ak = (alan || '') + '|' + id;   // birleşik kipte karar kaydın kendi alanına yazılır
     if (ertelenen.has(ak)) return;
@@ -1180,6 +1205,7 @@
     else if (ey === 'arac-konum') aracKonum(b);
     else if (ey === 'arac-sirala') { depo.koy('arac-sira', b.dataset.v); planla(); }
     else if (ey === 'karar') kararVer(b.dataset.id, b.dataset.sonuc, b.dataset.secim, b.dataset.alan);
+    else if (ey === 'soru-yanit' || ey === 'soru-kapat') soruIsle(b);
     else if (ey === 'uygula') {
       b.disabled = true;
       try { await gonder('/onay', { islem: 'simdi-uygula' }, b.dataset.alan || undefined); bildir('Uygulama arka planda başladı (pencere açılmaz); bitince kart kalkar.'); getir('/onaylar.json', { taze: true }); }

@@ -1347,6 +1347,24 @@
         }
       ],
       "etkinlesme": "2026-11-01T12:48:25+03:00"
+    },
+    {
+      "id": "P-053",
+      "katman": "plugin",
+      "metin": "ZORUNLU, istisnasız: Ajanın kullanıcıya sorduğu her soru kalıcı kaydedilir ve yanıtlanana kadar kaybolmaz; karar soruları her zaman düğmeyle sunulur. (1) Soru onay deposunda tur=soru kaydıdır (ikinci depo yok): PreToolUse'ta AskUserQuestion ve dolu ask alanlı wrap_up, Stop'ta düz metin karar sorusu açık soru olarak kaydedilir; alt ajan ve auto modu soru açmaz. (2) Kapanış: yanıtlanan AskUserQuestion, düğme etiketiyle gelen kullanıcı mesajı, panelde 'Yanıtlandı' ya da 'Gerek yok', ya da orkestra onay soru-kapat <id>; 14 gün yanıtsız soru eskidi olur. (3) Panel Gelen kutusunda ayrı 'Açık sorular' grubu yanıtsız soruları gösterir; soru bekleyen karar sayılmaz. (4) Açık sorusu olan oturumun sonraki turunda bağlama en çok 300 karakterlik tek satır eklenir (açık soru yokken 0); ajan kullanıcı yanıtladıysa soru-kapat çalıştırır, yanıtlamadıysa soruyu düğmeyle yeniden sorar. (5) 'Kurayım mı, yoksa önce X mi?' gibi seçim cümleleri düz metin yazılmaz, P-029 gereği düğmeyle sunulur; kalıp kaçakları kaynakta (ayarlar/secim_ekrani_hatirlatma.json) kapatılır. Zorlama: scripts/acik_soru.py, scripts/onay.py, hook.py bağlantıları, panel Gelen kutusu grubu; ORKESTRA_ACIK_SORU=0 yakalamayı kapatır; testler tests/test_acik_soru*.py. (ORK-ADR-0151)",
+      "neden": "Sorulan sorular yanıtlanmayınca unutuluyordu ve 'başlayayım mı, yoksa… karar verelim mi?' cümlesi düğmesiz sunuluyordu (02.11.2026).",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-02T19:32:44+03:00",
+      "guncelleme": "2026-11-02T19:32:44+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-02T19:32:44+03:00",
+          "olay": "eklendi",
+          "metin": "ZORUNLU, istisnasız: Ajanın kullanıcıya sorduğu her soru kalıcı kaydedilir ve yanıtlanana kadar kaybolmaz; karar soruları her zaman düğmeyle sunulur. (1) Soru onay deposunda tur=soru kaydıdır (ikinci depo yok): PreToolUse'ta AskUserQuestion ve dolu ask alanlı wrap_up, Stop'ta düz metin karar sorusu açık soru olarak kaydedilir; alt ajan ve auto modu soru açmaz. (2) Kapanış: yanıtlanan AskUserQuestion, düğme etiketiyle gelen kullanıcı mesajı, panelde 'Yanıtlandı' ya da 'Gerek yok', ya da orkestra onay soru-kapat <id>; 14 gün yanıtsız soru eskidi olur. (3) Panel Gelen kutusunda ayrı 'Açık sorular' grubu yanıtsız soruları gösterir; soru bekleyen karar sayılmaz. (4) Açık sorusu olan oturumun sonraki turunda bağlama en çok 300 karakterlik tek satır eklenir (açık soru yokken 0); ajan kullanıcı yanıtladıysa soru-kapat çalıştırır, yanıtlamadıysa soruyu düğmeyle yeniden sorar. (5) 'Kurayım mı, yoksa önce X mi?' gibi seçim cümleleri düz metin yazılmaz, P-029 gereği düğmeyle sunulur; kalıp kaçakları kaynakta (ayarlar/secim_ekrani_hatirlatma.json) kapatılır. Zorlama: scripts/acik_soru.py, scripts/onay.py, hook.py bağlantıları, panel Gelen kutusu grubu; ORKESTRA_ACIK_SORU=0 yakalamayı kapatır; testler tests/test_acik_soru*.py. (ORK-ADR-0151)"
+        }
+      ],
+      "etkinlesme": "2026-11-02T19:32:44+03:00"
     }
   ]
 }
