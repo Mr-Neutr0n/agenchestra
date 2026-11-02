@@ -1,0 +1,39 @@
+{
+  "mod": "golge",
+  "mod_aciklama": "ADR-0151 (P-028): golge = kapi_golge günlüğü + yönerge bağlamı, komut geçer; ihlal = kapi_ret günlüğü + komut koşmadan ret; kapali = kapalı. Kapatma: ORKESTRA_BASH_SOZDIZIMI=0. golge→ihlal yalnız tekrar oynatma ölçümünden sonra ayrı kararla.",
+  "bash_yollari": [
+    "%ProgramFiles%\\Git\\bin\\bash.exe",
+    "%ProgramFiles%\\Git\\usr\\bin\\bash.exe",
+    "%ProgramW6432%\\Git\\bin\\bash.exe",
+    "%LOCALAPPDATA%\\Programs\\Git\\bin\\bash.exe",
+    "/usr/bin/bash",
+    "/bin/bash"
+  ],
+  "haric_yol_kaliplari": [
+    "(?i)[\\\\/]system32[\\\\/]",
+    "(?i)[\\\\/]windowsapps[\\\\/]"
+  ],
+  "bash_secenekleri": ["-O", "extglob", "-n"],
+  "zaman_asimi_sn": 2,
+  "en_cok_karakter": 200000,
+  "tetik_kalibi": "['\"`(){}<]|\\b(?:if|for|while|until|case|select)\\b",
+  "ret_kaliplari": [
+    "unexpected EOF",
+    "syntax error"
+  ],
+  "uzunluk_en_cok": 7840,
+  "uzunluk_tek_tirnak_eki": 4,
+  "uzunluk_aciklama": "Araç komutu tek tırnak kaçışıyla (' → '\"'\"' , +4) komut satırına koyar; kaçışlı uzunluk sınırı aşınca komut kesilir ve 'unexpected EOF' verir. Eşik geçmiş komut ölçümünden (02.11.2026, ~/.claude/projects): başarılı en büyük 7818, başarısız en küçük 7863.",
+  "uzunluk_neden": "komut tek tırnak kaçışıyla {kacisli} karakter, aracın komut satırı sınırı {sinir}; kesilir ve 'unexpected EOF' verir",
+  "satir_esigi": 20,
+  "uzun_betik_kaliplari": [
+    "(?:^|[\\s;&|(])python[0-9.]*(?:\\.exe)?(?:\\s+-[A-Za-z]+)*\\s+-c\\b",
+    "(?:^|[\\s;&|(])py(?:\\s+-[0-9.]+)?(?:\\s+-[A-Za-z]+)*\\s+-c\\b",
+    "(?:^|[\\s;&|(])(?:ba)?sh(?:\\.exe)?\\s+(?:-[A-Za-z]+\\s+)*-[A-Za-z]*c\\b",
+    "<<-?\\s*['\"]?[A-Za-z_][A-Za-z0-9_]*['\"]?"
+  ],
+  "yonerge": "standartlar/bash_komut_yazimi.md",
+  "ret_metni": "Orkestra (ADR-0151): Bash komutu koşmadan reddedildi: {neden}. Aynı komutu satır içinde düzeltmeye çalışma: betiği Write ile dosyaya yaz, sonra yalnız dosyayı çalıştır (python <dosya>.py / bash <dosya>.sh). Yönerge: {yonerge}",
+  "golge_metni": "Orkestra (ADR-0151, golge): bu Bash komutu koşunca başarısız olacak: {neden}. Betiği Write ile dosyaya yaz, sonra çalıştır. Yönerge: {yonerge}",
+  "uzun_betik_metni": "Orkestra (ADR-0151): {satir} satırlık satır içi betik. Uzun ya da tırnak yoğun betiği Write ile dosyaya yazıp çalıştırmak tırnak/kaçış hatasını önler. Yönerge: {yonerge}"
+}

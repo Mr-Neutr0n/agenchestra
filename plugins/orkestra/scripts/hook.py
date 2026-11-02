@@ -445,6 +445,42 @@ def _genis_tarama_kapisi(sd: str, oid, komut: str) -> str:
     return ""
 
 
+def _bash_sozdizimi_kapisi(sd: str, oid, komut: str) -> str:
+    """ADR-0151: yalnız `Bash` aracı. Komut koşunca kabuk hatası verecekse (`bash -n` ya da kaçışlı uzunluk) kip `ihlal`/
+    `reddet`te `kapi_ret / bash_sozdizimi` yazılır ve ret metni döner (çağıran reddeder); `golge`de `kapi_golge` yazılır
+    ve uyarı bağlama gider. Uzun satır içi betikte (python -c, bash -c, heredoc) yönerge bağlamı eklenir. Hatada geçer."""
+    global _BEKLEYEN_UYARI
+    try:
+        import bash_sozdizimi as BS
+        ayar = BS.ayar_oku(sd)
+        km = BS.mod(ayar)
+        if km == "kapali":
+            return ""
+        ek = []
+        bulgu = BS.denetle(komut, sd, ayar)
+        if bulgu:
+            ret = km in BS.RET_MODLARI
+            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid,
+                                                             "tur": "kapi_ret" if ret else "kapi_golge",
+                                                             "kural": "bash_sozdizimi", "kapi": "bash_sozdizimi",
+                                                             "mod": km, "sinif": bulgu.get("sinif"),
+                                                             "neden": str(bulgu.get("neden", ""))[:200],
+                                                             "is": _oturum_isi(sd, oid)})
+            if ret:
+                return BS.ret_metni(bulgu, ayar)
+            ek.append(BS.golge_metni(bulgu, ayar))
+        uzun = BS.uzun_betik_metni(komut, sd, ayar)
+        if uzun:
+            ek.append(uzun)
+        if ek:
+            _BEKLEYEN_UYARI = "\n".join([x for x in [_BEKLEYEN_UYARI, *ek] if x]).strip()
+    except SystemExit:
+        raise
+    except Exception:
+        return ""
+    return ""
+
+
 def _kanit(eslesen=None, cumle=None) -> dict:
     """I-271: `kural_ihlal` satırının `eslesen`/`cumle` alanları (ortak yardımcı `kapi_mod.kanit_alanlari`: maske + 200 sınırı).
     Bilinmeyen alan yazılmaz; hatada boş sözlük (kaydı hiçbir zaman bozmaz)."""
@@ -1187,7 +1223,10 @@ def pre_tool_use(inp: dict):
         genis_ret = _genis_tarama_kapisi(sd, inp.get("session_id"), komut)
         if genis_ret:
             reddet(genis_ret)
-        if arac == "Bash":
+        if arac == "Bash":  # ADR-0151: PowerShell komutu bash ile ayrıştırılmaz
+            bs_ret = _bash_sozdizimi_kapisi(sd, inp.get("session_id"), komut)
+            if bs_ret:
+                reddet(bs_ret)
             _bekleme_kapisi(inp, komut)
         # Kilitli test denetimi yalnız yazma işleci içeren komutta anlamlı; yalnız-okuma komutunda kartları (125 JSON) okuma.
         kgid = kabuk_kilitli_yazma(komut, kilitli_testler(sd)) if _KABUK_YAZMA_ON.search(komut) else None

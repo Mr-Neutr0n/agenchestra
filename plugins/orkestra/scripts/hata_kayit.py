@@ -41,12 +41,53 @@ TURLER = {
 _KAPI_KIMLIGI = re.compile(r"\b(?:[KP]-\d{3}|ADR-\d{4})\b")
 
 
+# İmza sınıflama tablosu (ADR-0151 P4): imza deseni → önleme basamağı (L0-L6) ve sahip. Kodsuz genişler; okunamazsa boş.
+SINIF_TABLOSU = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ayarlar",
+                             "hata_onleme_siniflari.json")
+_SINIF_ONBELLEK: dict = {}
+
+
+def _siniflar() -> list:
+    try:
+        an = os.path.getmtime(SINIF_TABLOSU)
+        if _SINIF_ONBELLEK.get("an") != an:
+            with open(SINIF_TABLOSU, encoding="utf-8") as f:
+                d = json.load(f)
+            liste = d.get("siniflar") if isinstance(d, dict) else None
+            _SINIF_ONBELLEK.update(an=an, liste=[s for s in (liste or []) if isinstance(s, dict) and s.get("desen")])
+        return _SINIF_ONBELLEK.get("liste") or []
+    except Exception:
+        return []
+
+
+def onleme_sinifi(imza_metni: str):
+    """İmzaya uyan ilk tablo satırı; uymazsa ya da tablo okunamazsa None."""
+    for s in _siniflar():
+        try:
+            if re.search(s["desen"], imza_metni or ""):
+                return s
+        except (re.error, TypeError):
+            continue
+    return None
+
+
+def _sinif_uygula(kok: dict, s: dict) -> dict:
+    kok["onlenebilir"] = s.get("onlenebilir")
+    kok["sahip"] = s.get("sahip")
+    if s.get("cozum"):
+        kok["cozum"] = s["cozum"]
+    return kok
+
+
 def kok_neden(tur: str, ileti: str = "") -> dict:
-    """Tür tablosundan kök neden alanı; hook-red'de kapı kimliği yoksa kaynak `betik` (kural değil, kod kapısı)."""
+    """Tür tablosundan kök neden alanı; hook-red'de kapı kimliği yoksa kaynak `betik` (kural değil, kod kapısı).
+    İmza sınıflama tablosunda eşleşen imza `onlenebilir` (basamak) ve `sahip` alır; eşleşmezse eski alanlar kalır."""
     kaynak, onlenebilir, cozum = TURLER.get(tur, ("belirsiz", None, ""))
     if tur == "hook-red" and not _KAPI_KIMLIGI.search(ileti or ""):
         kaynak = "betik"
-    return {"kaynak": kaynak, "onlenebilir": onlenebilir, "cozum": cozum}
+    kok = {"kaynak": kaynak, "onlenebilir": onlenebilir, "cozum": cozum}
+    s = onleme_sinifi(imza(tur, ileti))
+    return _sinif_uygula(kok, s) if s else kok
 
 
 def imza(tur: str, ileti: str) -> str:
@@ -133,6 +174,10 @@ def kaydet(sd, kaynak: str, tur: str, ileti: str, baglam=None, ek=None, *, kapi=
             satir["baglam"] = baglam
         if ek:
             satir.update(ek)
+        if "kok" not in satir:  # kod hatası: yalnız tabloda bilinen imza kök alanı alır; bilinmeyen satır eski biçimdir
+            s = onleme_sinifi(satir["imza"])
+            if s:
+                satir["kok"] = _sinif_uygula({"kaynak": s.get("kaynak") or "betik", "onlenebilir": None, "cozum": ""}, s)
         if any(v is not None for v in (kapi, arac, dosya, ajan, metin)):
             satir.update(_ret_alanlari(sd, oturum, ileti, kapi, arac, dosya, ajan, metin))
         L.jsonl_ekle(os.path.join(sd, DOSYA), satir)
