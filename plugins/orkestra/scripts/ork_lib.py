@@ -657,6 +657,14 @@ def kullanim_maliyeti(model: str, u: dict, tablo: dict | None = None) -> float:
     return round(usd, 6)
 
 
+def onbellek_tarifesi(agent_id=None, tablo: dict | None = None) -> str:
+    """Ayrımsız defter satırında önbellek yazma TTL tarifesi: alt ajan ('agent_id' dolu) için `alt_ajan`, ana ajan için
+    `ana_ajan` (bin/fiyat.json `onbellek_ttl_varsayilan`). '5dk' ya da '1sa' döner."""
+    ttl = (tablo or fiyat_tablosu()).get("onbellek_ttl_varsayilan") or {}
+    v = ttl.get("alt_ajan" if agent_id else "ana_ajan") or "1sa"
+    return v if v in ("5dk", "1sa") else "1sa"
+
+
 def _metin(icerik) -> str:
     if isinstance(icerik, str):
         return icerik
@@ -746,9 +754,17 @@ def transkript_oku(yol: str, ofset: int = 0, yan_zincir: bool | None = None) -> 
                 if ad == "Read" and rp:
                     okuma_sayac[rp] = okuma_sayac.get(rp, 0) + 1
     tablo = fiyat_tablosu()
+    ttl = sonuc["ttl"] = {"5dk": 0, "1sa": 0, "ayrimsiz": 0}  # önbellek yazma token'ı TTL'e göre (mutabakat: varsayım sınaması)
     for model, u in son_kullanim.values():
         if model == "<synthetic>":
             continue
+        cc = u.get("cache_creation") or {}
+        c5, c1 = cc.get("ephemeral_5m_input_tokens"), cc.get("ephemeral_1h_input_tokens")
+        if c5 is None and c1 is None:
+            ttl["ayrimsiz"] += u.get("cache_creation_input_tokens", 0) or 0
+        else:
+            ttl["5dk"] += c5 or 0
+            ttl["1sa"] += c1 or 0
         m = sonuc["modeller"].setdefault(model, {"giris": 0, "cikis": 0, "onbellek_okuma": 0, "onbellek_yazma": 0, "maliyet_usd": 0.0})
         m["giris"] += u.get("input_tokens", 0) or 0
         m["cikis"] += u.get("output_tokens", 0) or 0
@@ -1213,9 +1229,17 @@ def desen_kesisir(proje: str, a: str, b: str) -> bool:
     return fnmatch.fnmatchcase(ta, tb) or fnmatch.fnmatchcase(tb, ta)
 
 
-def git(args: list[str], cwd: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", "-C", cwd] + list(args), capture_output=True, text=True, encoding="utf-8",
-                          errors="replace", **PENCERESIZ)
+GIT_ZAMAN_ASIMI = 60  # sn: takılan git (kilit, ağ sürücüsü, bekleyen stdin) hook'u ve bakımı süresiz tutmasın (ADR-0148)
+
+
+def git(args: list[str], cwd: str, timeout: float = GIT_ZAMAN_ASIMI) -> subprocess.CompletedProcess:
+    """git çalıştırır; stdin kapalı, süre sınırlı. Aşımda süreç öldürülür, returncode=124 döner."""
+    komut = ["git", "-C", cwd] + list(args)
+    try:
+        return subprocess.run(komut, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                              stdin=subprocess.DEVNULL, timeout=timeout, **PENCERESIZ)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(komut, 124, "", f"git zaman aşımı ({timeout:g} sn)")
 
 
 def git_koku(yol: str, onbellek: dict | None = None) -> str | None:
@@ -2188,12 +2212,19 @@ def _duzeltme_uygula(yol: str, out: list[dict]) -> list[dict]:
 _TOKEN_ALANLARI = ("giris", "cikis", "onbellek_okuma", "onbellek_yazma")
 
 
+def _satir_tarifesi(r: dict) -> str:
+    """Ayrımsız satırın önbellek yazma tarifesi: açık '5dk' damgası korunur; damgasız ya da '1sa' damgalı alt ajan
+    satırı da 5dk sayılır (eski yazıcı her satıra '1sa' basıyordu), ana ajan satırı '1sa' kalır (ADR-0133)."""
+    return "5dk" if r.get("tarife") == "5dk" else onbellek_tarifesi(r.get("agent_id"))
+
+
 def _satir_usd(r: dict) -> float:
-    """Defter satırının token sayılarından maliyet; önbellek yazma 1 sa tarifesiyle (hook satırlarıyla aynı)."""
+    """Defter satırının token sayılarından maliyet; önbellek yazma ajan türüne göre 5dk ya da 1sa tarifesiyle."""
+    alan = "ephemeral_5m_input_tokens" if _satir_tarifesi(r) == "5dk" else "ephemeral_1h_input_tokens"
     return kullanim_maliyeti(r.get("model") or "", {
         "input_tokens": r.get("giris") or 0, "output_tokens": r.get("cikis") or 0,
         "cache_read_input_tokens": r.get("onbellek_okuma") or 0,
-        "cache_creation": {"ephemeral_1h_input_tokens": r.get("onbellek_yazma") or 0}})
+        "cache_creation": {alan: r.get("onbellek_yazma") or 0}})
 
 
 def kalem_usd(r: dict) -> dict:
@@ -2201,14 +2232,14 @@ def kalem_usd(r: dict) -> dict:
 
     İlk üç kalem token x liste fiyatı. Önbellek yazma 'kalan'dır: satırın maliyet_usd'si eksi ilk üç kalem; böylece
     hook satırlarındaki gerçek 5 dk/1 sa karışımı kaybolmaz ve kalem toplamı defter toplamına birebir eşit kalır
-    (negatif olamaz). maliyet_usd yoksa yazma 1 sa tarifesiyle fiyatlanır."""
+    (negatif olamaz). maliyet_usd yoksa yazma satırın tarifesiyle (ajan türüne göre) fiyatlanır."""
     f = model_fiyati(r.get("model") or "")
     usd = {a: (r.get(a) or 0) * f[fiyat] / 1_000_000
            for a, fiyat in (("giris", "giris"), ("cikis", "cikis"), ("onbellek_okuma", "onbellek_okuma"))}
     if r.get("maliyet_usd") is not None:
         usd["onbellek_yazma"] = max(0.0, float(r["maliyet_usd"]) - sum(usd.values()))
     else:
-        usd["onbellek_yazma"] = (r.get("onbellek_yazma") or 0) * f["onbellek_yazma_1sa"] / 1_000_000
+        usd["onbellek_yazma"] = (r.get("onbellek_yazma") or 0) * f["onbellek_yazma_" + _satir_tarifesi(r)] / 1_000_000
     return usd
 
 
@@ -2300,9 +2331,9 @@ def pencere_toplamlari(satirlar, bugun: "datetime.date", anahtar=None) -> dict:
 
 def _maliyet_kayitlari_oku(yol: str, duzeltme: bool = True) -> list[dict]:
     rows = jsonl_oku(yol)
-    for r in rows:  # eski 'tur' satırları (tarife damgası yok) 5 dk tarifesiyle yazılmıştı: 1 sa tarifesiyle yeniden fiyatla
-        if (r.get("kaynak") == "tur" and not r.get("tarife") and r.get("model")
-                and any(r.get(a) for a in _TOKEN_ALANLARI)):
+    for r in rows:  # damgasız ya da alt ajanda eski '1sa' damgalı 'tur' satırı yanlış tarifedeydi: ajan türüne göre yeniden fiyatla (ADR-0133)
+        if (r.get("kaynak") == "tur" and r.get("model") and any(r.get(a) for a in _TOKEN_ALANLARI)
+                and (not r.get("tarife") or (r.get("agent_id") and r.get("tarife") == "1sa"))):
             r["maliyet_usd"] = _satir_usd(r)
     tur_var = {(r.get("oturum"), r.get("agent_id")) for r in rows if r.get("kaynak") == "tur"}
     son: dict = {}
@@ -2421,8 +2452,13 @@ def _hook_artigi(rows: list[dict], tur_var: set) -> list[dict]:
             parcalar = [(l, t_span[s]) for s, l in h_span.items()]
             if kalan_h:
                 parcalar.append((kalan_h, kalan_t))
-            for hl, tl in parcalar:
+            # Tur sayacı bir span'i komşusunun token'ıyla birlikte yazabilir (sınır kayması): eşli span'de tur > hook
+            # fazlası eşsiz hook span'inin artığından düşülür; yoksa aynı token hem tur hem artık olarak iki kez sayılır.
+            fazla = _tok_topla([_tok_fark(_tok_topla(tl), _tok_topla(a for _r, a in hl)) for hl, tl in parcalar[:len(h_span)]])
+            for i, (hl, tl) in enumerate(parcalar):
                 art = _tok_fark(_tok_topla(a for _r, a in hl), _tok_topla(tl))
+                if i >= len(h_span):
+                    art = _tok_fark(art, fazla)
                 if any(art.values()):
                     sonuc.append(_artik_satiri(max((r for r, _a in hl), key=lambda r: r.get("zaman") or ""), art))
     return sonuc

@@ -21,16 +21,37 @@ ARA = 3600  # sn: bakım işleri en çok bu aralıkta bir koşar
 ISARET = "oturum_bakim.json"  # son başlatma zamanı (dosya mtime'ı aralığı belirler)
 ONBELLEK = "bakim_onbellek.json"
 KILIT = "oturum_bakim_kos"
+TEMIZLE_ISARET = "surec_temizle.json"  # son temizlik başlatma zamanı (bakım kilidinden bağımsız)
 
 
 def etkin() -> bool:
     return (os.environ.get("ORKESTRA_OTURUM_BAKIM") or "").strip() != "0"
 
 
+def _temizle_baslat(sd: str) -> bool:
+    """Yetim süreç temizliğini bakım kilidinden bağımsız ayrık süreçte başlatır (ADR-0148): takılan bakım temizliği engellemez."""
+    isaret = os.path.join(sd, TEMIZLE_ISARET)
+    try:
+        with L.kilit(isaret, bekleme_s=0.5):
+            try:
+                if time.time() - os.path.getmtime(isaret) < ARA:
+                    return False
+            except OSError:
+                pass
+            L.atomik_yaz(isaret, json.dumps({"zaman": L.simdi()}))
+        subprocess.Popen([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "surec_temizle.py"), "--sd", sd],
+                         creationflags=cfg.ARKA_PLAN_BAYRAK, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, close_fds=True)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def baslat(sd: str, cwd: str) -> bool:
     """Aralık dolduysa bakım koşucusunu ayrık süreçte başlatır ve beklemez. Hatada sessiz False (hook'u düşürmez)."""
     if not etkin() or not sd:
         return False
+    _temizle_baslat(sd)
     isaret = os.path.join(sd, ISARET)
     try:
         with L.kilit(isaret, bekleme_s=0.5):

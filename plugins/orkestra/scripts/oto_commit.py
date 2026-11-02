@@ -56,10 +56,19 @@ def depo_koku(klasor):
         klasor = ust
 
 
+def _git_kos(subprocess, komut, cfg, timeout=60):
+    """git çağrısı: stdin kapalı, süre sınırlı; aşımda returncode 124 (ADR-0148)."""
+    try:
+        return subprocess.run(komut, capture_output=True, text=True, encoding="utf-8", stdin=subprocess.DEVNULL,
+                              timeout=timeout, **cfg.PENCERESIZ)
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(komut, 124, "", "git zaman aşımı")
+
+
 def _git(repo, *args):
     import subprocess
     import cfg
-    return subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, encoding="utf-8", **cfg.PENCERESIZ)
+    return _git_kos(subprocess, ["git", "-C", repo, *args], cfg)
 
 
 def klasorleri_commit(repo, onekler, atif_kaynagi, git=None, etiket="kabuk"):
@@ -181,7 +190,7 @@ def main():
     import cfg
 
     def git(repo, *args):
-        return subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, encoding="utf-8", **cfg.PENCERESIZ)
+        return _git_kos(subprocess, ["git", "-C", repo, *args], cfg)
 
     try:
         veri = json.load(sys.stdin)

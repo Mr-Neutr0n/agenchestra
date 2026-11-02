@@ -22,7 +22,11 @@ class KapiHata(Exception):
 
 
 def _git(kok: str, *arg: str) -> str:
-    r = subprocess.run(["git", "-c", "safe.directory=*", "-C", kok, *arg], capture_output=True, text=True, encoding="utf-8", **cfg.PENCERESIZ)
+    try:
+        r = subprocess.run(["git", "-c", "safe.directory=*", "-C", kok, *arg], capture_output=True, text=True, encoding="utf-8",
+                           stdin=subprocess.DEVNULL, timeout=60, **cfg.PENCERESIZ)
+    except subprocess.TimeoutExpired:
+        raise KapiHata(f"git {' '.join(arg)} zaman aşımı (60 sn)") from None
     if r.returncode != 0:
         raise KapiHata(r.stderr.strip() or f"git {' '.join(arg)} başarısız")
     return r.stdout.strip()

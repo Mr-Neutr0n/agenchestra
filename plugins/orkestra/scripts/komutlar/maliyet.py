@@ -126,6 +126,27 @@ def cmd_maliyet_rapor(a):
         print(metin)
 
 
+def cmd_maliyet_mutabakat(a):
+    """Defter USD/token/süresini transkript usage alanlarıyla oturum başına karşılaştırır (salt okuma)."""
+    sd = sd_gerekli()
+    sys.path.insert(0, BETIK_DIZINI)
+    import maliyet_mutabakat as MM
+    sonuc = MM.mutabakat(sd, L.proje_dizini(), a.oturum, a.en_az_usd)
+    oz = MM.ozet(sonuc)
+    if a.json:
+        print(json.dumps({"ozet": oz, "oturumlar": sonuc}, ensure_ascii=False, indent=1))
+        return
+    print(f"# Maliyet mutabakatı — {L.simdi()[:16]}")
+    print()
+    print("- " + "; ".join(f"{k}: {v}" for k, v in oz.items()))
+    print()
+    print("| oturum | durum | defter $ | transkript $ | fark % | token fark % | 5dk payı | alt ajan | süre sapma % |")
+    print("|---|---|---|---|---|---|---|---|---|")
+    for s in sorted([x for x in sonuc if x["durum"] != "transkript-yok"], key=lambda x: -(x.get("defter_usd") or 0))[:a.sayi]:
+        p5 = f"{s['ttl_5dk_payi']:.2f}" if s["ttl_5dk_payi"] is not None else "—"
+        print(f"| {s['oturum'][:8]} | {s['durum']} | {s['defter_usd']:.2f} | {s['transkript_usd']:.2f} | {s['fark_usd_yuzde']:+.1f} | {s['fark_token_yuzde']:+.1f} | {p5} | {s['alt_ajan_sayisi']} | {s['alt_sure_sapma_yuzde']:+.1f}{' ⚑' if s['sure_isaret'] else ''} |")
+
+
 def cmd_maliyet_gecmis(a):
     """Projenin geçmiş Claude oturumlarındaki token kullanımını maliyet defterine bir kez aktarır (ajan × süreç × model)."""
     sd = sd_gerekli()
@@ -351,12 +372,13 @@ def cmd_maliyet_tur(a):
                 L.atomik_yaz(onb, json.dumps({"gorev": gorev, "surec": surec, "ajan": ajan}))
     elif os.environ.get("ORKESTRA_PERSPEKTIF"):
         surec, ajan = "perspektif", "perspektif-bakimcisi"
+    tarife = L.onbellek_tarifesi(a.agent_id)  # ayrımsız sayaç: alt ajan 5dk, ana ajan 1sa (bin/fiyat.json, ADR-0133)
     u = {"input_tokens": a.giris, "output_tokens": a.cikis, "cache_read_input_tokens": a.onb_okuma,
-         "cache_creation": {"ephemeral_1h_input_tokens": a.onb_yazma}}  # hook satırlarıyla aynı 1 sa tarifesi
+         "cache_creation": {("ephemeral_5m_input_tokens" if tarife == "5dk" else "ephemeral_1h_input_tokens"): a.onb_yazma}}
     tur_satiri_yaz(os.path.join(sd, TUR_GOZLEM_DEFTERI), {
         "zaman": L.simdi(), "oturum": a.oturum, "gorev": gorev, "surec": surec, "ajan": ajan, "agent_id": a.agent_id,
         "model": a.model, "giris": a.giris, "cikis": a.cikis, "onbellek_okuma": a.onb_okuma, "onbellek_yazma": a.onb_yazma,
-        "maliyet_usd": L.kullanim_maliyeti(a.model, u), "sure_ms": a.sure_ms, "kaynak": "tur", "tarife": "1sa",
+        "maliyet_usd": L.kullanim_maliyeti(a.model, u), "sure_ms": a.sure_ms, "kaynak": "tur", "tarife": tarife,
         **_tur_isi(sd, gorev, a.oturum), **L.istek_kimlik_alanlari(sd, a.oturum, agent_id=a.agent_id)})
 
 
@@ -599,6 +621,12 @@ def kaydet(alt):
     ta.add_argument("--transkript-dizini", help=argparse.SUPPRESS)
     ta.add_argument("--json", action="store_true")
     ta.set_defaults(f=cmd_maliyet_taban)
+    mu = mal.add_parser("mutabakat", help="defter USD/token/süre ile transkript usage alanlarını oturum başına karşılaştırır")
+    mu.add_argument("--oturum")
+    mu.add_argument("--en-az-usd", type=float, default=0.0, help="yalnız defter toplamı bu değerin üstündeki oturumlar")
+    mu.add_argument("--sayi", type=int, default=30, help="tabloda gösterilecek en çok oturum")
+    mu.add_argument("--json", action="store_true")
+    mu.set_defaults(f=cmd_maliyet_mutabakat)
     ge = mal.add_parser("gecmis")
     ge.add_argument("--bu-oturum-dahil", action="store_true")
     ge.set_defaults(f=cmd_maliyet_gecmis)

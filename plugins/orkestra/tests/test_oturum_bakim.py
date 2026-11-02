@@ -30,7 +30,9 @@ class BaslatTest(unittest.TestCase):
     def test_ilk_cagri_ayrik_surec_baslatir(self):
         ok, po = self._baslat()
         self.assertTrue(ok)
-        po.assert_called_once()
+        komutlar = [" ".join(c.args[0]) for c in po.call_args_list]  # temizlik (ADR-0148) + bakım: iki ayrık süreç
+        self.assertEqual(len(komutlar), 2)
+        self.assertTrue(any("oturum_bakim.py" in k for k in komutlar))
         self.assertEqual(po.call_args.kwargs["stdin"], oturum_bakim.subprocess.DEVNULL)
 
     def test_aralik_dolmadan_ikinci_surec_baslamaz(self):

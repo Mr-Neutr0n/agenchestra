@@ -31,12 +31,32 @@ def _oku(yol: str) -> dict:
         return {}
 
 
+def en_yakin(veri: dict, ad: str) -> str:
+    """Serbest metin anahtarı, aynı işi anlatan mevcut anahtara bağlar (skill_kume benzerliği); yoksa ad döner.
+
+    Neden: aynı iş farklı sözcüklerle yazılınca ayrı sayılıyordu (391 anahtarın 374'ü 1 kez).
+    """
+    if ad in veri:
+        return ad
+    import skill_kume as K
+    k = K.kokler(K.temizle(ad) or "")
+    if len(k) < K.EN_AZ_SOZCUK:
+        return ad
+    en, en_b = ad, 0.0
+    for a in veri:
+        b = K.benzerlik(k, K.kokler(K.temizle(a) or ""))
+        if b > en_b:
+            en, en_b = a, b
+    return en if en_b >= K.BENZERLIK else ad
+
+
 def artir(sd: str, ad: str) -> int:
     """Anahtarın sayısını bir artırır; eşik katına ulaşıldıysa bildirim gönderir. Yeni sayıyı döner."""
     if not ad:
         return 0
     yol = os.path.join(sd, "sayac.json")
     veri = _oku(yol)
+    ad = en_yakin(veri, ad)
     kayit = veri.get(ad) or {"sayi": 0, "son_bildirilen": 0}
     kayit["sayi"] = int(kayit.get("sayi", 0)) + 1
     if kayit["sayi"] // ESIK > int(kayit.get("son_bildirilen", 0)) // ESIK:
