@@ -1214,7 +1214,7 @@ _DUZELTMELER = (  # (eksik metninde aranan, düzeltme şablonu); {h} = madde (P<
     (r"^P\d+: `\*\*Üretim noktası:\*\*|^P\d+: `Yeni yetenek`",
      "{h} altına yaz: `**Üretim noktası:** Düzeltme: <yer> — <önleme, en az 15 karakter>` (ya da `Kontrol: … ; Kaynakta çözülmedi çünkü: …`)"),
     (r"Best in class denetimi` bloğu yok", "plan sonuna `## Best in class denetimi` bloğunu aç; satırlarını ayrı orkestra:denetci doldurur"),
-    (r"^best in class denetimi:", "plan yazarı yazmaz: bu satırı ayrı orkestra:denetci doldurur (`**Denetçi:** <agent_id>`)"),
+    (r"^best in class denetimi:", "denetçi yanıtlar, ana ajan sonucu plan.md'ye yazar; `**Denetçi:** orkestra:denetci <agent_id>` satırı denetçinin kimliğini taşır"),
     (r"LLM çıktısı", "plan.md'ye yaz: `**LLM çıktısı:** yok — <en az 3 sözcük neden>` ya da `kullanıcıya gider — Doğrulama: <test yolu>`"),
     (r"\*\*Kabul:\*\*", "{h} altına yaz: `**Kabul:** <ölçülebilir ölçüt>`"),
     (r"\*\*Geri alma:\*\*", "{h} altına yaz: `**Geri alma:** <geri alma yolu, örn. git revert>`"),

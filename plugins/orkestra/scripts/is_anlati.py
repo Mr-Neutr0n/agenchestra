@@ -192,7 +192,7 @@ def _ozet_durum(metin: str) -> tuple[dict[str, str], dict[str, str]]:
 
 def _gaplar(metin: str) -> list[tuple[str, str]]:
     out = []
-    for s in _bolum(metin, r"6\. Gap analizi").splitlines():
+    for s in _bolum(metin, r"[56]\. Gap analizi").splitlines():
         m = re.match(r"^\s*[-*]\s*\*\*(G\d+):\*\*\s*(.*)$", s)
         if m:
             out.append((m.group(1), _kes(m.group(2))))
