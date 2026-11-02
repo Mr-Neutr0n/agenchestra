@@ -158,6 +158,7 @@ Bütün projelerden kaldırmak için aynı komuta `--kullanici --kaldir` ver.
 
 ## 9. Daha fazlası
 
+- [docs/README.md](docs/README.md): kavramlar, mimari, iş yaşam döngüsü ve kaynaktan üretilen tam başvuru (skill, ajan, CLI, ayar, hook, kural, ortam değişkeni, ADR).
 - [plugin_yayin/README.md](../../README.md): kurulum ayrıntısı, panel sayfaları, paralel çalışma, basamak tablosu, bilinen sınırlar.
 - [KURALLAR.md](KURALLAR.md): ajanlara verilen kurallar, denetim ve dağıtım ayrıntısı.
 - [GELISTIRME.md](GELISTIRME.md): eklentiyi geliştirenler için yayın akışı ve test takımı.
