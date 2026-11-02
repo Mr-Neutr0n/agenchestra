@@ -80,23 +80,28 @@ def ana_agac_koku(d: str) -> str | None:
     return os.path.dirname(ortak)
 
 
-def proje_dizini(cwd: str | None = None) -> str:
+def proje_dizini(cwd: str | None = None, ortami_yoksay: bool = False) -> str:
     """CLAUDE_PROJECT_DIR > cwd'den yukarı .claude/orkestra arayışı > cwd. Bulunan klasör bağlı bir git worktree'siyse
     (oturum worktree'si: durum kopyası git dışı olduğundan ayrışır) ve ana ağaçta durum klasörü varsa ana ağaç döner;
-    hook, komut ve panel böylece tek durum kaynağını görür. `ORKESTRA_DURUM_YEREL=1` yerel kopyayı seçer (ADR-0033)."""
-    baslangic = os.environ.get("CLAUDE_PROJECT_DIR") or cwd or os.getcwd()
-    d = os.path.abspath(baslangic)
-    while True:
-        if os.path.isdir(os.path.join(d, ".claude", "orkestra")):
-            if os.environ.get(DURUM_YEREL_ORTAM) != "1":
-                ana = ana_agac_koku(d)
-                if ana and os.path.isdir(os.path.join(ana, ".claude", "orkestra")):
-                    return os.path.abspath(ana)
-            return d
-        ust = os.path.dirname(d)
-        if ust == d:
-            return os.path.abspath(baslangic)
-        d = ust
+    hook, komut ve panel böylece tek durum kaynağını görür. `ORKESTRA_DURUM_YEREL=1` yerel kopyayı seçer (ADR-0033).
+    `ortami_yoksay=True` verilen yolu esas alır (plan klasörü gibi açık bir yolun kökü: ortam onu ezmez); iç içe
+    `.claude/agent-memory` klasörleri kök sayılmaz, yalnız `.claude/orkestra` taşıyan klasör sayılır."""
+    baslangic = (None if ortami_yoksay else os.environ.get("CLAUDE_PROJECT_DIR")) or cwd or os.getcwd()
+    # Açık yolda durum klasörü hiç yoksa (çıplak proje) en yakın `.claude` yedek işaret olur; ortamdan gelen yolda olmaz.
+    for isaret in ([os.path.join(".claude", "orkestra")] + ([".claude"] if ortami_yoksay else [])):
+        d = os.path.abspath(baslangic)
+        while True:
+            if os.path.isdir(os.path.join(d, isaret)):
+                if isaret != ".claude" and os.environ.get(DURUM_YEREL_ORTAM) != "1":
+                    ana = ana_agac_koku(d)
+                    if ana and os.path.isdir(os.path.join(ana, ".claude", "orkestra")):
+                        return os.path.abspath(ana)
+                return d
+            ust = os.path.dirname(d)
+            if ust == d:
+                break
+            d = ust
+    return os.path.abspath(baslangic)
 
 
 def oturum_koku(cwd: str | None = None) -> str:
@@ -1788,7 +1793,7 @@ def test_komutu_daralt(komut: str, proje: str, desenler: list[str]) -> tuple[str
     → (komut, not). Geniş = konumsal yol yok (cwd'nin tamamı) ya da bir konumsal yol klasör. Zaten dosya/düğüm
     verilmişse, pytest/test_paralel dışı bir koşucuysa (ör. unittest discover) ya da ORKESTRA_TEST_DARALT=0 ise
     komut aynen döner (not None). test_alani'na uyan test dosyası (test_*.py / *_test.py) yoksa (None, not): koşulacak
-    test yok, tam paket koşturulmaz. Tam paket iş sonunda bir kez ayrıca koşar."""
+    test yok, tam paket koşturulmaz."""
     if os.environ.get("ORKESTRA_TEST_DARALT", "").strip() == "0":
         return komut, None
     ham = _TOKEN_RE.findall(komut or "")
