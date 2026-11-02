@@ -5,7 +5,7 @@ Bu dosya eklentiyi geliştirenler içindir. Kullanım kuralları için `KURALLAR
 ## Yayın akışı
 Oturumlar eklentiyi `~/.claude/plugins/cache/claude-orchestration/<plugin>/<sürüm>/` altındaki önbellek kopyasından yükler (göreli yol girdisine rağmen). Sürüm commit SHA'sıdır (12 hane); `version` alanı bilerek yoktur.
 
-1. Eklenti deposunda geliştir.
+1. Eklenti deposunda geliştir. Skill, ajan, ayar, hook ya da kural değiştirdiysen `python scripts/dokuman_uret.py` çalıştır; başvuru sayfaları (`docs/basvuru/`) güncellenir. `tests/test_dokuman_uret.py` eski başvuruyu reddeder.
 2. Değişikliği kendi dalında commitle; `main`'e yalnız `--ff-only` ya da PR ile gir (aşağıda "Yan işler").
 3. Uzak `main`'e push et (yalnız kullanıcının açık isteğiyle). Git hook'u yoktur; hiçbir betik yayın klonuna yazmaz.
 4. `orkestra guncelle` çalıştır: yayın klonu GitHub `origin`'den çekilir (klon kirliyse reddeder). Çalıştırmazsan `autoUpdate` ilk mesajdan en çok 10 dk sonra alır.
