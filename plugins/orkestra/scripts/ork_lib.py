@@ -87,18 +87,21 @@ def proje_dizini(cwd: str | None = None, ortami_yoksay: bool = False) -> str:
     `ortami_yoksay=True` verilen yolu esas alır (plan klasörü gibi açık bir yolun kökü: ortam onu ezmez); iç içe
     `.claude/agent-memory` klasörleri kök sayılmaz, yalnız `.claude/orkestra` taşıyan klasör sayılır."""
     baslangic = (None if ortami_yoksay else os.environ.get("CLAUDE_PROJECT_DIR")) or cwd or os.getcwd()
-    d = os.path.abspath(baslangic)
-    while True:
-        if os.path.isdir(os.path.join(d, ".claude", "orkestra")):
-            if os.environ.get(DURUM_YEREL_ORTAM) != "1":
-                ana = ana_agac_koku(d)
-                if ana and os.path.isdir(os.path.join(ana, ".claude", "orkestra")):
-                    return os.path.abspath(ana)
-            return d
-        ust = os.path.dirname(d)
-        if ust == d:
-            return os.path.abspath(baslangic)
-        d = ust
+    # Açık yolda durum klasörü hiç yoksa (çıplak proje) en yakın `.claude` yedek işaret olur; ortamdan gelen yolda olmaz.
+    for isaret in ([os.path.join(".claude", "orkestra")] + ([".claude"] if ortami_yoksay else [])):
+        d = os.path.abspath(baslangic)
+        while True:
+            if os.path.isdir(os.path.join(d, isaret)):
+                if isaret != ".claude" and os.environ.get(DURUM_YEREL_ORTAM) != "1":
+                    ana = ana_agac_koku(d)
+                    if ana and os.path.isdir(os.path.join(ana, ".claude", "orkestra")):
+                        return os.path.abspath(ana)
+                return d
+            ust = os.path.dirname(d)
+            if ust == d:
+                break
+            d = ust
+    return os.path.abspath(baslangic)
 
 
 def oturum_koku(cwd: str | None = None) -> str:
