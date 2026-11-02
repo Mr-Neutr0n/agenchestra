@@ -96,7 +96,7 @@ Claude uygulaması oturum başına bir git worktree açar (`<proje>/.claude/work
 - Testler: `tests/test_hata_kayit.py`, `tests/test_hata_en_cok.py`.
 
 ## Test takımı
-- **Tek test kuralı (ADR-0146):** oturum yalnız hedefli test koşar (kartın `test_alani`, tek dosya, `::` düğümü ya da `-k`); tam paket oturumda ve yerel makinede koşulmaz.
+- **Tek test kuralı (ADR-0147):** oturum yalnız hedefli test koşar (kartın `test_alani`, tek dosya, `::` düğümü ya da `-k`); tam paket oturumda ve yerel makinede koşulmaz.
 - Tam paket GitHub Actions'ta koşar: `.github/workflows/orkestra-tam-takim.yml` (`main` push'u, gece 02:00 UTC, elle `gh workflow run orkestra-tam-takim.yml`; ubuntu ve windows, Python 3.13, 30 dk zaman aşımı). Hızlı katman `orkestra-test.yml` her push ve PR'da koşar.
 - Kırmızı koşuda başarısız testler job özetinde listelenir: `gh run view <id> --log-failed` ya da özet sayfası.
 - Yerelde zorunlu tam koşu gerekirse (ör. CI erişilemez): `python plugins/orkestra/scripts/test_paralel.py` (paralel koşar; işçi sayısı CPU ve bellekten otomatik, `ORKESTRA_PARALEL_N` ezer; 16 çekirdekte ~4,5 dk, seri ~32 dk; P-041).
