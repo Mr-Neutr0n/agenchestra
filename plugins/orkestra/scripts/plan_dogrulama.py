@@ -200,14 +200,9 @@ def kokler_plan(metin: str, plan_klasoru: str, proje: str, ek: list[str] | None 
 
 
 def proje_koku(plan_yolu: str) -> str:
-    d = os.path.dirname(os.path.abspath(plan_yolu))
-    while True:
-        if os.path.isdir(os.path.join(d, ".claude")):
-            return d
-        ust = os.path.dirname(d)
-        if ust == d:
-            return os.getcwd()
-        d = ust
+    """Plan yolunun proje kökü: ork_lib.proje_dizini (`.claude/orkestra` işareti; alt ajan `.claude/agent-memory` klasörü kök sayılmaz)."""
+    import ork_lib as L
+    return L.proje_dizini(os.path.dirname(os.path.abspath(plan_yolu)), ortami_yoksay=True)
 
 
 # ---------------------------------------------------------------- kanıt doğrulayıcılar
