@@ -25,7 +25,7 @@
       "dosya": [
         "mevcut_durum_*.md"
       ],
-      "metin": "Mevcut durum: en üstte '## Özet' (3-4 kısa cümle, paragraf ≤300 karakter); '## 6. Gap analizi' bölümünde '**Hedef durum:**' ve her gap '- **G1:** hedef → mevcut (MD §n) → fark' (P-017). Etiketli alanlar ayrı paragraf (K-005)."
+      "metin": "Mevcut durum: '## 5. Gap analizi' bölümünde (eski düzende en üstte '## Özet' ve '## 6. Gap analizi') '**Hedef durum:**' ve her gap '- **G1:** hedef → mevcut (MD §n) → fark' (P-017). Etiketli alanlar ayrı paragraf (K-005)."
     },
     {
       "tur": "sozlesme",
