@@ -79,7 +79,7 @@ def test_docs_readme_adlari_kaynakta_var():
             eksik.append(k)
         if re.fullmatch(r"[A-Z][A-Za-z]+(Submit|Use|Start|Stop|End|Compact|Change|Failure)", k) and k not in olaylar:
             eksik.append(k)
-        if k.startswith("orkestra ") and komutlar and k.split()[1] not in komutlar and not k.startswith("orkestra --"):
+        if k.startswith("orkestra ") and "<" not in k and komutlar and k.split()[1] not in komutlar and not k.startswith("orkestra --"):
             eksik.append(k)
         if re.fullmatch(r"(scripts|hooks|kurallar|ayarlar|standartlar)/[\w./-]+\.(py|json|md)", k) and not os.path.exists(os.path.join(KOK, k)):
             eksik.append(k)
