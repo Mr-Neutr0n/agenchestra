@@ -226,14 +226,12 @@ def _test_yonlendirme(komut: str, cwd: str | None) -> str:
     if bek:
         durum += f", bekleyen: {len(bek)}"
     ileti = (f"çıplak tam test koşusu ({parca}) kira, ortak işçi bütçesi ve sonuç önbelleği almaz; tam takım için "
-             f"GitHub Actions'ta koşar: `gh workflow run orkestra-tam-takim.yml` (yerelde zorunluysa `python {kosucu}`). "
-             f"Tek dosya ya da -k hedefli çağrı serbesttir. {durum}.")
+             f"`python {kosucu}` kullan. Tek dosya ya da -k hedefli çağrı serbesttir. {durum}.")
     import kapi_mod
     if kapi_mod.mod(TEST_YONLENDIRME_KAPI, cwd) == "ihlal":
         kapi_mod.ret_kaydet(cwd or os.getcwd(), TEST_YONLENDIRME_KAPI, f"çıplak test koşusu: {parca}")
         reddet(f"çıplak tam test koşusu reddedildi ({parca}): kira, ortak işçi bütçesi ve sonuç önbelleği almaz.\n"
-               f"- tam takım oturumda koşulmaz, GitHub Actions'ta koşar: `gh workflow run orkestra-tam-takim.yml` "
-               f"(yerelde zorunluysa `python {kosucu}`; ek yol ve -n verilebilir, aynı kod için sonuç önbellekten döner)\n"
+               f"- tam takım: `python {kosucu}` (ek yol ve -n verilebilir; aynı kod için sonuç önbellekten döner)\n"
                f"- hedefli: tek dosya `pytest tests/test_x.py`, düğüm `pytest tests/test_x.py::Sinif::test_y`, "
                f"süzgeç `pytest -k <ad>` ya da `python -m unittest tests.test_x` engellenmez\n"
                f"- {durum}. Kapatma: ORKESTRA_TEST_YONLENDIRME=0 ya da .claude/orkestra/{TEST_YONLENDIRME_KAPI}.json "
@@ -887,7 +885,7 @@ def _izin_karar_yaz(arac: str, kar, neden: str, sd: str, oturum) -> None:
 
 _AUTO_SOZLESME = (
     "Orkestra /auto sözleşmesi (ADR-0086): bu mesaj Jira ve GitHub dahil kapsamdaki her eylem için açık yetkidir. "
-    "Kullanıcıya soru sorma (AskUserQuestion ve wrap_up 'ask' reddedilir; yanıt metninde de soru sorma, '…mı kastettin?' yazma); kararı en iyi uygulamayla kendin ver ve "
+    "Kullanıcıya soru sorma (AskUserQuestion ve wrap_up 'ask' reddedilir); kararı en iyi uygulamayla kendin ver ve "
     "çalışma özetindeki '## Otomatik kararlar' bölümüne yaz. Zorla/silme/ayna push, kalıcı silme, sır okuma ve veritabanı "
     "yazma yasak kalır; değeri yalnız kullanıcıda olan işler 'Kullanıcıya kalanlar' altına yazılır, koşu durmaz."
 )
@@ -895,9 +893,7 @@ _AUTO_SOZLESME = (
 
 def _auto_soru_kapisi(arac: str, girdi: dict, sd: str, oturum, aid) -> None:
     """ADR-0086: bağlı işin modu `auto` ise ana ajan kullanıcıya soru soramaz: AskUserQuestion ve dolu `ask` alanlı wrap_up
-    reddedilir (kutu yalnız özetle açılabilir). Mod okunamıyorsa serbest (plan davranışı). ORKESTRA_AUTO_YETKI=0 kapatır.
-    ADR-0133: wrap_up için izin kipi düzeltilmiş girdiyi sormadan uygulamaya elverişliyse (`_KENDILIGINDEN_YAZAN_KIPLER`) ret
-    yerine `ask`/`actions`/`blocked` silinip updatedInput ile geçer; AskUserQuestion ve diğer kiplerde ret sürer."""
+    reddedilir (kutu yalnız özetle açılabilir). Mod okunamıyorsa serbest (plan davranışı). ORKESTRA_AUTO_YETKI=0 kapatır."""
     if aid or not oturum:
         return
     if arac == "AskUserQuestion":
@@ -912,11 +908,6 @@ def _auto_soru_kapisi(arac: str, girdi: dict, sd: str, oturum, aid) -> None:
         auto = izin_politikasi._auto_modu(sd, oturum)
     except Exception:
         return
-    if auto and arac != "AskUserQuestion" and _IZIN_KIPI in _KENDILIGINDEN_YAZAN_KIPLER:
-        global _GUNCEL_GIRDI, _KULLANICI_MESAJI  # ADR-0133: ret yerine girdi düzeltilir; tur kaybolmaz
-        _GUNCEL_GIRDI = {k: v for k, v in (girdi or {}).items() if k not in ("ask", "actions", "blocked")}
-        _KULLANICI_MESAJI = "orkestra (ADR-0133): auto modunda wrap_up 'ask' alanı kaldırıldı; karar plan.md 'Otomatik kararlar'a yazılır."
-        return
     if auto:
         reddet("auto modunda kullanıcıya soru sorulmaz (ADR-0086): kararı en iyi uygulamayla kendin ver ve plan.md'deki "
                "'Otomatik kararlar' bölümüne yaz. Kullanıcıya ait engel (parola, değeri yalnız onda olan sır) soru olmaz; "
@@ -929,20 +920,6 @@ def _kapi_uygula(kar, neden: str):
         reddet(neden)
     elif kar == "ask":
         sor(neden)
-
-
-def _icerik_kapisi(arac: str, girdi: dict, tam: str) -> None:
-    """Yasak içerik desenini (push_kapisi.json `icerik_desenleri`) yazım anında reddeder; yapılandırma yoksa sessiz.
-    Fail-open: kapı kodunda her istisna çağrıyı serbest bırakır. ORKESTRA_ICERIK_KAPISI=0 kapatır."""
-    if os.environ.get("ORKESTRA_ICERIK_KAPISI") == "0" or arac not in ("Write", "Edit", "MultiEdit"):
-        return
-    try:
-        import icerik_kapisi as IK
-        neden = IK.yazim_ihlali(arac, girdi, tam)
-    except Exception:
-        return
-    if neden:
-        reddet(neden)
 
 
 def _hafiza_duzeltme_kapisi(arac: str, girdi: dict, tam: str) -> None:
@@ -1002,53 +979,6 @@ def _ajan_kapsam_kapisi(inp: dict, arac: str, girdi: dict, sd: str, atip: str) -
     if mod == "ihlal":
         reddet(neden)
     _BEKLEYEN_UYARI = f"orkestra (gölge): {neden}"
-
-
-def _bekleme_kaydi_kapisi(inp: dict, sd: str, arac: str, komut: str) -> None:
-    """ADR-0146: ana ajanın araç çağrısı açık bekleme kaydına "beklerken yapılan iş" olarak yazılır; yeni kayıt varsa
-    bağımsız todo maddeleri bağlama eklenir (kayıt başına bir kez); kabukta kayıtsız sleep/poll gölge kaydı (ihlal: ret).
-    Alt ajan atlanır. Hata aracı bozmaz; yalnız ihlal modundaki ret çıkışı yükseltir."""
-    global _BEKLEYEN_UYARI
-    try:
-        import bekleme_kaydi as _bk
-        if inp.get("agent_id") or not _bk.acik_mi():
-            return
-        oid = str(inp.get("session_id") or "")
-        cwd = inp.get("cwd") or os.getcwd()
-        if arac in KABUK_ARACLARI:
-            s = _bk.karar(komut, cwd, sd)
-            if s:
-                mod, mesaj, parca = s
-                olay = f"{parca[:80]} oturum={oid[:8]}"
-                import kapi_mod
-                if mod == "ihlal":
-                    kapi_mod.ret_kaydet(cwd, _bk.KAPI, olay)
-                    reddet(mesaj)
-                    return
-                kapi_mod.kaydet(cwd, _bk.KAPI, olay)
-                _BEKLEYEN_UYARI = (_BEKLEYEN_UYARI + " " if _BEKLEYEN_UYARI else "") + mesaj
-        acik = _bk.liste(sd)
-        if not acik:
-            return
-        if "orkestra" not in (komut or "") or "bekleme" not in (komut or ""):
-            _bk.adim(sd, oid)
-        for k in acik:
-            if k.get("bildirildi"):
-                continue
-            isler = []
-            try:
-                import is_kaydi
-                for g in is_kaydi.is_liste(sd, "acik"):
-                    if str(g.get("id")) == str(k.get("is") or _bagli_is(sd, oid)) and g.get("klasor"):
-                        isler = _bk.bagimsiz_isler(g["klasor"], k.get("p"))
-            except Exception:
-                pass
-            _bk.bildirildi_isaretle(sd, k["id"])
-            _BEKLEYEN_UYARI = (_BEKLEYEN_UYARI + " " if _BEKLEYEN_UYARI else "") + _bk.baglam_satiri(k, isler)
-    except SystemExit:
-        raise
-    except Exception:
-        pass
 
 
 def _bekleme_kapisi(inp: dict, komut: str) -> None:
@@ -1139,7 +1069,6 @@ def pre_tool_use(inp: dict):
         raise
     except Exception:
         pass
-    _bekleme_kaydi_kapisi(inp, sd, arac, girdi.get("command") or "")  # ADR-0146
 
     try:
         import is_onay as _io
@@ -1181,7 +1110,6 @@ def pre_tool_use(inp: dict):
             gec()
         tam = os.path.abspath(os.path.join(inp.get("cwd") or os.getcwd(), yol))
         _hafiza_duzeltme_kapisi(arac, girdi, tam)
-        _icerik_kapisi(arac, girdi, tam)
         try:
             rel = os.path.relpath(tam, sd).replace("\\", "/")
         except ValueError:
@@ -1775,23 +1703,6 @@ def _secim_kapisi_yanit(sd: str, oid, inp: dict) -> None:
         return
 
 
-def _auto_metin_sorusu_yanit(sd: str, oid, inp: dict) -> None:
-    """ADR-0133 (gölge, P-028): auto modunda yanıt düz metin soruyla bitiyorsa `kural_ihlal / auto_metin_sorusu` günlüğe
-    yazılır; engellemez. Asıl önlem `_AUTO_SOZLESME` ve auto skill'indeki yasaktır. Hatada sessiz geçer."""
-    try:
-        import cikti_sirasi as CS
-        import izin_politikasi
-        if not izin_politikasi._auto_modu(sd, oid):
-            return
-        son = CS.metin_sorusu(inp.get("last_assistant_message"))
-        if son:
-            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kural_ihlal",
-                                                             "kural": "auto_metin_sorusu", "mod": "golge",
-                                                             "is": _oturum_isi(sd, oid), "cumle": son[-200:]})
-    except Exception:
-        return
-
-
 def _cikti_sirasi_yanit(sd: str, oid, inp: dict) -> None:
     """ADR-0135: karar bekleyen bölüm yanıtın son bölümü olmalı (ayrıntı: cikti_sirasi.py). Her kipte günlüğe
     `kural_ihlal / cikti_sirasi` yazılır; `block` kipinde tur başına bir kez block, ikinci denemede (`stop_hook_active`)
@@ -2154,7 +2065,6 @@ def stop(inp: dict):
         _onleme_yanit(sd, oid, inp)
         _cikti_butce_yanit(sd, oid, inp)
         _cikti_sirasi_yanit(sd, oid, inp)
-        _auto_metin_sorusu_yanit(sd, oid, inp)
         _kapanis_kapisi(sd, oid, inp)
     # Bitiş kapısı: bu oturumun açık kartları
     if perspektif:
@@ -3016,9 +2926,32 @@ def _ss_uyarilar(sd: str, inp: dict) -> tuple[list[str], str]:
             u.append(f"UYARI: çalışan orkestra kopyası kaynaktan {b['farkli']} dosya farklı; `orkestra guncelle`")
     except Exception:
         pass
-    try:  # yavaş, yavaş değişen uyarılar ayrık bakım koşucusunun önbelleğinden okunur (ADR-0145)
-        import oturum_bakim
-        u += oturum_bakim.yavas_uyarilar(sd, inp.get("cwd"))
+    try:
+        import maliyet_anomali as MA
+        olay = [x for x in MA.calistir(sd, 1) if x["kural"] in ("K3", "K4", "K5")]
+        if olay:
+            u.append("MALİYET: " + ", ".join(f"{x['kural']} {x['kart']}" for x in olay[:3]) + " (`orkestra maliyet anomali --gun 1`)")
+    except Exception:
+        pass
+    try:
+        import hata_en_cok as HE
+        hs = HE.esik_satiri(sd)
+        if hs:
+            u.append(hs)
+    except Exception:
+        pass
+    try:
+        import iz as IZ
+        if IZ.kapsama_satiri(sd):
+            u.append("iz kapsama eşik aşımı (`orkestra iz kapsama`)")
+    except Exception:
+        pass
+    try:
+        import is_kaydi
+        if is_kaydi.todo_denetle_satiri(sd, L.proje_dizini(inp.get("cwd"))):
+            u.append("işe bağlı olmayan todo dosyası var (`orkestra is todo-denetle`)")
+        if is_kaydi.devral_ipucu(sd, inp.get("cwd")):
+            u.append("worktree durum kopyasında devralınmamış kayıt var (`orkestra durum devral`)")
     except Exception:
         pass
     return u, onay_ek
@@ -3523,45 +3456,11 @@ def post_tool_use_failure(inp: dict):
             L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"),
                          {"zaman": L.simdi(), "oturum": inp.get("session_id"), "tur": "skill_hata",
                           "skill": g.get("skill") or g.get("name"), "hata": L.maskele(str(inp.get("error") or ""))[:200]})
-        if sd and not inp.get("is_interrupt"):  # kullanıcı kesmesi hata değildir; her başarısız araç hata defterine yazılır (I-329)
-            import hata_kayit
-            hata_kayit.arac_hatasi(sd, inp.get("tool_name"), inp.get("error"), "alt" if inp.get("agent_id") else "ana")
         if sd:
             import kok_neden_enjeksiyonu
             ipucu = kok_neden_enjeksiyonu.arac_metni(inp, sd)
             if ipucu:
                 L.hook_cikti({"hookSpecificOutput": {"hookEventName": "PostToolUseFailure", "additionalContext": ipucu}})
-    except Exception:
-        pass
-    gec()
-
-
-def _olay_bilgisi(inp: dict):
-    """Yeni olay yüklerinin şeması canlı doğrulanmadı (ADR-0141): ilk yazımlarda alan adları satıra düşer."""
-    return {"alanlar": sorted(str(k) for k in inp)[:20]}
-
-
-def permission_denied(inp: dict):
-    """I-329 P3: izin reddi hata defterine (hook-red ile çift yazılmaz); engellemez, hook'u düşürmez."""
-    try:
-        sd = L.durum_dizini(inp.get("cwd"))
-        if sd:
-            import hata_kayit
-            neden = inp.get("reason") or inp.get("error") or inp.get("message") or "izin reddedildi"
-            hata_kayit.izin_reddi(sd, inp.get("tool_name"), neden, "alt" if inp.get("agent_id") else "ana", _olay_bilgisi(inp))
-    except Exception:
-        pass
-    gec()
-
-
-def stop_failure(inp: dict):
-    """I-329 P3: API hatasıyla biten tur hata defterine; engellemez."""
-    try:
-        sd = L.durum_dizini(inp.get("cwd"))
-        if sd:
-            import hata_kayit
-            ileti = inp.get("error") or inp.get("error_type") or inp.get("message") or "tur API hatasıyla bitti"
-            hata_kayit.tur_api_hatasi(sd, ileti, _olay_bilgisi(inp))
     except Exception:
         pass
     gec()
@@ -3814,7 +3713,7 @@ OLAYLAR = {
     "Notification": notification,
     "PreToolUse": pre_tool_use, "SubagentStart": subagent_start, "SubagentStop": subagent_stop, "Stop": stop,
     "SessionStart": session_start, "UserPromptSubmit": user_prompt_submit, "PostToolUse": post_tool_use,
-    "PostToolUseFailure": post_tool_use_failure, "PermissionDenied": permission_denied, "StopFailure": stop_failure,
+    "PostToolUseFailure": post_tool_use_failure,
     "SessionEnd": session_end, "ConfigChange": config_change, "PreCompact": pre_compact,
 }
 

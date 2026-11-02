@@ -46,7 +46,7 @@ AD_SOYAD = "Ayse Yilmaz"
 def mal(oturum, gun, gorev, is_, surec, ajan, model, g, c, o, y, usd, aid, kaynak="tur", **ek):
     r = {"zaman": f"2026-03-{gun}T10:00:00+03:00", "oturum": oturum, "gorev": gorev, "agent_id": aid,
          "model": model, "surec": surec, "ajan": ajan, "giris": g, "cikis": c, "onbellek_okuma": o,
-         "onbellek_yazma": y, "maliyet_usd": usd, "kaynak": kaynak, "tarife": "5dk" if aid else "1sa"}
+         "onbellek_yazma": y, "maliyet_usd": usd, "kaynak": kaynak, "tarife": "1sa"}
     if is_ is not None:
         r["is"] = is_
     r.update(ek)

@@ -29,12 +29,9 @@ class GuncelleHata(Exception):
 def kos(argv: list[str], cwd: str | None = None) -> tuple[int, str]:
     """Komutu çalıştırır; (çıkış kodu, stdout+stderr) döner. Program yoksa 127."""
     try:
-        r = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                           stdin=subprocess.DEVNULL, timeout=300, **cfg.PENCERESIZ)
+        r = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", **cfg.PENCERESIZ)
     except OSError as e:
         return 127, str(e)
-    except subprocess.TimeoutExpired:
-        return 124, "zaman aşımı (300 sn)"
     return r.returncode, (r.stdout + r.stderr).strip()
 
 

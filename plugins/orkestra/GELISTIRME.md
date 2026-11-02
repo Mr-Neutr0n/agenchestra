@@ -5,7 +5,7 @@ Bu dosya eklentiyi geliştirenler içindir. Kullanım kuralları için `KURALLAR
 ## Yayın akışı
 Oturumlar eklentiyi `~/.claude/plugins/cache/claude-orchestration/<plugin>/<sürüm>/` altındaki önbellek kopyasından yükler (göreli yol girdisine rağmen). Sürüm commit SHA'sıdır (12 hane); `version` alanı bilerek yoktur.
 
-1. Eklenti deposunda geliştir. Skill, ajan, ayar, hook ya da kural değiştirdiysen `python scripts/dokuman_uret.py` çalıştır; başvuru sayfaları (`docs/basvuru/`) güncellenir. `tests/test_dokuman_uret.py` eski başvuruyu reddeder.
+1. Eklenti deposunda geliştir.
 2. Değişikliği kendi dalında commitle; `main`'e yalnız `--ff-only` ya da PR ile gir (aşağıda "Yan işler").
 3. Uzak `main`'e push et (yalnız kullanıcının açık isteğiyle). Git hook'u yoktur; hiçbir betik yayın klonuna yazmaz.
 4. `orkestra guncelle` çalıştır: yayın klonu GitHub `origin`'den çekilir (klon kirliyse reddeder). Çalıştırmazsan `autoUpdate` ilk mesajdan en çok 10 dk sonra alır.
@@ -48,7 +48,7 @@ Adımlar:
 9. Doğrula: `git diff --stat $OLD $NEW` çıktısında yalnız kendi dosyaların olmalı.
 10. Ana indeksi eşitle: `git reset -q HEAD -- <yollar>`. Yapmazsan sonraki commit işini geri alır.
 
-## Entegrasyon kuyruğu (ADR-0142)
+## Entegrasyon kuyruğu (ADR-0134)
 - Durumlar: bekliyor → kosuyor → birlesti; kosuyor → karantina (kırmızı koşuda suçlu); karantina → bekliyor (düzeltme yeniden teslim edilince).
 - Ölü koşucu kurtarma: koşucu süreci ölürse `kuyruk.kurtar` takılı kosuyor kaydını bekliyor'a döndürür ve kilidi bırakır.
 
@@ -71,7 +71,7 @@ Claude uygulaması oturum başına bir git worktree açar (`<proje>/.claude/work
 - Testler: `tests/test_terfi.py`.
 
 ## Hafıza düzeltme kapısı ve rapor kanıt doğrulaması
-- Kural P-026, P-021'in rapor ayağı; karar kaydı DemoRoot deposunda ADR-0029'dur (eklentiyi kuran başka bir kullanıcıda bulunmaz, kural metni kendi başına anlaşılır).
+- Kural P-026, P-021'in rapor ayağı; karar kaydı McD deposunda ADR-0029'dur (eklentiyi kuran başka bir kullanıcıda bulunmaz, kural metni kendi başına anlaşılır).
 - Çekirdek `scripts/hafiza_duzeltme.py`: düzeltme notu = parantezli ya da köşeli (`[[bağlantı]]` hariç) bölüm, `ayarlar/hafiza_duzeltme.json` `isaret_kokleri` kökünden birini taşır ve `min_uzunluk` karakterden uzundur. Aynı normalize not hafıza klasöründe `esik` (2) ya da daha çok dosyada geçerse `tara`/`tekrarlar` bulgu verir.
 - Yazım kapısı `scripts/hook.py` `_hafiza_duzeltme_kapisi` (PreToolUse, Write/Edit/MultiEdit; yol `hafiza_yolu` kalıbına uyan md): yazımdan sonraki metin hesaplanır, notun toplam sayımı eşiğe ulaşıp artıyorsa `reddet`. Hata olursa açık geçer (fail-open). Mod `ayarlar/hafiza_duzeltme.json` `mod`: `ihlal` (reddet, varsayılan), `golge` (yalnız uyarı), `kapali`; `ORKESTRA_HAFIZA_DUZELTME=0` hepsini kapatır.
 - Rapor ayağı `scripts/perspektif.py`: `girdi.json` `duzeltme_tekrari` alanı, `rapor_dogrula`/`rapor_isaretle` (`Kanıt:` satırları `plan_dogrulama.kanit_dogrula` ile, `kos=False`: komut koşulmaz; tutmayan satırın altına `ISARET` yazılır, idempotent), `kaydet` işaretlemeyi kendisi yapar. CLI: `orkestra perspektif dogrula <rapor>` (tutmayanda çıkış 1) ve `duzeltme-tara [klasör]` (bulguda çıkış 1).
@@ -89,18 +89,15 @@ Claude uygulaması oturum başına bir git worktree açar (`<proje>/.claude/work
 - Proje = en yakın manifest dizini; `.git` dosyası olan dizin (çalışma ağacı) ve manifestsiz klasör proje sayılmaz. Kapsamı genişletmek (içe aktarma taraması) ayrı karar ister.
 - Testler: `tests/test_harita_teknolojiler.py`.
 
-## Hata defteri (DemoRoot ADR-0035, iş I-184)
+## Hata defteri (McD ADR-0035, iş I-184)
 - `scripts/hata_kayit.py`: `kaydet()` hook (`hook.py _hata_yaz`), CLI (`komutlar/_ortak.py hata()`, çıkış kodu 2 hariç) ve özet (`ozet.py`) hatalarını `<durum>/hata.jsonl`e imzalı satır olarak yazar; yazılamazsa stderr'e tek satır, çağıran düşmez. `imza()` sayı, tam yol, `.tmp_` adı ve onaltılık kimliği çıkarır.
 - `scripts/hata_en_cok.py` + `orkestra hata en-cok|liste [--gun N] [--kaynak K | --tum] [--ilk N] [--json]`: hata.jsonl, `gunluk.jsonl` `hook-hatasi` (karşılığı hata.jsonl'de olmayanlar) ve kart retleri okuma anında birleştirilir; kopya yoktur. Kural ihlalleri varsayılanda dışarıdadır (`--kaynak kural` ya da `--tum`).
 - Oturum başı uyarısı: `hook.py _ss_uyarilar` son 7 günde aynı imzadan 3 ve üzeri varsa tek `HATA:` satırı yazar; kural kaynağı sayılmaz.
 - Testler: `tests/test_hata_kayit.py`, `tests/test_hata_en_cok.py`.
 
 ## Test takımı
-- **Tek test kuralı (ADR-0147):** oturum yalnız hedefli test koşar (kartın `test_alani`, tek dosya, `::` düğümü ya da `-k`); tam paket oturumda ve yerel makinede koşulmaz.
-- Tam paket GitHub Actions'ta koşar: `.github/workflows/orkestra-tam-takim.yml` (`main` push'u, gece 02:00 UTC, elle `gh workflow run orkestra-tam-takim.yml`; ubuntu ve windows, Python 3.13, 30 dk zaman aşımı). Hızlı katman `orkestra-test.yml` her push ve PR'da koşar.
-- Kırmızı koşuda başarısız testler job özetinde listelenir: `gh run view <id> --log-failed` ya da özet sayfası.
-- Yerelde zorunlu tam koşu gerekirse (ör. CI erişilemez): `python plugins/orkestra/scripts/test_paralel.py` (paralel koşar; işçi sayısı CPU ve bellekten otomatik, `ORKESTRA_PARALEL_N` ezer; 16 çekirdekte ~4,5 dk, seri ~32 dk; P-041).
-- Kuyruk kuralı (ADR-0142): commit öncesi yalnız hedefli test; tam paket entegrasyon kuyruğuyla teslim edilir.
+- Tam paket: `python plugins/orkestra/scripts/test_paralel.py` (paralel koşar; işçi sayısı CPU ve bellekten otomatik, `ORKESTRA_PARALEL_N` ezer; 16 çekirdekte ~4,5 dk, seri ~32 dk; P-041).
+- Kuyruk kuralı (ADR-0134): commit öncesi yalnız hedefli test (kartın `test_alani`); tam paket oturumda koşulmaz.
 - Tam paket `orkestra teslim kuyruk ekle` ile entegrasyon kuyruğuna teslim edilir.
 - Entegrasyon şeridi (`scripts/entegrasyon.py`) birleşik tam koşuyu bir kez yapar; yeşilde main'e fast-forward, kırmızıda bisect + karantina, suçlu oturuma `not_birak` ile geri bildirim. Düzeltmeyi bağlamı olan oturum yapar.
 - Tek-koşucu kilidi aynı anda bir koşuya izin verir. Kapı `ayarlar/kuyruk.json` (gölge); `ORKESTRA_KUYRUK_KAPISI=0` kapatır.
@@ -122,7 +119,7 @@ Claude uygulaması oturum başına bir git worktree açar (`<proje>/.claude/work
 - Komutlar: `orkestra mcp liste|config|kur` (`scripts/komutlar/mcp.py`). Yeni MCP = kayıta bir girdi; kod gerekmez. Testler: `tests/test_mcp_kimlik.py`, `tests/test_mcp_komut.py`.
 - Şema genişlemesi (ADR-0097): `ortam` değeri `ANAHTAR` ya da `servis.ANAHTAR`; `gerek` = ön koşul komut adları (`liste` gösterir, `kur --hepsi` atlar); `komut` içinde yalnız `${CLAUDE_PROJECT_DIR}` açılır (tanımsızsa hata, başka `${...}` reddedilir).
 
-## Panel: Araçlar sayfası (MCP ve skill aç/kapat, DemoRoot ADR-0098, iş I-254)
+## Panel: Araçlar sayfası (MCP ve skill aç/kapat, McD ADR-0098, iş I-254)
 
 - **Sayfa:** `#/araclar` (assets/app.js bölüm 10c). MCP: `scripts/araclar_mcp.py` (kayıt ekle/sil, `komutlar/mcp.py kur`'u kullanır). Skill: `scripts/araclar_skill.py` (çalışma alanının `.claude/settings.local.json`'u).
 - **Uçlar:** `POST/GET /api/araclar-mcp` (kullanıcı düzeyi, `alan=*` kabul), `/api/araclar-skill?alan=<id>` (alan zorunlu).
@@ -203,9 +200,9 @@ Aynı kusur sınıfı tekrar etti:
 
 Sınama: fetch'i belge yüklenmeden sar (CDP `Page.addScriptToEvaluateOnNewDocument`; POST `/ac` sahte yanıtla engellenir). Kalıcı hata, toparlanma ve alan değişimi senaryolarında DOM değişimlerini MutationObserver ile say. Odak örtmesini gerçek Tab ve Shift+Tab ile ölç.
 
-## Geliştirme geçmişi ve kararlar (DemoRoot hafızasından taşındı, 17.10.2026, I-057)
+## Geliştirme geçmişi ve kararlar (McD hafızasından taşındı, 17.10.2026, I-057)
 
-Kaynak iş klasörleri DemoRoot deposundadır (`C:\Work\DemoRoot\Claude_Orkestrasyon\NNN-…`); eklentiyi kuran başka bir kullanıcıda bulunmaz. Sayılar yazıldıkları günün ölçümüdür.
+Kaynak iş klasörleri McD deposundadır (`C:\Mert\McD\Claude_Orkestrasyon\NNN-…`); eklentiyi kuran başka bir kullanıcıda bulunmaz. Sayılar yazıldıkları günün ölçümüdür.
 
 ### Kurulum ve ayar kapsamı
 - Eklentiler user kapsamında kurulur (`araclar/projeye_kur.py --kullanici`); `~/.claude/settings.json` içine `enabledPlugins`, kota durum satırı, `Bash(orkestra *)` izni ve `PYTHONUTF8` yazılır. Eski karar (13.10: genel ayar bilerek boş, proje kapsamı) 17.10'da değişti (I-054).
@@ -214,7 +211,7 @@ Kaynak iş klasörleri DemoRoot deposundadır (`C:\Work\DemoRoot\Claude_Orkestra
 - Kesin token: `hooks/sayac.ts` (turn.complete) yazar; alt ajan transkriptleri çıkış tokenını eksik tutar, hook kaydı yalnız yedektir.
 - Taşınabilirlik: ortam başka makineye taşınırken hafıza `~/.claude/projects/<proje>/memory`, hook'lar `python` çağırır (Mac'te `python3` sorunu), `hooks.json` platforma dayanıklıdır (16.10).
 - Eklentinin tek kaynağı `Desktop\Claude-Orchestration`. Yeni skill, ayar ve kayıt buraya yazılır (`skills\<ad>\SKILL.md`, betik skill klasöründe, test `tests\`, README satırı), projenin `.claude\skills\` klasörüne yazılmaz. `plugin_yayin`'e yazılan iş eşitlemede `koruma/klon-*` dalına alınır, main'e girmez. Skill adı `/orkestra:<ad>` olur; betikte projeye özgü yol kalmaz.
-- Push yalnız bu depo içindir (`origin/main`); DemoRoot deposunun uzak deposu yoktur.
+- Push yalnız bu depo içindir (`origin/main`); McD deposunun uzak deposu yoktur.
 
 ### Yetenekler (14-16.10.2026)
 - **İş/todo modeli:** her işin tek `todo.md`'si görev klasöründe; `orkestra is todo <id> --ekle/--bitti`.

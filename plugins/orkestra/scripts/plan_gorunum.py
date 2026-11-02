@@ -153,7 +153,7 @@ def todo_gorunumu(todo: str, plan: str) -> str:
         no, bas, kabul = p_ad.get(n, (n, f"Madde {n}", ""))
         cikti += [f"## {no}. {bas}", ""]
         if kabul:
-            cikti += [kabul[:1].upper() + kabul[1:], ""]
+            cikti += [f"Bitti sayılır: {kabul}", ""]
         for yapildi, metin, kanit in gruplar[n]:
             cikti.append(f"- [{'x' if yapildi else ' '}] {metin}" + (f" (kanıt: {kanit})" if kanit and yapildi else ""))
         cikti.append("")

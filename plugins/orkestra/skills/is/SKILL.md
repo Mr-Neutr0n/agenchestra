@@ -28,11 +28,11 @@ Ayrıntı (kart alanları, plan yolu, workflow, kapılar, toplama) `${CLAUDE_PLU
 - Plan yolu eşikleri `.claude/orkestra/plan_yolu.json` (yoksa skill klasöründeki `plan_yolu.json`): küçük iş `dogrudan` (kartları sen yaz), belirsiz iş `triyaj` (`orkestra:triyaj`), büyük iş `devir` (araştırmacılar + T3 plan kartı). Yolu plan özetinin ilk satırına yaz.
 - Kod yazan alt iş önce MEVCUT DURUMU tanır: işçi kod yazmadan `orkestra kart mevcut <id> --dosya <json>` ile mevcut durum notunu kaydeder; kartın `girdi`sine ilgili dosya yollarını yaz.
 - Her kart: `baslik`, `soru` (tek cümle, ≤200 karakter; önce en ucuz kanıt), `basamak` (T0-T4; kuşkuda DAHA DÜŞÜĞÜ; model ayarları ayarlar/model_politikasi.json), `kabul_kriterleri` (ölçülebilir), `yazma_alani` (paralel kartlarda kesişmez), `bagimliliklar` (yalnız çıktı bağımlılığı).
-- Kod kartı (`sinif` = "kod"): `test_komutu` (daraltılmış), `test_alani`; riskli kartta `tdd: true` (test yazarı + kırmızı kapı, işçi testlere dokunamaz). Kartta tam paket yazılmaz.
+- Kod kartı (`sinif` = "kod"): `test_komutu` (daraltılmış), `test_alani`; riskli kartta `tdd: true` (test yazarı + kırmızı kapı, işçi testlere dokunamaz). Tam paket kartta değil, iş sonunda bir kez koşar.
 - Kartları plan JSON'una yaz, `orkestra kart toplu --json-dosya <plan.json>`; kullanıcıya 3-8 satır plan göster, "önce planı göster" denmedikçe onay bekleme.
 
 ## 2. Dağıt
-- Dalgalı planda (P-035) bir dalganın tüm işçileri aynı mesajda birlikte dağıtılır. Workflow kullanırsan dalga bariyeri yoktur: tüm kartları tek seferde ver, `calistir.js` bağımlılığı onaylanan kartı dalgayı beklemeden başlatır (kritik yoldaki kart kuyrukta öne geçer). Dalga sırası yalnız elle (Agent ile) dağıtımda geçerlidir.
+- Dalgalı planda (P-035) bir dalganın tüm işçileri aynı mesajda birlikte dağıtılır; sonraki dalga öncekinin denetimi bitince başlar.
 - Workflow: `name: "orkestra:calistir"`, `args: { "gorevler": [<kart goster JSON'ları>] }` (yoksa `scriptPath`: `${CLAUDE_PLUGIN_ROOT}/workflows/calistir.js`). Kapılar (ön kontrol, test) CLI `is-bitti` içinde koşar, ayrı ajan değildir.
 - Kod kartında sıra: test yazarı (`orkestra:test-yazari`, `#SUREC:test-yaz`, yalnız `tdd: true`) → işçi (yeşil + ön kontrol) → AYRI denetçi (`test kalitesi` merceği dahil).
 - Workflow yoksa elle dağıt: bağımsız kartlar için Agent aracını AYNI mesajda `run_in_background: true` ile çağır; `subagent_type` `orkestra:isci-t1`…`t4`; istem `#GOREV:<id> #SUREC:is` ile başlar; her işçi için ayrı `orkestra:denetci`. Kod kartında `tdd: true` ise önce `orkestra:test-yazari`.

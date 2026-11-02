@@ -1,7 +1,0 @@
-{
-  "aciklama": "ADR-0148: ebeveyni ölmüş, eşikten eski, izin listesindeki süreçleri bakımda öldürür (RAM/tutamaç sızıntısı). mod: uygula | golge (yalnız kaydeder). git_esik_sn: takılı git; python_esik_sn: eklenti betiği. python_betikler: yalnız bunlar öldürülür (panel.py yok: panel bilerek yetim koşar). Kapatma: ORKESTRA_SUREC_TEMIZLE=0.",
-  "mod": "uygula",
-  "git_esik_sn": 3600,
-  "python_esik_sn": 7200,
-  "python_betikler": ["mcp_kimlik.py", "oturum_bakim.py", "test_paralel.py"]
-}

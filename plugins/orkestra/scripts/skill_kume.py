@@ -3,7 +3,7 @@
 Neden: sayaç anahtarı serbest metindi, aynı iş farklı yazılınca ayrı sayılıyordu; perspektif de skill adayını son 40 ham
 istekten tahmin ediyordu. Burada bildirim ve sistem metni süzülür, kalan istekler gövde kökü (ilk KOK_UZUNLUK harf) kümesi
 üzerinden Jaccard benzerliğiyle gruplanır. Eşik tek kaynaktır: `sayac.ESIK` (kümedeki istek sayısı bu eşikte aday olur).
-Benzerlik eşiği BENZERLIK, tests/veri/skill_kume_ornek.jsonl etiketli örneğinin ilk yarısıyla seçildi, ikinci yarıda sınanır.
+Benzerlik eşiği BENZERLIK, tests/veri/skill_kume_ornek.jsonl etiketli örneğinde seçildi; test iki yarıda ayrı ayrı sınar.
 
 Komut satırı: `python skill_kume.py [--gun 14] [--json]` (durum dizinini çalışma klasöründen bulur).
 """
@@ -19,10 +19,16 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 KOK_UZUNLUK = 5  # Türkçe ek çeşitliliğini sönümler: "commitle", "commit", "commiti" aynı kök
-BENZERLIK = 0.5  # etiketli örnekte seçildi (tests/test_skill_kume.py)
+BENZERLIK = 0.25  # etiketli örnekte seçildi: Jaccard 0,25 + en az EN_AZ_ORTAK ortak kök → çift precision 0,97 / recall 0,65
+EN_AZ_ORTAK = 2
+ORNEK_SINIR = 20
+EN_AZ_GUN = 2  # tek oturumdaki yineleme (aynı konuşmanın içinde) tekrar eden iş sayılmaz
 EN_AZ_SOZCUK = 3  # "onaylıyorum", "yap" gibi kısa istekler iş türü taşımaz
-GURULTU_ONEKI = ("<system-reminder", "<task-notification", "<command-", "<local-command", "<ci-monitor",
-                 "[system notification", "<pasted_content", "caveat:")
+# "<" ile başlayan etiketli metin (sistem hatırlatması, bildirim, alt ajan mesajı) ve "[" ile başlayan sistem satırı kullanıcı isteği değildir
+GURULTU_ONEKI = ("<", "[system", "[subagent", "caveat:")
+# Sohbeti yöneten sözcük kökleri iş türü taşımaz ("sohbete devam edelim", "onaylıyorum", "tamam")
+SOHBET_KOKLERI = frozenset("""sohbe devam edeli onayl tamam evet hayır lütfe başla yapıp yapıl kaldı konuş çözül best class
+şekil yapal bakal şimdi sonra tekra sadec ancak yalnı hepsi herşe nasıl neden nedir misin musun""".split())
 DURAK = frozenset("""ve ile bir bu şu da de mi mı mu mü ki için gibi ama veya ya ne var yok çok daha en
 the and for with that this you are not from""".split())
 _SOZCUK = re.compile(r"[a-zçğıöşü0-9_]{3,}", re.IGNORECASE)
@@ -40,11 +46,15 @@ def temizle(metin) -> str | None:
 
 
 def kokler(metin: str) -> frozenset:
-    return frozenset(w[:KOK_UZUNLUK] for w in _SOZCUK.findall(metin) if w not in DURAK)
+    return frozenset(k for k in (w[:KOK_UZUNLUK] for w in _SOZCUK.findall(metin) if w not in DURAK)
+                     if k not in SOHBET_KOKLERI)
 
 
 def benzerlik(a: frozenset, b: frozenset) -> float:
-    return len(a & b) / len(a | b) if a and b else 0.0
+    """Jaccard; ortak kök sayısı EN_AZ_ORTAK'tan azsa 0 (tek ortak sözcük iş türü kanıtı değildir)."""
+    if not a or not b or len(a & b) < EN_AZ_ORTAK:
+        return 0.0
+    return len(a & b) / len(a | b)
 
 
 def kumele(istekler: list[dict], esik: float = BENZERLIK) -> list[dict]:
@@ -67,7 +77,7 @@ def kumele(istekler: list[dict], esik: float = BENZERLIK) -> list[dict]:
         if en is not None and en_b >= esik:
             en["adet"] += 1
             en["tarihler"].append(str(r.get("zaman", ""))[:10])
-            if len(en["ornekler"]) < 5:
+            if len(en["ornekler"]) < ORNEK_SINIR:
                 en["ornekler"].append(str(r.get("metin", ""))[:160])
             en["_ortak"] &= k
         else:
@@ -87,10 +97,10 @@ def adaylar(kumeler: list[dict], esik: int, mevcut_skiller: list[str] | None = N
     ad_kokleri = {s: kokler(s.replace("-", " ").replace(":", " ")) for s in (mevcut_skiller or [])}
     out = []
     for c in kumeler:
-        if c["adet"] < esik:
-            continue
+        if c["adet"] < esik or not c["kokler"] or len(c["tarihler"]) < EN_AZ_GUN:
+            continue  # ortak iş sözcüğü olmayan ya da tek günlük küme tekrar eden iş değil, gürültüdür
         k = frozenset(c["kokler"])
-        eslesen = [s for s, ak in ad_kokleri.items() if ak and len(ak & k) / len(ak) >= 0.6]
+        eslesen = [s for s, ak in ad_kokleri.items() if ak and len(ak & k) / len(ak) >= 0.5]
         out.append({**c, "mevcut_skill": eslesen})
     return out
 

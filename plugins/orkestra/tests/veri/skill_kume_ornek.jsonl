@@ -1,0 +1,36 @@
+{"zaman": "2026-10-01T10:00:00+03:00", "metin": "değişiklikleri commitle ve özetini yaz", "etiket": "commit"}
+{"zaman": "2026-10-02T10:01:00+03:00", "metin": "perspektifin neden skill önermediğini araştır", "etiket": "tek0"}
+{"zaman": "2026-10-03T10:02:00+03:00", "metin": "bu bulguyu Jira story'sine çevir", "etiket": "jira"}
+{"zaman": "2026-10-04T10:03:00+03:00", "metin": "veritabanında şu tabloyu ölç kaç satır var", "etiket": "dbolcum"}
+{"zaman": "2026-10-05T10:04:00+03:00", "metin": "azure vpn bağlantısı neden düştü", "etiket": "tek1"}
+{"zaman": "2026-10-01T10:05:00+03:00", "metin": "bu çıktıları arşivle projeye taşı", "etiket": "arsiv"}
+{"zaman": "2026-10-02T10:06:00+03:00", "metin": "bu dosyaları commit et lütfen", "etiket": "commit"}
+{"zaman": "2026-10-03T10:07:00+03:00", "metin": "rakip analizi tablosundaki üçüncü satır yanlış görünüyor", "etiket": "tek2"}
+{"zaman": "2026-10-04T10:08:00+03:00", "metin": "jira story yaz şu madde için", "etiket": "jira"}
+{"zaman": "2026-10-05T10:09:00+03:00", "metin": "DB'de ölçüm yap, tablo satır sayısını göster", "etiket": "dbolcum"}
+{"zaman": "2026-10-01T10:10:00+03:00", "metin": "langfuse sürümü kaç şu an", "etiket": "tek3"}
+{"zaman": "2026-10-02T10:11:00+03:00", "metin": "çıktı dosyalarını arşive taşı lütfen", "etiket": "arsiv"}
+{"zaman": "2026-10-03T10:12:00+03:00", "metin": "commit atar mısın şu değişiklikleri", "etiket": "commit"}
+{"zaman": "2026-10-04T10:13:00+03:00", "metin": "dosya adlandırma kuralı nerede yazıyor", "etiket": "tek4"}
+{"zaman": "2026-10-05T10:14:00+03:00", "metin": "yol haritası maddesini jira story haline getir", "etiket": "jira"}
+{"zaman": "2026-10-01T10:15:00+03:00", "metin": "şu tablonun satır sayısını veritabanında ölç", "etiket": "dbolcum"}
+{"zaman": "2026-10-02T10:16:00+03:00", "metin": "hangi model ile çalışıyoruz şu an", "etiket": "tek5"}
+{"zaman": "2026-10-03T10:17:00+03:00", "metin": "eski çıktıları arşivle ve readme güncelle", "etiket": "arsiv"}
+{"zaman": "2026-10-04T10:18:00+03:00", "metin": "yaptığımız değişiklikleri commitle", "etiket": "commit"}
+{"zaman": "2026-10-05T10:19:00+03:00", "metin": "panel neden açılmıyor port kullanımda", "etiket": "tek6"}
+{"zaman": "2026-10-01T10:20:00+03:00", "metin": "bu iş için bir jira story hazırla", "etiket": "jira"}
+{"zaman": "2026-10-02T10:21:00+03:00", "metin": "kopyada bu tabloya bak kaç satır var ölç", "etiket": "dbolcum"}
+{"zaman": "2026-10-03T10:22:00+03:00", "metin": "mongo bağlantı dizesi hangi kayıtta", "etiket": "tek7"}
+{"zaman": "2026-10-04T10:23:00+03:00", "metin": "şu ara dosyaları arşivle taşı", "etiket": "arsiv"}
+{"zaman": "2026-10-05T10:24:00+03:00", "metin": "şu düzeltmeyi commit et ve mesajı yaz", "etiket": "commit"}
+{"zaman": "2026-10-01T10:25:00+03:00", "metin": "kota göstergesi yanlış sayıyor neden", "etiket": "tek8"}
+{"zaman": "2026-10-02T10:26:00+03:00", "metin": "rakip özelliğini story'ye çevir jira için", "etiket": "jira"}
+{"zaman": "2026-10-03T10:27:00+03:00", "metin": "db ölçümü yap şu şemada kaç tablo var", "etiket": "dbolcum"}
+{"zaman": "2026-10-04T10:28:00+03:00", "metin": "hafıza dosyalarında çelişki var mı bak", "etiket": "tek9"}
+{"zaman": "2026-10-05T10:29:00+03:00", "metin": "bu klasörü arşive taşıyalım arşivle", "etiket": "arsiv"}
+{"zaman": "2026-10-01T10:30:00+03:00", "metin": "değişiklikleri commit edelim mi, commitle", "etiket": "commit"}
+{"zaman": "2026-10-02T10:31:00+03:00", "metin": "testler neden kırmızı çıkıyor son değişiklikten sonra", "etiket": "tek10"}
+{"zaman": "2026-10-03T10:32:00+03:00", "metin": "jira story paketi çıkar bu bulgudan", "etiket": "jira"}
+{"zaman": "2026-10-04T10:33:00+03:00", "metin": "veritabanı ölçümü: tabloda kaç satır var", "etiket": "dbolcum"}
+{"zaman": "2026-10-05T10:34:00+03:00", "metin": "terraform planında hangi kaynaklar değişiyor", "etiket": "tek11"}
+{"zaman": "2026-10-01T10:35:00+03:00", "metin": "oturum çıktılarını arşivle taşı", "etiket": "arsiv"}

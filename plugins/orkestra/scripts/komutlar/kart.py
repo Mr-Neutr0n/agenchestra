@@ -1132,7 +1132,7 @@ def _eski_surumde_kos(proje: str, ref: str, komut: str, dosyalar, zaman_asimi: f
     import tempfile
 
     def git(*args, cwd=proje):
-        return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", stdin=subprocess.DEVNULL, timeout=120, **cfg.PENCERESIZ)
+        return subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", **cfg.PENCERESIZ)
     ust = git("rev-parse", "--show-toplevel")
     if ust.returncode != 0:
         hata("--eski-surumde için proje bir git deposunda olmalı.")
@@ -1199,7 +1199,7 @@ def cmd_kart_test_kos(a):
     if komut is None:
         hata(f"{daralma}: test_alani ({', '.join(k['test_alani'])}) test_*.py dosyasına uymuyor.")
     if daralma:
-        print(f"orkestra: {daralma}", file=sys.stderr)
+        print(f"orkestra: {daralma} (tam paket iş sonunda bir kez koşar)", file=sys.stderr)
     eski_sha = None
     if eski:
         kod, cikti, sure, eski_sha = _eski_surumde_kos(proje, getattr(a, "surum_ref", None) or "HEAD", komut, sorted(once), a.zaman_asimi)

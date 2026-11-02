@@ -21,8 +21,8 @@ class GirdiTest(unittest.TestCase):
         self.assertTrue(all(c["adet"] >= 5 for c in a["adaylar"]))
 
     def test_mevcut_skill_isaretli_gelir(self):
-        a = P._skill_adaylari(ORNEK, ["commit-yaz"])
-        self.assertTrue(any(c["mevcut_skill"] == ["commit-yaz"] for c in a["adaylar"]))
+        a = P._skill_adaylari(ORNEK, ["jira-story-yaz"])
+        self.assertTrue(any(c["mevcut_skill"] == ["jira-story-yaz"] for c in a["adaylar"]))
 
     def _kur(self):
         proje = tempfile.mkdtemp()

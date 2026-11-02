@@ -1,14 +1,12 @@
 """P9 (I-026): SessionStart hızlı yol — doktor yalnız gerektiğinde, arka planda, proje açık olmasa da başlar."""
 import os
-import subprocess
 import sys
 import tempfile
 import time
 import unittest
 from unittest import mock
 
-KOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(KOK, "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 import cfg  # noqa: E402
 import hook  # noqa: E402
 
@@ -106,16 +104,8 @@ class HizliYolTest(unittest.TestCase):
         while time.time() < bitis and not cfg.makine_taze_mi():
             time.sleep(0.5)
         self.assertTrue(cfg.makine_taze_mi(), "arka plan doktor makine.json yazmadı")
-        bitis = time.time() + 240  # yavaş CI (Windows/py3.9) doktoru 90 sn'yi aşabilir; ikinci bekleme kendi süresini alır
         while time.time() < bitis and not isinstance(cfg.makine_oku().get("son_doktor"), dict):
             time.sleep(0.5)
-        if not isinstance(cfg.makine_oku().get("son_doktor"), dict):
-            # arka plan sürecin çıktısı atılır; eşzamanlı koşup nedenini hata iletisine koy
-            r = subprocess.run([sys.executable, os.path.join(KOK, "scripts", "doktor.py"), "--duzelt", "--arka-plan"],
-                               stdin=subprocess.DEVNULL, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300, **cfg.PENCERESIZ)
-            ayrac = chr(10)
-            self.fail(ayrac.join(["doktor çalışma işaretini yazmadı; eşzamanlı koşu rc=%s" % r.returncode,
-                                  "stdout=" + r.stdout[-600:], "stderr=" + r.stderr[-1200:], "makine=%s" % cfg.makine_oku()]))
         self.assertIsInstance(cfg.makine_oku().get("son_doktor"), dict, "doktor çalışma işaretini yazmadı")
 
 

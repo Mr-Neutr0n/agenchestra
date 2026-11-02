@@ -14,6 +14,7 @@ import sys
 import ork_lib as L
 
 ESIK = 5
+ANAHTAR_BENZERLIK = 0.6  # sayım birleştirme kümelemeden sıkıdır: zıt eylem ve farklı nesne ('stok raporu sil' ≠ 'stok raporu çıkar') ayrı kalır
 
 
 def anahtar(*parcalar) -> str:
@@ -47,7 +48,7 @@ def en_yakin(veri: dict, ad: str) -> str:
         b = K.benzerlik(k, K.kokler(K.temizle(a) or ""))
         if b > en_b:
             en, en_b = a, b
-    return en if en_b >= K.BENZERLIK else ad
+    return en if en_b >= ANAHTAR_BENZERLIK else ad
 
 
 def artir(sd: str, ad: str) -> int:

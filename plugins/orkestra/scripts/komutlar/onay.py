@@ -26,6 +26,9 @@ def cmd_perspektif(a):
     sd = sd_gerekli()
     sys.path.insert(0, BETIK_DIZINI)
     import perspektif
+    if a.islem == "rapor":
+        import perspektif_rapor
+        sys.exit(perspektif_rapor.main(["--json"] if getattr(a, "json", False) else []))
     if a.islem in ("basladi", "kaydet"):
         uyusmazlik = perspektif.proje_uyusmazligi(getattr(a, "proje", None), L.proje_dizini())
         if uyusmazlik:
@@ -283,9 +286,10 @@ def cmd_kural(a):
 def kaydet(alt):
     """Bu modülün alt komutlarını ana ayrıştırıcıya ekler."""
     ru = alt.add_parser("perspektif", aliases=["ruya"])  # "ruya": eski ad, geriye uyumlu takma ad
-    ru.add_argument("islem", choices=["durum", "basla", "basladi", "kaydet", "bitti", "hafiza", "girdi", "dogrula", "duzeltme-tara"])
+    ru.add_argument("islem", choices=["durum", "basla", "basladi", "kaydet", "bitti", "hafiza", "girdi", "dogrula", "duzeltme-tara", "rapor"])
     ru.add_argument("yol", nargs="?")
     ru.add_argument("--proje", help="basladi/kaydet: beklenen proje klasörü; oturum başka projedeyse reddeder")
+    ru.add_argument("--json", action="store_true", help="rapor: JSON çıktı")
     ru.set_defaults(f=cmd_perspektif)
 
     on = alt.add_parser("onay").add_subparsers(dest="alt", required=True)

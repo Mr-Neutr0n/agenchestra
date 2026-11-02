@@ -94,23 +94,6 @@ def _kapi_golge(sd: str) -> dict:
     return dict(sorted(sayi.items()))
 
 
-TALEP_ORNEK = 100  # is_talebi ihlal geçişi için en az etiketli uyarı (ADR-0138, S7)
-TALEP_UST = 0.05   # yanlış pozitif oranının Wilson %95 üst sınırı eşiği
-
-
-def _is_talebi(sd: str) -> dict:
-    """Gölge `is_talebi` uyarıları ve elle etiketler (`is_talebi_etiket.jsonl`: {"dogru": bool}); Wilson üst sınırı ve karar."""
-    uyari = sum(1 for o in L.jsonl_oku(os.path.join(sd, "gunluk.jsonl"))
-                if isinstance(o, dict) and o.get("tur") == "kapi_golge" and o.get("kapi") == "is_talebi")
-    et = [o for o in L.jsonl_oku(os.path.join(sd, "is_talebi_etiket.jsonl")) if isinstance(o, dict) and "dogru" in o]
-    n, yanlis = len(et), sum(1 for o in et if not o["dogru"])
-    from kanit_olcum import wilson
-    ust = wilson(yanlis, n)[1] if n else None
-    karar = ("ihlal geçişi önerilir (karar ayrı)" if n >= TALEP_ORNEK and ust <= TALEP_UST
-             else f"gölgede kal: etiket {n}/{TALEP_ORNEK}" if n < TALEP_ORNEK else "gölgede kal: yanlış pozitif yüksek")
-    return {"uyari": uyari, "etiket": n, "yanlis": yanlis, "ust": ust, "karar": karar}
-
-
 CIKTI_ORNEK = 200  # ihlal geçişi kararı için en az tur (ADR-0075, plan K6)
 CIKTI_HEDEF = {"ortanca": 400, "p90": 800}
 
@@ -257,17 +240,6 @@ def _kapi_bekleniyor(sd: str) -> dict:
     return _kapi_olaylari(sd)[1]
 
 
-def _hook_ret(sd: str, n: int = 3) -> list:
-    """ADR-0133: hook reddinin en sık `n` kaynağı (ret_olcum.say: hata.jsonl `hook-red`, sınıf R1–R9 ve kapı); yeni sayaç yok."""
-    try:
-        import ret_olcum as RO
-        c = RO.say(RO.yukle(sd))
-        return [{"kapi": k, "sinif": RO.sinif_turet({"kapi": k}), "n": v}
-                for k, v in sorted(c["kapi"].items(), key=lambda x: -x[1])[:n]]
-    except Exception:
-        return []
-
-
 def rapor(sd: str) -> dict:
     v = _veri(sd)
     mal, zam, isler, kartlar = v["mal"], v["zam"], v["isler"], v["kartlar"]
@@ -316,8 +288,8 @@ def rapor(sd: str) -> dict:
     }
     kapi_ret, kapi_bekl = _kapi_olaylari(sd)
     return {"satirlar": satirlar, "kalite": kalite, "kapi_golge": _kapi_golge(sd), "kapi_ret": kapi_ret,
-            "kapi_bekleniyor": kapi_bekl, "hook_ret": _hook_ret(sd), "yontem": _yontem(sd), "ihlal_kanit": _ihlal_kanitlari(sd),
-            "cikti": _cikti(sd), "is_talebi": _is_talebi(sd)}
+            "kapi_bekleniyor": kapi_bekl, "yontem": _yontem(sd), "ihlal_kanit": _ihlal_kanitlari(sd),
+            "cikti": _cikti(sd)}
 
 
 def paralellik_olcumu(sd: str, is_id: str, klasor: str | None, kart_is: dict | None = None,
@@ -448,9 +420,6 @@ def metin(r: dict) -> str:
     bekl = r.get("kapi_bekleniyor") or {}
     if bekl:
         ret_satiri.append("denetçi bekleniyor (ret sayılmaz): " + ", ".join(f"{k} {n}" for k, n in bekl.items()))
-    hr = r.get("hook_ret") or []
-    if hr:
-        ret_satiri.append("en sık hook retleri: " + ", ".join(f"{x['kapi']} ({x['sinif']}) {x['n']}" for x in hr))
     kn = r.get("ihlal_kanit") or []
     if kn:
         ret_satiri += ["", f"son {len(kn)} ihlal/ret kanıtı:", _tablo(
