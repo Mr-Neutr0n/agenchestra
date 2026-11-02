@@ -75,11 +75,11 @@ def _ek(satirlar: list[dict]) -> dict:
 
 
 def _formul_usd(r: dict, model: str) -> float:
-    """Satırın token sayılarından verilen modelin liste fiyatıyla maliyet (önbellek yazma satırın tarifesiyle: ana ajan 1sa, alt ajan 5dk; ADR-0133)."""
+    """Satırın token sayılarından verilen modelin liste fiyatıyla maliyet (önbellek yazma 1 sa tarifesiyle; defterdeki hook ve tur satırlarıyla aynı)."""
     f = L.model_fiyati(model)
     return ((r.get("giris") or 0) * f["giris"] + (r.get("cikis") or 0) * f["cikis"]
             + (r.get("onbellek_okuma") or 0) * f["onbellek_okuma"]
-            + (r.get("onbellek_yazma") or 0) * f["onbellek_yazma_" + L._satir_tarifesi(r)]) / 1_000_000
+            + (r.get("onbellek_yazma") or 0) * f["onbellek_yazma_1sa"]) / 1_000_000
 
 
 AJAN_ADLARI = {
@@ -375,7 +375,7 @@ def _tasarruf(kayitlar: list[dict]) -> dict:
         senaryo(lambda r: _rol(r.get("ajan")) != "ana", "Bütün alt ajanlar", "Denetçiler dahil."),
         senaryo(lambda r: True, "Ana ajan dahil hepsi", "Planlama da Sonnet'te olsaydı."),
     ]
-    # önbellek: okunan token tam giriş fiyatıyla okunsaydı; yazmanın giriş fiyatından fazlası (satırın tarifesi) düşülür
+    # önbellek: okunan token tam giriş fiyatıyla okunsaydı; yazmanın giriş fiyatından fazlası (1 sa tarifesi) düşülür
     kazanc = ek_yazma = 0.0
     okuma = yazma = 0
     model_kazanc = collections.Counter()
@@ -383,7 +383,7 @@ def _tasarruf(kayitlar: list[dict]) -> dict:
         f = L.model_fiyati(r.get("model"))
         o, w = r.get("onbellek_okuma") or 0, r.get("onbellek_yazma") or 0
         k = o * (f["giris"] - f["onbellek_okuma"]) / 1e6
-        e = w * (f["onbellek_yazma_" + L._satir_tarifesi(r)] - f["giris"]) / 1e6  # defter satırının tarifesiyle (ana ajan 1sa, alt ajan 5dk; ADR-0133)
+        e = w * (f["onbellek_yazma_1sa"] - f["giris"]) / 1e6  # defter satırları 1 sa tarifesiyle fiyatlanır
         kazanc += k
         ek_yazma += e
         okuma += o

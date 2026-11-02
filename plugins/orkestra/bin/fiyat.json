@@ -1,11 +1,6 @@
 {
   "_aciklama": "API liste fiyatları, $ / milyon token (kaynak: claude-api skill tablosu, 06.10.2026). Abonelikte gerçek fatura değil, kota karşılığı tahmindir. Önbellek yazma: 5 dk = giriş x1.25, 1 saat = giriş x2.",
   "varsayilan": "claude-opus-5-5",
-  "onbellek_ttl_varsayilan": {
-    "_aciklama": "Önbellek yazma TTL'i ayrımsız satırlarda (tur, hook-artik) ajan türüne göre varsayılır; hook satırları transkriptteki gerçek 5dk/1sa ayrımını kullanır. Ölçüm: 01.11.2026, ~/.claude/projects/C--Mert-McD transkriptleri (message.usage.cache_creation): alt ajan yazmasının %100'ü 5dk; ana ajan Sonnet %99, Opus %86 1sa. ADR-0133 (McD).",
-    "ana_ajan": "1sa",
-    "alt_ajan": "5dk"
-  },
   "modeller": {
     "claude-fable-5-1":  {"giris": 10.0, "cikis": 50.0, "onbellek_okuma": 0.25, "onbellek_yazma_5dk": 12.5,  "onbellek_yazma_1sa": 20.0},
     "claude-fable-5":    {"giris": 10.0, "cikis": 50.0, "onbellek_okuma": 1.0,  "onbellek_yazma_5dk": 12.5,  "onbellek_yazma_1sa": 20.0},

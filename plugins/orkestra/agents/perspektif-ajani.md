@@ -37,12 +37,13 @@ Türkçe, kısa cümleler:
    - MEMORY.md'nin satır ve bayt sayısı. Oturum başında yalnız ilk 200 satır ya da 25 KB okunur.
    - Çok uzun konu dosyaları ve önerilen bölünme.
 6. **Önerilen değişiklikler:** Her biri için dosya, değişiklik ve gerekçe; uygulanabilir kısa diff blokları ekle. Her önerinin altına ZORUNLU bir `Kanıt:`, `Geçtiği yerler:`, `Vaat:` ve `Yayın:` satırı ekle (aşağıdaki "Doğrulama", "Vaat satırı" ve "Yayın satırı" bölümleri).
-7. **Skill adayları:** Skill'siz ve en az `python <eklenti>/scripts/sayac.py esik` çıktısı kadar tekrarlanan iş türleri. Her aday için:
+7. **Skill adayları:** Kaynak girdi.json `skill_adaylari` alanıdır (betik kümeledi; ham istekleri sen kümeleme). Her `adaylar` öğesi için, `mevcut_skill` boşsa, madde işaretli ya da numaralı bir madde yaz: `- **<ad>** — <adet> kez (küme <id>)`; ad `onerilen_skill/` altındaki taslak adıyla aynı olsun (kök sözcüklerden: `kokler`). Her aday için:
    - ad;
-   - tetik cümleleri;
+   - tetik cümleleri (`ornekler`);
    - girdi → çıktı;
    - başlangıç basamağı (T0-T4);
    - kullanılan mevcut betik.
+   `mevcut_skill` dolu aday için yeni skill önerme; mevcut skill'in genişletilmesini öner. `adaylar` boşsa "aday yok (eşik <esik>, kaynağı `sayac.py esik`, <istek> istek, <kume_sayisi> küme)" yaz; girdi.json `skill_adaylari` alanı yoksa "doğrulanamadı" yaz. Betik rapor kaydedilince taslağı (SKILL.md, GEREKCE.md) kendisi üretir; sen dosya yazma.
 8. **Orkestra sağlığı:**
    - Etiketsiz ajan oranı.
    - Reddedilen ve yükseltilen kartlar: yükseltilen kart sayısı girdi.json `gunluk.yukseltilen_kart` alanından alınır; alan yoksa ya da boşsa "doğrulanamadı" yaz.

@@ -54,7 +54,7 @@ def mal(gorev, agent_id, giris, cikis, okuma, yazma, usd, kaynak="tur", zaman="2
         oturum="o1"):
     return {"zaman": zaman, "oturum": oturum, "gorev": gorev, "agent_id": agent_id, "model": "claude-sonnet-5-5",
             "giris": giris, "cikis": cikis, "onbellek_okuma": okuma, "onbellek_yazma": yazma,
-            "maliyet_usd": usd, "kaynak": kaynak, "tarife": "5dk" if agent_id else "1sa"}
+            "maliyet_usd": usd, "kaynak": kaynak, "tarife": "1sa"}
 
 
 KARTLAR = [

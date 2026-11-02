@@ -78,8 +78,7 @@ class MaliyetDuzeltme(unittest.TestCase):
 
 class KuralEtkiKancasi(unittest.TestCase):
     def test_k5_kural_onayi_kancalari_cagirir(self):
-        sd = os.path.join(tempfile.mkdtemp(), "proje", ".claude", "orkestra")
-        os.makedirs(sd)
+        sd = tempfile.mkdtemp()
         onay.kural_oner(sd, "Öneri kuralı", "neden", "test")
         onay.esitle(sd)
         bekleyen = [k for k in onay.liste(sd) if k.get("tur") == "kural" and k.get("durum") == "bekliyor"]

@@ -116,6 +116,17 @@ def _skiller(proje: str) -> list[str]:
     return sorted({os.path.basename(os.path.dirname(y)) for k in kokler for y in glob.glob(os.path.join(k, "*", "SKILL.md"))})
 
 
+def _skill_adaylari(istekler: list, skiller: list[str]) -> dict:
+    """Tekrar eden iş kümeleri (I-347): eşik (sayac.ESIK) ve üstü kümeler; ham 40 istek yerine ajanın dayanağı."""
+    import sayac
+    import skill_kume as K
+    kumeler = K.kumele(istekler)
+    adaylar = K.adaylar(kumeler, sayac.ESIK, skiller)
+    return {"esik": sayac.ESIK, "istek": len(istekler), "kume_sayisi": len(kumeler),
+            "adaylar": [{k: c[k] for k in ("id", "adet", "temsil", "kokler", "tarihler", "mevcut_skill")}
+                        | {"ornekler": c["ornekler"][:3]} for c in adaylar[:15]]}
+
+
 def girdi(sd: str, proje: str, hafiza: str) -> dict:
     """Perspektifin mekanik girdisi (LLM'siz) ve değişim imzası."""
     import collections
@@ -142,13 +153,15 @@ def girdi(sd: str, proje: str, hafiza: str) -> dict:
     defter = [r for r in L.defter_kayitlari(sd) if r.get("zaman", "") >= esik]
     etiketsiz = sum(1 for r in defter if r.get("gorev") in (None, "", "-") and r.get("ajan") not in (None, "ana-ajan"))
     skiller = _skiller(proje)
+    skill_adaylari = _guvenli(lambda: _skill_adaylari(istekler, skiller))
     duzeltme = _duzeltme_tekrari(hafiza)
     memory = next((x for x in dosyalar if x["ad"] == "MEMORY.md"), None)
     zaman = _guvenli(lambda: PZ.ozet(sd, esik, None))
     pg = _guvenli(lambda: PG.ozet(sd, esik, None))
     trend = _guvenli(lambda: PT.hesapla(sd, GIRDI_GUN))
     imza_kaynagi = {"hafiza": h_imza, "kurallar": hashlib.sha256(kurallar.encode("utf-8")).hexdigest()[:16],
-                    "skiller": skiller, "anomali": sorted({f"{a['kural']}:{a['kart']}" for a in anomali}),
+                    "skiller": skiller, "skill_adaylari": sorted(c["id"] for c in skill_adaylari.get("adaylar", [])),
+                    "anomali": sorted({f"{a['kural']}:{a['kart']}" for a in anomali}),
                     "istek_kovasi": len(istekler) // ISTEK_KOVASI,
                     "duzeltme": sorted(b["not"] for b in duzeltme["bulgular"]),
                     "zaman_anomali": sorted({f"{a.get('kural')}:{a.get('hedef')}" for a in zaman.get("anomali") or []})}
@@ -158,6 +171,7 @@ def girdi(sd: str, proje: str, hafiza: str) -> dict:
         "hafiza": {"klasor": hafiza, "dosyalar": dosyalar, "memory_md": memory,
                    "olu_yollar": olu[:60], "olu_yol_sayisi": len(olu), "belirsiz_yollar": belirsiz[:60]},
         "skiller": skiller,
+        "skill_adaylari": skill_adaylari,
         "duzeltme_tekrari": duzeltme,
         "anomali": {"sayim": dict(collections.Counter(a["kural"] for a in anomali)), "ilk": anomali[:25]},
         "kpi": kpi_,
@@ -554,6 +568,43 @@ def rapor_isaretle(rapor: str, hafiza: str, proje: str) -> dict:
     return sonuc
 
 
+def _rapor_skill_adlari(rapor: str) -> dict:
+    """Raporun 'Skill adayları' maddelerinde anılan {küme id: skill adı} (ajan hangi kümeyi gerçek iş saydıysa)."""
+    import onay
+    out = {}
+    try:
+        with open(rapor, encoding="utf-8", errors="replace") as f:
+            metin = f.read()
+    except OSError:
+        return out
+    for bolum, _n, govde in onay._rapor_maddeleri(metin):
+        if bolum != "skill":
+            continue
+        ad = onay._skill_adi(govde.splitlines()[0]).strip("`").lower()
+        for kid in re.findall(r"(?<![\w-])k-[0-9a-f]{8}(?![\w-])", govde):
+            out[kid] = ad
+    return out
+
+
+def _skill_taslaklari(sd: str, rapor: str | None = None) -> list[str]:
+    """Rapor kaydedilince, raporun kümeyi anarak seçtiği skill adayları için onerilen_skill/ taslağı yazılır.
+
+    Neden raporla süzülür: ham kümelerin çoğu sohbet kontrolüdür (gerçek günlükte ölçüldü); gerçek iş mi kararını
+    perspektif ajanı verir, taslağı betik üretir. Rapor yoksa ya da küme anmıyorsa taslak yazılmaz.
+    """
+    try:
+        import skill_taslak
+        secilen = _rapor_skill_adlari(rapor) if rapor else {}
+        if not secilen:
+            return []
+        with open(_girdi_yolu(sd), encoding="utf-8") as f:
+            a = (json.load(f).get("skill_adaylari") or {})
+        adaylar = [c for c in a.get("adaylar") or [] if c.get("id") in secilen]
+        return skill_taslak.uret(sd, adaylar, int(a.get("esik") or 5), secilen)
+    except Exception:
+        return []
+
+
 def kaydet(sd: str, rapor: str, proje: str | None = None) -> dict | None:
     with L.kilit(_durum_yolu(sd)):
         st = _oku(sd)
@@ -568,6 +619,7 @@ def kaydet(sd: str, rapor: str, proje: str | None = None) -> dict | None:
         _yaz(sd, st)
     L.defter_ekle(sd, {"gorev": "-", "surec": "perspektif", "ajan": "orkestra:perspektif-ajani", "model": "sonnet",
                        "yaptim": "Hafıza bakımı ve skill avı (yalnız okuma).", "sonuc": f"Rapor: {rapor}", "kaynak": "perspektif"})
+    _skill_taslaklari(sd, rapor)
     try:  # kanıtı tutmayan iddialar işaretlenir; hata kaydı bozmaz
         proje = proje or L.proje_dizini()
         with open(_girdi_yolu(sd), encoding="utf-8") as f:

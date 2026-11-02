@@ -1,6 +1,5 @@
 """İzin politikası: kabuk ve MCP kapısı, mod/ortam/ezme katmanları, hook uçtan uca, doktor kontrolü."""
 import json
-import re
 import os
 import shutil
 import sys
@@ -230,15 +229,12 @@ class HookUcAdanUca(unittest.TestCase):
             shutil.rmtree(bos, ignore_errors=True)
 
     def test_hooks_json_tum_araclari_kapsar(self):
-        # ADR-0143: Read/Grep/Glob/ToolSearch genel kapıdan çıktı (hız); kimlik klasörü okumaları ikinci girişte kapıdan geçer
+        # eşleşme ".*": Read, Glob, Grep, Agent, Skill gibi araçlar da politikadan geçer (varsayılan Claude Code istemine düşmez)
         with open(os.path.join(KOK, "hooks", "hooks.json"), encoding="utf-8") as f:
-            pre = json.load(f)["hooks"]["PreToolUse"]
-        genel = re.compile(pre[0]["matcher"])
-        for a in ("mcp__github__x", "WebFetch", "WebSearch", "Bash", "PowerShell", "Write", "Agent", "Skill"):
-            self.assertRegex(a, genel)
-        for a in ("Read", "Glob", "Grep", "ToolSearch"):
-            self.assertIsNone(genel.search(a), a)
-        self.assertEqual(pre[1]["matcher"], "Read|Grep|Glob")
+            eslesme = json.load(f)["hooks"]["PreToolUse"][0]["matcher"]
+        self.assertEqual(eslesme, ".*")
+        for a in ("mcp__github__x", "WebFetch", "WebSearch", "Bash", "PowerShell", "Write", "Read", "Glob", "Grep", "Agent", "Skill"):
+            self.assertRegex(a, eslesme)
 
     def test_session_start_politikayi_duyurur(self):
         g = {"session_id": OTURUM, "cwd": self.proje, "hook_event_name": "SessionStart", "source": "startup"}
@@ -266,26 +262,26 @@ class KimlikKapisi(unittest.TestCase):
         return IP.karar(arac, girdi, cfg=dict({"mod": "kapi"}, **cfg))[0]
 
     def test_okuma_her_proje_ve_ortak_icin_serbest(self):
-        for proje in ("DemoRoot", "BaskaProje", "_ortak"):
+        for proje in ("McD", "BaskaProje", "_ortak"):
             y = os.path.join(self.YOL, proje, "db.env")
             self.assertNotEqual(self._k("Read", {"file_path": y}), "deny", y)
             self.assertNotEqual(self._k("Grep", {"pattern": "KEY", "path": os.path.dirname(y)}), "deny", y)
             self.assertNotEqual(self._k("Glob", {"pattern": "*.env", "path": os.path.dirname(y)}), "deny", y)
 
     def test_yazma_ve_kabuk_yasak(self):
-        y = os.path.join(self.YOL, "DemoRoot", "db.env")
+        y = os.path.join(self.YOL, "McD", "db.env")
         for arac in ("Write", "Edit", "NotebookEdit"):
             self.assertEqual(self._k(arac, {"file_path": y}), "deny", arac)
         for arac in ("Bash", "PowerShell"):
             self.assertEqual(self._k(arac, {"command": f"cat {y}"}), "deny", arac)
-            self.assertEqual(self._k(arac, {"command": "type ~/.orkestra/credentials/DemoRoot/db.env"}), "deny", arac)
+            self.assertEqual(self._k(arac, {"command": "type ~/.orkestra/credentials/McD/db.env"}), "deny", arac)
 
     def test_ayar_kapaliyken_okuma_yasak(self):
-        y = os.path.join(self.YOL, "DemoRoot", "db.env")
+        y = os.path.join(self.YOL, "McD", "db.env")
         self.assertEqual(self._k("Read", {"file_path": y}, kimlik_okuma=False), "deny")
 
     def test_ortam_degiskeni_okumayi_kapatir(self):
-        y = os.path.join(self.YOL, "DemoRoot", "db.env")
+        y = os.path.join(self.YOL, "McD", "db.env")
         os.environ["ORKESTRA_KIMLIK_OKUMA"] = "0"
         self.assertEqual(self._k("Read", {"file_path": y}), "deny")
 
@@ -359,12 +355,12 @@ class OnayKapisiKabuk(unittest.TestCase):
     def test_k2_proje_ici_kabuk_yazimi_reddedilir(self):
         p = os.path.join(self.proje, "src", "a.py")
         for arac, komut in (("Bash", f"echo x > {p}"), ("Bash", f"echo x >> {p}"), ("Bash", f"printf x | tee {p}"),
-                            ("Bash", f"cp /tmp/a.py {p}"), ("Bash", f"mv x.py {os.path.join(self.proje, 'src')}"),
+                            ("Bash", f"cp /tmp/a.py {p}"), ("Bash", f"mv x.py {self.proje}/src/"),
                             ("Bash", f"cd {self.proje} && echo x > src/a.py"), ("Bash", f"rm -f {p}"),
                             ("Bash", f"cat > {p} <<'EOF'\nprint(1)\nEOF"),
                             ("PowerShell", f'Set-Content -Path "{p}" -Value x'), ("PowerShell", f"Set-Content '{p}' x"),
                             ("PowerShell", f'"x" | Out-File "{p}"'), ("PowerShell", f'Add-Content -LiteralPath "{p}" -Value x'),
-                            ("PowerShell", f'Copy-Item a.py -Destination "{os.path.join(self.proje, "src")}"'),
+                            ("PowerShell", f'Copy-Item a.py -Destination "{self.proje}\\src"'),
                             ("PowerShell", f"[IO.File]::WriteAllText('{p}', 'x')"),
                             ("PowerShell", "$f = 'x'; Set-Content $f 'y'"),
                             ("Bash", f"echo {{}} > {os.path.join(self.klasor, 'is.json')}")):

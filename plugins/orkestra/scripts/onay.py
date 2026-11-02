@@ -461,7 +461,8 @@ def _kural_durum(r: dict, durum: str, olay: str, not_: str | None = None) -> Non
 
 # ---------------------------------------------------------------- eşitleme
 
-_MADDE = re.compile(r"^(\d+)\.\s+\S")
+# Numaralı ("1.", "1)") ve madde işaretli ("- ", "* ") üst düzey maddeler; girintili satırlar önceki maddenin devamıdır.
+_MADDE = re.compile(r"^(?:(\d+)[.)]|[-*•])\s+\S")
 _CIT = re.compile(r"^\s*(```|~~~)")
 
 
@@ -471,6 +472,7 @@ def _rapor_maddeleri(metin: str) -> list[tuple[str, int, str]]:
     bolum = None
     cur = None
     cit = False
+    sira: dict[str, int] = {}
 
     def kapat():
         nonlocal cur
@@ -486,7 +488,7 @@ def _rapor_maddeleri(metin: str) -> list[tuple[str, int, str]]:
             b = satir.lower()
             if "önerilen" in b:
                 bolum = "oneri"
-            elif "skill" in b and "aday" in b:
+            elif "skill" in b and ("aday" in b or "öner" in b):
                 bolum = "skill"
             else:
                 bolum = None
@@ -496,7 +498,8 @@ def _rapor_maddeleri(metin: str) -> list[tuple[str, int, str]]:
         m = None if cit or _CIT.match(satir) else _MADDE.match(satir)
         if m:
             kapat()
-            cur = (bolum, int(m.group(1)), [satir])
+            sira[bolum] = sira.get(bolum, 0) + 1
+            cur = (bolum, int(m.group(1) or sira[bolum]), [satir])
         elif cur:
             cur[2].append(satir)
     kapat()
@@ -504,7 +507,7 @@ def _rapor_maddeleri(metin: str) -> list[tuple[str, int, str]]:
 
 
 def _skill_adi(ilk_satir: str) -> str:
-    govde = re.sub(r"^\d+\.\s+", "", ilk_satir).strip()
+    govde = re.sub(r"^(?:\d+[.)]|[-*•])\s+", "", ilk_satir).strip()
     m = re.search(r"\*\*(.+?)\*\*", govde)
     return (m.group(1) if m else govde).strip()
 
@@ -637,7 +640,7 @@ def _esitle_perspektif(sd: str) -> None:
         if bolum == "skill":
             baslik = "Skill adayı: " + _skill_adi(ilk)
         else:
-            baslik = re.sub(r"^\d+\.\s+", "", ilk).strip()[:100]
+            baslik = re.sub(r"^(?:\d+[.)]|[-*•])\s+", "", ilk).strip()[:100]
         yayin, bicimli = yayin_ayristir(govde)
         _yeni_kayit(sd, "perspektif", baslik, govde, yol, anahtar, [], None, ek={"yayin": yayin})
     # Daha eski rapordan gelen, hâlâ bekleyen perspektif kayıtları eskir.
@@ -851,12 +854,23 @@ def al(sd: str, id: str, oturum: str) -> dict:
         return k
 
 
+def _skill_dosyasi_sart(sd: str, k: dict) -> None:
+    """tur=skill kaydı 'uygulandı' olamaz: projenin .claude/skills/<ad>/SKILL.md dosyası yoksa skill devreye alınmamıştır."""
+    a = k.get("anahtar") or ""
+    if k.get("tur") != "skill" or not a.startswith("skill:"):
+        return
+    ad = a.split(":", 1)[1]
+    if not os.path.isfile(os.path.join(_proje(sd), ".claude", "skills", ad, "SKILL.md")):
+        raise ValueError(f"{k['id']} uygulandı olamaz: .claude/skills/{ad}/SKILL.md yok (skill devreye alınmadı).")
+
+
 def uygulandi(sd: str, id: str, ozet: str, oturum=None) -> dict:
     os.makedirs(_onay_dizini(sd), exist_ok=True)
     with L.kilit(_kilit_yolu(sd)):
         k = _gerekli(sd, id)
         if k["durum"] not in ("onaylandi", "uygulaniyor"):
             raise ValueError(f"{id} uygulanabilir durumda değil (şu an: {k['durum']}).")
+        _skill_dosyasi_sart(sd, k)
         u = k.get("uygulama") or {"oturum": oturum, "alma_zamani": None}
         if oturum and not u.get("oturum"):
             u["oturum"] = oturum

@@ -52,12 +52,8 @@ class EntegrasyonHatasi(RuntimeError):
 
 def _git(cwd: str, *args: str, check: bool = True) -> subprocess.CompletedProcess:
     env = {k: v for k, v in os.environ.items() if k not in _GIT_SIZINTI}
-    try:
-        r = subprocess.run(["git", "-c", "safe.directory=*", *_GIT_KIMLIK, *args], cwd=cwd, capture_output=True,
-                           text=True, encoding="utf-8", errors="replace", env=env, stdin=subprocess.DEVNULL, timeout=300,
-                           **cfg.PENCERESIZ)
-    except subprocess.TimeoutExpired:
-        r = subprocess.CompletedProcess(args, 124, "", "git zaman aşımı (300 sn)")
+    r = subprocess.run(["git", "-c", "safe.directory=*", *_GIT_KIMLIK, *args], cwd=cwd, capture_output=True,
+                       text=True, encoding="utf-8", errors="replace", env=env, **cfg.PENCERESIZ)
     if check and r.returncode:
         raise EntegrasyonHatasi(f"git {' '.join(args)}: {(r.stderr or r.stdout).strip()[:500]}")
     return r

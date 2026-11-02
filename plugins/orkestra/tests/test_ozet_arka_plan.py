@@ -31,7 +31,7 @@ class OzetArkaPlan(unittest.TestCase):
 
     def test_isci_kirliyi_isler(self):
         self.kirli_yaz(5)
-        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}):
+        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)):
             ozet.isci(self.sd, self.sd)
         self.assertEqual(len(self.cagri), 1)
         self.assertEqual(self.islenen(), 5)
@@ -40,7 +40,7 @@ class OzetArkaPlan(unittest.TestCase):
         self.kirli_yaz(5)
         with open(self.yol + ".islenen", "w") as f:
             f.write("5")
-        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}):
+        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)):
             ozet.isci(self.sd, self.sd)
         self.assertEqual(self.cagri, [])
 
@@ -51,7 +51,6 @@ class OzetArkaPlan(unittest.TestCase):
             self.cagri.append(1)
             if len(self.cagri) == 1:
                 self.kirli_yaz(2)   # hesap sürerken ikinci tetik
-            return {}
 
         with mock.patch.object(ozet, "yaz", side_effect=yavas):
             ozet.isci(self.sd, self.sd)
@@ -69,7 +68,7 @@ class OzetArkaPlan(unittest.TestCase):
                 durum["bumped"] = True
                 self.kirli_yaz(2)   # kos bırakıldı, bitiş kontrolünden önce tetik
 
-        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}), \
+        with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)), \
                 mock.patch("os.close", side_effect=kapat):
             ozet.isci(self.sd, self.sd)
         self.assertEqual(len(self.cagri), 2)
@@ -80,7 +79,7 @@ class OzetArkaPlan(unittest.TestCase):
         fd = ozet._kos_kilidi_al(self.yol)
         self.assertIsNotNone(fd)
         try:
-            with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}):
+            with mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)):
                 ozet.isci(self.sd, self.sd)
             self.assertEqual(self.cagri, [])
             self.assertFalse(os.path.exists(self.yol + ".zaman_asimi.log"))   # log yazmayan non-blocking deneme
@@ -103,7 +102,7 @@ class OzetArkaPlan(unittest.TestCase):
 
     def test_geri_alma_esitzamanli(self):
         with mock.patch.dict(os.environ, {"ORKESTRA_OZET_ESITZAMANLI": "1"}), \
-                mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}), \
+                mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)), \
                 mock.patch.object(ozet.subprocess, "Popen") as popen:
             ozet.yaz_arka_plan(self.sd, self.sd)
         self.assertEqual(self.cagri, [1])
@@ -111,7 +110,7 @@ class OzetArkaPlan(unittest.TestCase):
 
     def test_baslatma_hatasinda_esitzamanli_yola_duser(self):
         with mock.patch.object(ozet.subprocess, "Popen", side_effect=OSError("yok")), \
-                mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1) or {}):
+                mock.patch.object(ozet, "yaz", side_effect=lambda *a: self.cagri.append(1)):
             ozet.yaz_arka_plan(self.sd, self.sd)
         self.assertEqual(self.cagri, [1])
 

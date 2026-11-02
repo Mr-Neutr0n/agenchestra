@@ -130,7 +130,7 @@ def gecikme_yaz(yol: str, sure_s: float, kod: int | None = None) -> None:
                 f.write(json.dumps(satir, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001
         pass
-SURUM = "23"  # sayfa/sunucu sözleşmesi; değişince eski sunucu yeniden başlatılır
+SURUM = "22"  # sayfa/sunucu sözleşmesi; değişince eski sunucu yeniden başlatılır
 GUNCELLEME = panel_guncelleme.Guncelleme()  # eklenti güncelleme durumu (kullanıcı düzeyi, ADR-0039); testte değiştirilir
 
 
@@ -1489,10 +1489,7 @@ def calistir(port: int, durum_yaz: bool = True) -> None:
 def _isit(port: int) -> None:
     """Açılışta ağır uç noktaları bir kez ister; ilk sayfa açılışı soğuk üretimi beklemez (en iyi çaba)."""
     try:
-        # Tarayıcının ilk isteği /alanlar.json'dır: listeyi önbellekli uç noktadan al ki ilk açılış soğuk üretimi (tüm transkript taraması)
-        # ağır uç noktaların ısıtmasıyla yarışarak beklemesin.
-        ham = urllib.request.urlopen(f"http://127.0.0.1:{port}/alanlar.json", timeout=60).read()
-        alanlar = [a["id"] for a in json.loads(ham) if a.get("orkestra")]
+        alanlar = [a["id"] for a in L.calisma_alanlari() if a.get("orkestra")]
     except Exception:  # noqa: BLE001
         return
     for alan in ["*", *alanlar]:   # '*' tarayıcının TEMEL istekleridir (I-312): ilk sayfa açılışı soğuk üretimi beklemesin
