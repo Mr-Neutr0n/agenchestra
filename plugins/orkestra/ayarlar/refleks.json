@@ -1,0 +1,34 @@
+{
+  "mod": "acik",
+  "on_ek": "/ok",
+  "aciklama": "Refleks katmanı (ADR-0149): '/ok <komut>' modelsiz çalışır. mod: acik | kapali. Kapatma: ORKESTRA_REFLEKS=0. Kayıt kuralı: arguman[0] 'orkestra', salt_okur true, kabuk metakarakteri ve {} yok. Proje ezmesi (.claude/orkestra/refleks.json) yalnız {\"mod\": \"kapali\"} ya da {\"kapat\": [ad,...]} ile kapatabilir, kayıt ekleyemez.",
+  "komutlar": [
+    {
+      "ad": "guncelle-kuru",
+      "takma": ["gk"],
+      "arguman": ["orkestra", "update", "--kuru"],
+      "salt_okur": true,
+      "zaman_asimi": 8,
+      "cikti_siniri": 4000,
+      "aciklama": "Eklenti güncellemesinde ne yapılacağını yazar, çalıştırmaz"
+    },
+    {
+      "ad": "isler",
+      "takma": ["acik-isler"],
+      "arguman": ["orkestra", "is", "liste"],
+      "salt_okur": true,
+      "zaman_asimi": 8,
+      "cikti_siniri": 4000,
+      "aciklama": "Açık işlerin listesi"
+    },
+    {
+      "ad": "panel",
+      "takma": [],
+      "arguman": ["orkestra", "panel", "servis", "durum"],
+      "salt_okur": true,
+      "zaman_asimi": 8,
+      "cikti_siniri": 4000,
+      "aciklama": "Panel servisinin durumu ve portu"
+    }
+  ]
+}

@@ -95,6 +95,13 @@ Terminalden sık kullanılanlar:
 - `orkestra harita oku` projenin sistem haritasını (sır yerleri, dış bağlantılar, modüller) basar.
 - `orkestra --help` bütün komutları listeler.
 
+Modelsiz hızlı komutlar (refleks katmanı, ADR-0149): sohbete `/ok <komut>` yaz; model turu açılmaz, 0 token harcanır.
+
+- `/ok isler` açık işleri listeler.
+- `/ok panel` panel servisinin durumunu verir.
+- `/ok gk` (`guncelle-kuru`) güncellemede ne yapılacağını yazar, çalıştırmaz.
+- Komut hata verirse istem normal yoldan modele gider. Kapatma: `ORKESTRA_REFLEKS=0`. Komut listesi: `ayarlar/refleks.json`.
+
 ## 5. Panel
 
 Panel, tarayıcıda açılan canlı bir izleme ekranıdır. `orkestra panel` komutuyla ya da `/orkestra-web` ile başlar ve `http://127.0.0.1:8765/` adresinde yalnız bu bilgisayardan erişilir. Windows'ta panel, ilk oturumda kendiliğinden kurulan "Orkestra Panel" zamanlanmış görevi olarak çalışır: Windows'a oturum açınca başlar, kapanırsa bir dakika içinde yeniden başlar, adres hep aynı kalır. Yönetici hakkı gerekmez. Durum: `orkestra panel servis durum`; kaldırmak için `orkestra panel servis kaldir` (bir daha kurulmaz); otomatik kurulumu kapatmak için `ORKESTRA_PANEL_SERVIS=0`.
