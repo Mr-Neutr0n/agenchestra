@@ -1101,9 +1101,32 @@ def plan_eksikleri(klasor: str) -> list[str]:
     metin = _plan_oku(klasor)
     if metin is None:
         return ["plan.md yok (`orkestra is belge <id> plan`)"]
-    return (_plan_temel_eksikleri(klasor, metin) + mevcut_varlik_eksikleri(klasor) + gap_kapsama_eksikleri(klasor)
-            + bic_engeli(klasor) + uretim_engeli(klasor) + paralellik_engeli(klasor) + jira_bagimlilik_engeli(klasor)
+    on = _plan_temel_eksikleri(klasor, metin) + mevcut_varlik_eksikleri(klasor) + gap_kapsama_eksikleri(klasor)
+    agir = kucuk_kademe_golge(klasor, bic_engeli(klasor) + uretim_engeli(klasor) + paralellik_engeli(klasor))
+    return (on + agir + jira_bagimlilik_engeli(klasor)
             + karar_engeli(klasor) + istek_engeli(klasor) + etki_engeli(klasor))
+
+
+def kucuk_kademe_mi(klasor: str) -> bool:
+    """ADR-0150: is.json `kademe: kucuk` taşıyan sıralı iş (bayraksız işler muaf)."""
+    if not sirali_mi(klasor):
+        return False
+    try:
+        with open(os.path.join(klasor, "is.json"), encoding="utf-8") as f:
+            return json.load(f).get("kademe") == "kucuk"
+    except (OSError, ValueError):
+        return False
+
+
+def kucuk_kademe_golge(klasor: str, agir: list[str]) -> list[str]:
+    """Küçük işte ağır plan kapılarının (best in class, üretim noktası, paralellik) eksiklerini `kapi_golge` olarak yazar.
+
+    Davranış değişmez: eksikler aynen döner. Ölçüm (`orkestra is rapor`): küçük kademede kaç ağır eksik atlanabilirdi.
+    """
+    if agir and kucuk_kademe_mi(klasor):
+        import kapi_mod as KM
+        KM.kaydet(klasor, "kucuk_kademe", f"küçük kademede atlanabilir {len(agir)} ağır plan eksiği: " + "; ".join(agir)[:300])
+    return agir
 
 
 def istek_engeli(klasor: str) -> list[str]:

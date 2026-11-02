@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "Küçük iş kademesi (ADR-0150, I-353). `orkestra is ac --kucuk` is.json'a `kademe: kucuk` koyar; küçük işte ağır plan kapılarının (best in class, üretim noktası, paralellik) eksikleri gunluk.jsonl'a `kapi_golge` (kapi: kucuk_kademe) olarak yazılır, davranış değişmez. ihlal moduna geçiş yok: önce 30 gölge işte elle sınıflama (riskli iş küçük beyan edildi mi, hedef <=1), geçiş ayrı karar ve ADR ister (P-028)."
+}

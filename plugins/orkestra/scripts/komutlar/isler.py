@@ -148,7 +148,7 @@ def cmd_is_ac(a):
             print(f"orkestra: klasör numarası dolu ya da eksik ({ad}); yeni klasör: {klasor}", file=sys.stderr)
     try:
         kayit = _ik().is_ac(sd, a.baslik, klasor, a.etiket, dogrulama=False if a.dogrulamasiz else None,
-                            devral=a.devral)
+                            devral=a.devral, kademe="kucuk" if a.kucuk else None)
     except _ik().IsKlasoruHatasi as e:
         _davranis_kaydet(sd, "is-klasoru-yanlis", str(e))
         hata(str(e))
@@ -1358,6 +1358,8 @@ def kaydet(alt):
     ia.add_argument("--devral", action="store_true",
                     help="klasörde başka işin is.json'u varsa reddetmek yerine devral (yedek alır, oturumları ve kimliği yeni işe bağlar)")
     ia.add_argument("--dogrulamasiz", action="store_true", help="plan ✅/❌ doğrulama bayrağı ve şablonu konmaz (eski plan şablonu)")
+    ia.add_argument("--kucuk", action="store_true",
+                    help="küçük iş (≤4 araç, ≤2 yazılan dosya, kod yok): ağır plan kapıları gölge günlüğe yazılır, davranış değişmez (ADR-0150)")
     ia.set_defaults(f=cmd_is_ac)
     idv = is_.add_parser("devam")
     idv.add_argument("is_id")

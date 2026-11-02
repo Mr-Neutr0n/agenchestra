@@ -433,7 +433,7 @@ def _alt_klasor_onerisi(klasor: str) -> str:
 
 
 def is_ac(sd: str, baslik: str, klasor: str, etiketler=None, dogrulama: bool | None = None,
-          devral: bool = False) -> dict:
+          devral: bool = False, kademe: str | None = None) -> dict:
     """Yeni iş. Kapı açıkken (P-005) iş sıralıdır: ilk dosya mevcut durum iskeletidir, plan.md ve todo.md
     önceki adım tamamlanınca açılır; kapı kapalıyken (ORKESTRA_SIRA_KAPISI=0) eski üç dosya yazılır.
     Sıralı işe ayrıca `dogrulama` bayrağı konur (plan ✅/❌ kapısı); `dogrulama=False` ya da
@@ -498,6 +498,8 @@ def is_ac(sd: str, baslik: str, klasor: str, etiketler=None, dogrulama: bool | N
         if dogrulama:
             import plan_dogrulama as PD
             kayit["dogrulama"] = PD.DOGRULAMA_ADI
+    if kademe == "kucuk":
+        kayit["kademe"] = "kucuk"  # ADR-0150: küçük iş; ağır plan kapıları gölge günlüğe yazılır (kucuk_kademe)
     eski_id = None
     with L.kilit(_is_json_yolu(klasor)):
         if os.path.exists(_is_json_yolu(klasor)):  # klasörde önceki bir işin kaydı varsa ezilmez, yedeklenir
