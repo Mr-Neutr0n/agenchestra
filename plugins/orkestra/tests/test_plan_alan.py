@@ -108,8 +108,6 @@ def _p(no, baslik, gap, iddia, once, yazma, uretim):
 
 **Kabul:** test `tests/test_p{no}.py` geçer.
 
-**Geri alma:** `git revert <commit>`.
-
 **Önce:** {once}
 
 **Yazma alanı:** {yazma}

@@ -53,7 +53,7 @@ Açık bir işe dönmek için `orkestra is devam <id>` kullan. Büyük işler `/
 İş şu sırayla ilerler:
 
 - **Mevcut durum:** Ajan önce var olanı okur ve `mevcut_durum_<tarih>.md` dosyasına yazar. Sonuna hedef ile mevcut arasındaki farkları (gap) ekler.
-- **Plan:** `plan.md` her maddeye ölçülebilir kabul ölçütü ve geri alma yolu yazar. Plandaki iddialar kanıtla doğrulanır (`orkestra plan dogrula <id> --yaz`).
+- **Plan:** `plan.md` her maddeye ölçülebilir kabul ölçütü yazar. Plandaki iddialar kanıtla doğrulanır (`orkestra plan dogrula <id> --yaz`).
 - **Todo:** `todo.md` plan maddelerinden türer. Bir madde ancak kanıt notuyla bitirilir.
 - **Onay:** Sen onaylayana kadar kod, dosya değişikliği, commit ve bağımlılık ekleme yapılmaz.
 - **Uygulama:** Parçalar işçilere dağıtılır, her çıktıyı ayrı denetçi inceler.

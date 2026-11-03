@@ -1142,7 +1142,7 @@ def karar_engeli(klasor: str) -> list[str]:
 
 
 def _plan_temel_eksikleri(klasor: str, metin: str) -> list[str]:
-    """Kapısız (her sıralı işte) plan eksikleri: mevcut durum bağlantısı, P maddeleri, MD dayanağı; kalite işinde Kabul/Geri alma."""
+    """Kapısız (her sıralı işte) plan eksikleri: mevcut durum bağlantısı, P maddeleri, MD dayanağı; kalite işinde Kabul."""
     eksik = []
     md = mevcut_durum_yolu(klasor)
     if md is not None:
@@ -1161,7 +1161,7 @@ def _plan_temel_eksikleri(klasor: str, metin: str) -> list[str]:
             eksik.append(f"P{n}: dayanak MD §{dayanaklar[0]} geçersiz (§1-§{md_son if gapli_mi(klasor) else md_sayi})")
     if kaliteli_mi(klasor):  # ADR-0126: plan `## Özet` taşımaz; ilk satır bölüm başlıklarında `**Sonuç:**`
         for n, blok in sorted(bloklar.items()):
-            for alan in ("Kabul",):  # ADR-0136: Geri alma alanı kalktı
+            for alan in ("Kabul",):  # ADR-0159: yalnız Kabul zorunlu
                 if not alan_dolu(blok, alan):
                     eksik.append(f"P{n}: `**{alan}:**` alanı yok ya da boş (P-018)")
     return eksik
@@ -1217,7 +1217,6 @@ _DUZELTMELER = (  # (eksik metninde aranan, düzeltme şablonu); {h} = madde (P<
     (r"^best in class denetimi:", "denetçi yanıtlar, ana ajan sonucu plan.md'ye yazar; `**Denetçi:** orkestra:denetci <agent_id>` satırı denetçinin kimliğini taşır"),
     (r"LLM çıktısı", "plan.md'ye yaz: `**LLM çıktısı:** yok — <en az 3 sözcük neden>` ya da `kullanıcıya gider — Doğrulama: <test yolu>`"),
     (r"\*\*Kabul:\*\*", "{h} altına yaz: `**Kabul:** <ölçülebilir ölçüt>`"),
-    (r"\*\*Geri alma:\*\*", "{h} altına yaz: `**Geri alma:** <geri alma yolu, örn. git revert>`"),
     (r"yazma alanı kesişiyor", "sonraki maddeye yaz: `**Önce:** P<önceki> — Çakışma: <gerekçe>`"),
     (r"\*\*Yazma alanı:\*\*", "{h} altına yaz: `**Yazma alanı:** scripts/a.py, tests/test_a.py`"),
     (r"\*\*Önce:\*\*", "{h} altına yaz: `**Önce:** yok` ya da `**Önce:** P1 — Çıktı: <gerekçe>`"),

@@ -11,7 +11,6 @@ PLAN = """### P1 Düğme konumu
 **Ne:** düğmeyi sağ kenara sabitle
 **Dokunulan yer:** app.css
 **Kabul:** {kabul}
-**Geri alma:** geri al
 """
 
 

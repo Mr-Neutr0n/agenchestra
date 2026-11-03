@@ -38,8 +38,6 @@ ORNEK_P = """### P1 Şablonu onar
 
 **Kabul:** uyum testi geçer
 
-**Geri alma:** git revert
-
 **Alternatifler:**
 
 - Seçilen: şablonu onarmak. Neden: ihlal şablonda doğuyor.

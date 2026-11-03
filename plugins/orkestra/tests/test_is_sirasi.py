@@ -452,7 +452,7 @@ class GapAnalizi(unittest.TestCase):
 
 
 class KaliteCitasi(unittest.TestCase):
-    """P-018: belge çıtası (Özet, Kabul/Geri alma, kanıtlı todo, planla karşılaştıran çalışma özeti)."""
+    """P-018: belge çıtası (Özet, Kabul, kanıtlı todo, planla karşılaştıran çalışma özeti)."""
 
     def setUp(self):
         import tempfile
@@ -482,7 +482,7 @@ class KaliteCitasi(unittest.TestCase):
         return MD_TAMAM.replace("# Deneme: mevcut durum\n", f"# Deneme: mevcut durum\n\n## Özet\n\n{ozet}\n", 1)
 
     @staticmethod
-    def plan_metni(ozet="Plan özeti burada.", kabul="**Kabul:** testler geçer\n\n**Geri alma:** git checkout\n"):
+    def plan_metni(ozet="Plan özeti burada.", kabul="**Kabul:** testler geçer\n"):
         p = plan_metni().replace("# Deneme: plan\n", f"# Deneme: plan\n\n## Özet\n\n{ozet}\n", 1)
         return p.replace("**Gap:** G1\n", f"**Gap:** G1\n\n{kabul}", 1).replace("**Gap:** G2\n", f"**Gap:** G2\n\n{kabul}", 1)
 
@@ -498,7 +498,13 @@ class KaliteCitasi(unittest.TestCase):
         self.yaz(self.md, self.md_metni("<!-- doldur -->"))
         self.assertTrue(any("boş" in e for e in S.mevcut_durum_eksikleri(self.k)))
 
-    def test_planda_ozet_kabul_geri_alma_zorunlu(self):
+    def test_geri_alma_alani_istenmez(self):  # ADR-0159
+        self.yaz(os.path.join(self.k, "plan.md"), self.plan_metni())
+        e = S.plan_eksikleri(self.k)
+        self.assertFalse(any("Geri alma" in x for x in e), e)
+        self.assertNotIn("Geri alma", "\n".join(S.duzeltme_satiri(x) for x in e))
+
+    def test_planda_ozet_kabul_zorunlu(self):
         self.yaz(os.path.join(self.k, "plan.md"), self.plan_metni(ozet="<!-- doldur -->"))
         self.assertFalse(any("Özet" in e for e in S.plan_eksikleri(self.k)))  # ADR-0126: plan Özet istemez
         self.yaz(os.path.join(self.k, "plan.md"), self.plan_metni(kabul=""))
@@ -507,7 +513,7 @@ class KaliteCitasi(unittest.TestCase):
         self.assertTrue(any(x.startswith("P2:") and "Kabul" in x for x in e), e)
 
     def test_doldur_yer_tutucusu_bos_sayilir(self):
-        self.yaz(os.path.join(self.k, "plan.md"), self.plan_metni(kabul="**Kabul:** <doldur>\n\n**Geri alma:** <doldur> sonra\n"))
+        self.yaz(os.path.join(self.k, "plan.md"), self.plan_metni(kabul="**Kabul:** <doldur> sonra\n"))
         e = S.plan_eksikleri(self.k)
         self.assertTrue(any(x.startswith("P1:") and "Kabul" in x for x in e), e)
         self.assertTrue(S.alan_dolu("**Kabul:** testler geçer; `<doldur>` kalmaz", "Kabul"))  # metin içi alıntı dolu sayılır
