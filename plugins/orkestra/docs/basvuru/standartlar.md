@@ -6,6 +6,7 @@
 
 ## Standartlar
 
+- `bash_komut_yazimi`: Bash komutu yazımı (ADR-0151)
 - `best_in_class`: Best in class standardı (P-030)
 - `commit`: Commit mesajı standardı (Conventional Commits)
 - `dal`: Dal adı standardı
@@ -21,10 +22,10 @@
 - `bulgu`: {baslik}: bulgu
 - `calisma_ozeti`: {baslik}: çalışma özeti ({tarih})
 - `jira_onerisi`: {baslik}: Jira güncelleme önerisi (Jira'ya yazılmadı)
-- `mevcut_durum`: {baslik}: mevcut durum ve bulgular
+- `mevcut_durum`: {baslik}: mevcut durum
 - `plan`: {baslik}
 - `plan_dogrulamali`: {baslik}: plan
 - `plan_sirali`: {baslik}: plan
 - `rapor`: {baslik}: rapor
-- `sozlesme`: {baslik}: sözleşme ve rapor
+- `sozlesme`: {baslik}: görev sözleşmesi
 - `todo`: {baslik}: yapılacaklar

@@ -42,7 +42,7 @@ GET /api/ayarlar              → kullanıcı ayarları: {bildirim: {acik, kayna
 POST /api/ayarlar             → {bildirim: true|false} Windows bildirimini açar/kapatır (makine config'i; ortam değişkeni varsa 409; X-Orkestra: 1, yerel Host, ≤1 KB)
 POST /api/guncelle             → eklenti güncellemesini arka planda başlatır (aynı anda tek koşu, çalışıyorsa 409; X-Orkestra: 1, yerel Host)
 POST /api/guncelle-ertele      → kartı şu anki yeni sürüm için gizler ("Sonra"; daha yeni sürümde döner; X-Orkestra: 1, yerel Host)
-POST /onay?alan=<id>           → karar / simdi-uygula / kural-ekle / kural-duzenle / kural-kaldir (X-Orkestra: 1, yerel Host, ≤64 KB)
+POST /onay?alan=<id>           → karar / soru-yanit / soru-kapat / simdi-uygula / kural-ekle / kural-duzenle / kural-kaldir (X-Orkestra: 1, yerel Host, ≤64 KB)
 GET /kaynaklar                 → Kaynaklar sayfası (kabuk panel.py'de, içerik assets/kaynaklar.js)
 GET /api/kaynaklar[?alan=<id>] → makine geneli test kirası: sahipler (pid, komut, işçi, süre), bekleyenler (bekleme_s), bütçe; alan verilirse kilit zaman aşımı sayıları (I-309 P6; salt okuma)
 GET /saglik                    → "ok"
@@ -735,7 +735,7 @@ def _govde_denetle(g: dict) -> str | None:
     """Gövde alan türlerini denetler; sorun varsa Türkçe hata metni, yoksa None."""
     if not isinstance(g.get("islem"), str):
         return "islem metin olmalı."
-    for ad in ("id", "metin", "sonuc", "neden", "not"):
+    for ad in ("id", "metin", "sonuc", "neden", "not", "yanit"):
         if ad in g and not isinstance(g[ad], str):
             return f"{ad} metin olmalı."
     if g.get("secim") is not None and not isinstance(g["secim"], str):
@@ -802,6 +802,10 @@ def _onay_islemi(sd: str, g: dict):
         return onay.kural_kaldir(sd, g.get("id"), g.get("not") or "")
     if islem == "simdi-uygula":
         return onay.simdi_uygula(sd)
+    if islem == "soru-yanit":   # P-053: Gelen kutusu "Açık sorular" grubu
+        return onay.soru_yanitla(sd, g.get("id"), g.get("yanit") or "", kim="panel")
+    if islem == "soru-kapat":
+        return onay.soru_kapat(sd, g.get("id"), g.get("not") or "gerek yok")
     raise ValueError("bilinmeyen işlem.")
 
 

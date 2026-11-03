@@ -1099,6 +1099,11 @@ def pre_tool_use(inp: dict):
     elif arac not in KABUK_ARACLARI:
         _kapi_uygula(kar, kneden)
     _auto_soru_kapisi(arac, girdi, sd, inp.get("session_id"), aid)
+    try:  # P-053: ana ajanın sorusu açık soru olarak kaydedilir; hata aracı bozmaz
+        import acik_soru
+        acik_soru.yakala(sd, arac, girdi, inp.get("session_id"), aid, _bagli_is(sd, inp.get("session_id")))
+    except Exception:
+        pass
     try:  # I-297 P5: atlanan bölme kaydı; hata aracı bozmaz
         _bolme_kapisi(sd, arac, inp.get("session_id"), aid)
     except SystemExit:
@@ -1718,6 +1723,10 @@ def _secim_kapisi_yanit(sd: str, oid, inp: dict) -> None:
         if izin_politikasi._auto_modu(sd, oid):  # ADR-0086: /auto kullanıcıya seçim yaptırmaz, ekran hatırlatması susar
             return
         tetik = SH.yapisal_tetik(inp.get("transcript_path"), inp.get("last_assistant_message"), sd)
+        if tetik == "teklif_sonu" or (SH.yanit_ihlali(inp.get("last_assistant_message"), sd)
+                                      and not SH.secim_ekrani_sunuldu(inp.get("transcript_path"), sd)):
+            import acik_soru  # P-053: düz metin soru kaybolmasın, açık soru olarak kalır
+            acik_soru.metin_kaydet(sd, inp.get("last_assistant_message"), oid, inp.get("agent_id"), _oturum_isi(sd, oid))
         if tetik:
             ykip = SH.yapisal_mod(SH.ayar_oku(sd))
             L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kural_ihlal",
@@ -3394,6 +3403,11 @@ def user_prompt_submit(inp: dict):
                     parcalar.append(ob)
             except Exception:
                 pass
+            try:  # P-053: düğme etiketiyle gelen mesaj açık soruyu kapatır (bağlam satırından önce)
+                import acik_soru
+                acik_soru.mesaj_yaniti(sd, inp.get("session_id"), metin)
+            except Exception:
+                pass
             try:  # panel onay kararları: hata hook'u düşürmez
                 import onay
                 om = onay.baglam_metni(sd, inp.get("session_id"), "UserPromptSubmit")
@@ -3529,6 +3543,11 @@ def post_tool_use(inp: dict):
     g = inp.get("tool_input") or {}
     _son_arac_yaz(sd, inp.get("agent_id"))  # sessizlik saati: her araç çağrısı ajanın son-araç zamanını tazeler
     if arac == "AskUserQuestion":  # ADR-0078: seçim ekranı yanıtı P-016 onay kanalıdır; kendi dalında çıkar
+        try:  # P-053: yanıtlanan soru açık sorulardan düşer
+            import acik_soru
+            acik_soru.ekran_yaniti(sd, g, inp.get("tool_response"), inp.get("session_id"), inp.get("agent_id"))
+        except Exception:
+            pass
         _ekran_onayi(sd, inp)
         gec()
     if arac == OTURUM_BASLAT:

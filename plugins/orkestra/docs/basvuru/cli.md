@@ -6,7 +6,7 @@ Kaynak: `scripts/orkestra.py` ve komut modülleri. Aşağıdaki metin `orkestra 
 
 ```text
 usage: orkestra [-h]
-                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,bekleme,oturum,teslim,git} ...
+                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,oturum,teslim,git} ...
 
 orkestra — görev kartları, ortak defter, token defteri ve perspektif için komut satırı aracı.
 
@@ -60,7 +60,7 @@ Kullanım (ajanlar Bash'ten çağırır; `orkestra` plugin bin/ ile PATH'tedir):
 `--ajan-id/--ajan-tipi` argümanlarını PreToolUse hook'u ekler; elle verilenler silinir.
 
 positional arguments:
-  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,bekleme,oturum,teslim,git}
+  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,oturum,teslim,git}
     update (guncelle)   yayın klonunu GitHub'dan çek, kurulu plugin'leri kendi
                         kapsamıyla güncelle (LLM'siz)
     niyet               sohbetin şu an ne yaptığını ve neye yarayacağını
@@ -110,7 +110,6 @@ positional arguments:
     olay                olay kaydı: tür, kategori, sonuç ve gidiş yolu
                         önerileri (salt okuma)
     kapi                kapı modları: etkin modu ayardan oku
-    bekleme             bekleme kaydı: beklerken bağımsız iş (ADR-0146)
     oturum              oturumlar arası farkındalık: canlı oturumlar, not
                         bırak/oku, ölçüm
     teslim              teslim kuyruğu: işi toplu entegrasyon koşusuna ver

@@ -12,7 +12,7 @@
     "\\b(iki|üç|birkaç)\\s+(yol|seçenek|yöntem)(dan|den|lardan|lerden)?\\s+birini\\s+seç\\w*",
     "\\b(yollardan|seçeneklerden|yöntemlerden)\\s+birini\\s+seç\\w*",
     "\\bister\\s+misin(iz)?\\s*\\?",
-    "\\byoksa\\b[^.\\n?]{0,100}\\?",
+    "(?:^|[.!?:\\n]\\s*|,\\s*|\\bm[ıiuü]\\s+)\\byoksa\\b(?:\\d\\.|[^.\\n?]){0,160}\\?",
     "\\byap\\W{0,3}\\s*(de|dem|dey|ders|yaz)\\w*[^.\\n]{0,30}\\byeter\\w*",
     "(?<![\\w-])yap[\"'“”]{0,2}\\s+(dersen|derseniz|dediğinde|dediğin\\s+anda|deyin)\\b[^.\\n]{0,80}\\b\\w+([ıiuü]r[ıiuü]m|[ae]r[ıi]m|[ae]y[ıi]m|[ae]r[ıi]z|[ıiuü]r[ıi]z)\\b",
     "\\bonay\\s+ver(irsen|irseniz|in|ir\\s+misin\\w*)\\b",
@@ -21,7 +21,9 @@
     "\\b\\w+(ay[ıi]m|ey[ıi]m)\\s+m[ıi]\\s*\\?",
     "\\b(onay|karar|yanıt|cevap|talimat|istek|go-ahead)\\w*\\s+bekl(iyor|eniyor)\\w*",
     "\\b(istiyorsan(ız)?|istersen|isterseniz|uygunsa|onaylıyorsan(ız)?|olursa)\\b.*\\b(de|deyin|yaz|yazın|söyle|söyleyin|bildir|bildirin|onayla|onaylayın|haber\\s+ver\\w*)[.!]?$",
-    "[\"“'‘]\\s*(yap|evet|tamam|onay\\w*|devam|başla|uygula)\\w*\\s*[\"”'’]?\\s*(de|deyin|yaz|yazın|dersen|diyin)[.!]?$"
+    "[\"“'‘]\\s*(yap|evet|tamam|onay\\w*|devam|başla|uygula)\\w*\\s*[\"”'’]?\\s*(de|deyin|yaz|yazın|dersen|diyin)[.!]?$",
+    "\\b\\w+(ay[ıi]m|ey[ıi]m)\\s+m[ıi]\\s*,\\s*yoksa\\b",
+    "\\b\\w+(el[ıi]m|al[ıi]m)\\s+m[ıi]\\s*\\?"
   ],
   "yapisal_mod": "golge",
   "degisiklik_araclari": [

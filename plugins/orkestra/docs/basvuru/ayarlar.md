@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 86 ayar; `açıklama yok` işaretli: 31.
+Toplam 89 ayar; `açıklama yok` işaretli: 31.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -14,8 +14,8 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `auto_karar_alan` | golge | mod: golge = auto işin çalışma özetinde `## Otomatik kararlar` girdilerinde karar, gerekçe, alternatifler ya da geri alma alanı eksikse uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, is kapat engellenmez; ihlal = a… |
 | `auto_kararlar` | ihlal | mod: golge = auto modundaki işin çalışma özetinde `## Otomatik kararlar` bölümü yok ya da boşsa uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, is kapat engellenmez; ihlal = bölüm olmadan özet doldurulmuş sayılmaz. |
 | `bagsiz_kabuk` | ihlal | mod: ihlal = bağsız oturumda geçici dizin dışına dosya yazan kabuk komutu reddedilir ve gunluk.jsonl'a kapi_ret düşer; golge = yalnız kapi_golge kaydı, iş engellenmez. |
+| `bash_sozdizimi` | golge | açıklama yok |
 | `bekleme_kapisi` | golge | açıklama yok |
-| `bekleme_kaydi` | golge | açıklama yok |
 | `belge_bicim` | — | açıklama yok |
 | `belge_duzelt` | acik | açıklama yok |
 | `best_in_class` | ihlal | P-030 best in class kapısı. |
@@ -36,11 +36,11 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `hafiza_duzeltme` | ihlal | açıklama yok |
 | `harita_etki` | golge | ADR-0118 etki kapısı: isteğin konu kartlarına eşlenen yüzeyleri plan maddelerinin `**Etki:**` alanında anılmalı. |
 | `harita_iliski` | — | Proje bilgi grafiği şeması (ADR-0118, I-296). |
+| `hata_onleme_siniflari` | — | ADR-0151 P4: tekrar eden hata imzası → önleme basamağı (standartlar/onleme_merdiveni.md L0-L6) ve sahip (sorunun doğduğu kaynak). |
 | `hedef` | — | açıklama yok |
 | `iddia_dogrula` | — | iddia-dogrula skill varsayılanları. |
 | `is_baglama` | etkin | açıklama yok |
 | `is_esleme` | — | açıklama yok |
-| `is_talebi` | golge | mod: golge = aynı todo işi başka canlı oturumda ise uyarılır ve gunluk.jsonl'a kapi_golge/is_talebi düşer, hiçbir şey engellenmez; ihlal = ikinci talep reddedilir ve madde sahibe devredilir; kapali = kayıt yok. |
 | `istek_defteri` | golge | ADR-0112 istek defteri kapısı. |
 | `iz_kapsama` | — | açıklama yok |
 | `izin_politikasi` | genis | genis: kapı dışındaki her araç çağrısı onaysız (hook allow; kullanıcının settings deny/ask kuralları yine geçerli). |
@@ -58,6 +58,7 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `konu_defteri` | golge | ADR-0116 sohbet konu defteri. |
 | `konu_kaymasi` | etkin | Kayma sınıflayıcısı (I-297 P4, ADR-0114). |
 | `kpi_esikleri` | — | açıklama yok |
+| `kucuk_kademe` | golge | Küçük iş kademesi (ADR-0150, I-353). |
 | `kuyruk` | golge | mod: golge = oturum teslimi kuyruğa verilmeden (orkestra teslim kuyruk ekle) tam paket koşulduysa ya da kuyruk eksiği varsa uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, iş engellenmez; ihlal = eksik varsa reddedi… |
 | `main_kopya_kapisi` | golge | Korunan deponun birincil main kopyasına Edit/Write (I-302, ADR-0122). |
 | `mcp_kimlik` | — | MCP kimlik kaydı (ADR-0096, ADR-0097). |
@@ -78,6 +79,7 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `perspektif_zaman` | — | açıklama yok |
 | `plan_dogrulama` | ihlal | mod: golge = todo yazımı engellenmez, uyarı verilir ve gunluk.jsonl'a düşer; ihlal = engelli P<n> için todo yazımı reddedilir. |
 | `postgres_mcp` | — | postgres-mcp sarmalayıcısı (scripts/postgres_mcp.py) varsayılanları. |
+| `refleks` | acik | Refleks katmanı (ADR-0149): '/ok <komut>' modelsiz çalışır. |
 | `secim_ekrani_hatirlatma` | block | açıklama yok |
 | `sef_ozeti` | ihlal | İki katmanlı Şef Özeti kapısı (ADR-0085, ADR-0091). |
 | `sir_kaliplari` | — | açıklama yok |
@@ -91,6 +93,7 @@ Toplam 86 ayar; `açıklama yok` işaretli: 31.
 | `uretim_enjeksiyonu` | etkin | ADR-0111, P-045: Write/Edit hedefi bir belge türüne denkse ilgili kapı kuralı yazım anında kısa bağlam olarak eklenir (merdiven L4). |
 | `uretim_noktasi` | ihlal | K-006 üretim noktası kapısı (ADR-0069). |
 | `uretim_olcum` | — | ADR-0111 etki ölçümü. |
+| `yapamam_kaniti` | golge | ADR-0153 (P-045): yanıtta gerçek yapamama iddiası denenen komut ya da engel kanıtı olmadan yazılmışsa günlüğe kapi_golge / yapamam_kaniti düşer. |
 | `yetki` | — | Yeni işlerin ve iş bağlanmamış oturumların varsayılan çalışma modu: plan \| auto. |
 | `yontem_enjeksiyonu` | etkin | ADR-0068: best in class yöntemi (standartlar/best_in_class.md '## Üretim anı' bölümü) iş mesajlarında ana ajana, kartlı işçilerde SubagentStart'ta bağlama eklenir. |
 | `zaman_etkin` | — | I-257/I-259: ana tur süresi (zaman.jsonl tur=ana sure_ms) bu eşiği (dakika) aşarsa kullanıcı beklemesi sayılır ve etkin_ms 0 yazılır; eşiğin altındaki turda etkin_ms = sure_ms. |
