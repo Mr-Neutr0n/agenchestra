@@ -3391,9 +3391,12 @@ def user_prompt_submit(inp: dict):
                         parcalar.append(satir)
             except Exception:
                 pass
-            try:  # I-271: önceki tur pahalıysa (önbellek okuması eşik üstü) tek satır devir ipucu; engellemez
+            devir_metni = ""
+            try:  # I-271: önceki tur pahalıysa sabit devir uyarısı kullanıcıya gider (systemMessage), modele yalnız düğme yönergesi (ADR-0154)
                 import devir_esigi
-                parcalar.append(devir_esigi.ipucu_al(sd, inp.get("session_id")))
+                devir_metni = devir_esigi.ipucu_al(sd, inp.get("session_id"))
+                if devir_metni:
+                    parcalar.append(devir_esigi.YONERGE)
             except Exception:
                 pass
             try:  # I-319 P6: çıktı bütçesi deneyi; kontrol kolunda boş, metin ≤200 karakter, hata hook'u düşürmez
@@ -3435,7 +3438,9 @@ def user_prompt_submit(inp: dict):
                 uyari = _is_degisimi_uyarisi(sd, inp.get("session_id"), inp.get("transcript_path"), metin)
             except Exception:
                 uyari = ""
-            if not uyari:  # I-159 P5: büyük bağlamda devir uyarısı (iş değişimi uyarısıyla aynı kanal, engellemez)
+            if devir_metni:  # aynı turda tek devir uyarısı: pahalı tur uyarısı varsa bağlam uyarısı atlanır (ADR-0154)
+                uyari = "\n".join(u for u in (uyari, devir_metni) if u)
+            elif not uyari:  # I-159 P5: büyük bağlamda devir uyarısı (iş değişimi uyarısıyla aynı kanal, engellemez)
                 try:
                     import soguk_onbellek
                     uyari = soguk_onbellek.devir_uyarisi(sd, inp.get("session_id"), inp.get("transcript_path")) or ""

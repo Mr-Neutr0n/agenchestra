@@ -142,29 +142,57 @@ class HookBaglantisi(_Ortak):
             for s in satirlar:
                 f.write(json.dumps(s) + "\n")
 
-    def baglam(self):
+    def cikti(self):
+        """UserPromptSubmit çıktısından (systemMessage, additionalContext) çifti."""
         ham = self.calistir(hook.user_prompt_submit, {"prompt": "devam"})
+        sistem, baglam = "", ""
         for satir in ham.strip().splitlines():
             try:
-                h = json.loads(satir).get("hookSpecificOutput") or {}
+                d = json.loads(satir)
             except ValueError:
                 continue
-            if h.get("additionalContext"):
-                return h["additionalContext"]
-        return ""
+            sistem = sistem or d.get("systemMessage") or ""
+            baglam = baglam or (d.get("hookSpecificOutput") or {}).get("additionalContext") or ""
+        return sistem, baglam
 
-    def test_stop_pahali_tur_sonraki_mesaja_ipucu_ekler(self):
+    def baglam(self):
+        return self.cikti()[1]
+
+    def test_stop_pahali_tur_sabit_systemmessage_ve_dugme_yonergesi(self):  # S2, S3
         self.transkript(7_000_000)
         self.calistir(hook.stop, {})
-        ek = self.baglam()
-        self.assertIn("Orkestra (pahalı tur)", ek)
-        self.assertIn("7.0 M", ek)
-        self.assertNotIn("pahalı tur", self.baglam())  # ikinci mesajda tekrar yok
+        sistem, ek = self.cikti()
+        self.assertIn("Orkestra: oturum uzadı.", sistem)
+        self.assertIn("7.0 M", sistem)
+        self.assertNotIn("7.0 M", ek)  # serbest metin modele gitmez
+        self.assertIn(DE.DUGME_DEVIR, ek)  # yönerge iki düğme etiketini taşır
+        self.assertIn(DE.DUGME_SURDUR, ek)
+        sistem2, ek2 = self.cikti()  # ikinci mesajda tekrar yok
+        self.assertEqual(sistem2, "")
+        self.assertNotIn(DE.DUGME_DEVIR, ek2)
 
     def test_stop_ucuz_tur_ipucu_eklemez(self):
         self.transkript(1_000_000)
         self.calistir(hook.stop, {})
-        self.assertNotIn("pahalı tur", self.baglam())
+        self.assertEqual(self.cikti()[0], "")
+        self.assertNotIn(DE.DUGME_DEVIR, self.baglam())
+
+    def test_ayni_girdi_iki_cagri_ayni_metin(self):  # S2
+        self.assertEqual(DE.devir_metni("a", "b"), DE.devir_metni("a", "b"))
+        self.assertIn("\n", DE.devir_metni("a", "b"))  # dikey düzen
+
+    def test_ihlal_serbest_cumle_modele_gitmez(self):  # S4: eski kodda ek içinde "token önbellek okudu" vardı
+        self.transkript(7_000_000)
+        self.calistir(hook.stop, {})
+        self.assertNotIn("önbellek okudu", self.cikti()[1])
+
+    def test_ihlal_iki_devir_uyarisi_ayni_turda(self):  # S4: pahalı tur ve 200k bağlam uyarısı aynı turda tek uyarı
+        self.transkript(7_000_000)
+        with open(os.path.join(self.sd, "onbellek_kapisi.json"), "w", encoding="utf-8") as f:
+            json.dump({"acik": False, "devir_uyarisi": True, "devir_esik_token": 1, "is_degisimi": False}, f)
+        self.calistir(hook.stop, {})
+        sistem, _ = self.cikti()
+        self.assertEqual(sistem.count("Orkestra: oturum uzadı."), 1)
 
 
 if __name__ == "__main__":
