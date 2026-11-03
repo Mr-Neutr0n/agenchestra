@@ -1,0 +1,7 @@
+{
+  "mod": "golge",
+  "n_min": 60,
+  "wilson_alt_min": 0.75,
+  "kisa_mesaj_uzunluk": 15,
+  "aciklama": "ADR-0156 niyet defteri kapısı. Ajan bir kullanıcı isteği için niyet yazmadan turu bitirirse gunluk.jsonl'a kapi_golge (kapi=niyet_defteri) düşer, iş engellenmez (P-028). Ölçüm: orkestra niyetler rapor; payda = kısa onay olmayan her istek, yazılan = en az 1 niyet kaydı olan istek (kapsama). Uzunluk vekiliyle 'çok niyetli' ayırmak 30 gerçek mesajlık elle etiketli örnekte kesinlik %43 verdi, bu yüzden kullanılmaz; istek başına ortalama niyet yalnız bilgidir. ihlal geçişi: en az n_min istek ve kapsama oranının Wilson alt sınırı en az wilson_alt_min ise, ayrı kararla ve ADR ile. Kapatma: ORKESTRA_NIYET_DEFTERI=0. Proje ezmesi: .claude/orkestra/niyet_defteri.json."
+}

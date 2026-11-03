@@ -417,7 +417,8 @@ def _gunluk_istekleri(proje: str, sinir: datetime.datetime) -> list[dict]:
     out = []
     for o in L.jsonl_oku(os.path.join(proje, ".claude", "orkestra", "gunluk.jsonl")):
         if o.get("tur") == "istek" and (_zaman(o.get("zaman")) or sinir) >= sinir and not str(o.get("metin", "")).startswith("<"):
-            out.append({"zaman": o["zaman"], "oturum": o.get("oturum"), "proje": proje, "tur": "istek", "metin": o.get("metin")})
+            out.append({"zaman": o["zaman"], "oturum": o.get("oturum"), "proje": proje, "tur": "istek",
+                        "metin": o.get("metin") or o.get("ne")})  # yeni kayıtta ham metin yok, ne özeti var (ADR-0156)
     return out
 
 

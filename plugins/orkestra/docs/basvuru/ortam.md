@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 122 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -76,6 +76,7 @@ Kaynakta geçen 122 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_MCP_BETIK` | mcp.py |
 | `ORKESTRA_MEVCUT_KAPISI` | hook.py, kart.py, test_paralel.py |
 | `ORKESTRA_MOD_KAPISI` | is_onay.py |
+| `ORKESTRA_NIYET_DEFTERI` | niyet_defteri.py |
 | `ORKESTRA_ONAY_KAPISI` | hook.py, is_kaydi.py, is_onay.py |
 | `ORKESTRA_ONLEME_YANIT` | onleme_yanit.py |
 | `ORKESTRA_ON_BAGLAM` | on_baglam.py |

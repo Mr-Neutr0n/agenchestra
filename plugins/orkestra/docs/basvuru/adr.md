@@ -67,3 +67,4 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0151](../../../../adr/ADR-0151-bash-sozdizimi-kapisi-bash-n-ile-komut-kosmadan-ret.md) | Bash sözdizimi kapısı: bash -n ile komut koşmadan ret | Kabul edildi |
 | [ADR-0153](../../../../adr/ADR-0153-yapamam-iddiasi-kanit-turu-kapisi-golge-modda.md) | Yapamam iddiası kanıt türü kapısı gölge modda | Kabul edildi |
 | [ADR-0154](../../../../adr/ADR-0154-acik-sorular-gelen-kutusu.md) | Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur | Kabul edildi |
+| [ADR-0156](../../../../adr/ADR-0156-niyet-defteri-atomik-niyet-kaydi-ham-mesaj-yok.md) | Niyet defteri: atomik niyet kaydı, ham mesaj yok | Kabul edildi |

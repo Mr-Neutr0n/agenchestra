@@ -48,6 +48,7 @@ açık işler: <rapor bağlantısı>
    ```
    - Her kullanıcı mesajına `U1, U2…` kimliği verir; tur sürerken gönderilenler dahil. Argümansız slash komutları, skill gövdesi ve meta mesajlar elenir.
    - Her mesajın altına o aradaki yapılanları koyar: değişen dosyalar, komut açıklamaları, hatalar, başlatılan oturumlar, asistanın son cümlesi.
+   - `niyet_defteri`: ajanın sohbet sırasında yazdığı niyetler (id, niyet_tur, ne, kriter, durum, kanit; ADR-0156). Doluysa U-etiketleme bunu esas alır: `acik` ya da `kismen` niyet açık aday, `karsilandi` niyet kanıtıyla kapalı; boşsa yukarıdaki transkript çıkarımı tek kaynaktır.
    - `dosyalar_yok`: yazılan ama şimdi diskte olmayan dosyalar (varlık kontrolü betikte). `eylem_yok: true`: salt soru-cevap turu (CEVAPLANDI adayı).
    - **Açık adayları** buradan başla: `plan_son_durum` içinde tamamlanmayan maddeler; `cevapsiz_soru` (asistanın son turdaki cevapsız sorusu); `dosyalar_yok`; `hatalar`. Her aday ya açık iş olur ya da kapalı olduğuna dair kanıt yazılır.
 2. **Konulara grupla (model).** Konu = tek amaç. Dağınık mesajlar birleşir; belirsizse ayrı konu. Her konuya kısa ad ve `U` kimlikleri yazılır. Hook/oturum açılış bağlamı kullanıcı isteği değildir.

@@ -2041,6 +2041,12 @@ def stop(inp: dict):
             konu_defteri.stop_kontrol(sd, oid)
     except Exception:
         pass
+    try:  # ADR-0156: istek için niyet yazılmadıysa gölge kaydı (engellemez)
+        import niyet_defteri_kapi
+        if not inp.get("agent_id"):
+            niyet_defteri_kapi.stop_kontrol(sd, oid)
+    except Exception:
+        pass
     baglam = ""
     try:
         esleme = B.esleme_oku(sd)
@@ -3265,7 +3271,7 @@ def user_prompt_submit(inp: dict):
             if ne:
                 istek["ne"] = ne
         L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": inp.get("session_id"), "tur": "istek",
-                                                         "metin": metin[:300], "uzunluk": len(metin), **istek})
+                                                         "uzunluk": len(metin), **istek})  # ham mesaj yazılmaz (ADR-0156)
         # Niyet kaydı: kullanıcı yazdı → Claude çalışıyor. Sistem iletileri (<agent-message>, <task-notification>) istek metni sayılmaz.
         import niyet
         sistem = metin.lstrip().startswith("<")
@@ -3276,12 +3282,19 @@ def user_prompt_submit(inp: dict):
                 neden = soguk_onbellek.karar(sd, inp.get("session_id"), inp.get("transcript_path"))
             except Exception:
                 neden = None
-        niyet.olay(inp.get("session_id"), L.proje_dizini(inp.get("cwd")), "istek", metin=None if sistem else metin[:200])
+        niyet.olay(inp.get("session_id"), L.proje_dizini(inp.get("cwd")), "istek", metin=None if sistem else (istek.get("ne") or None))
         if not sistem:
             parcalar = [asili_uyari(sd, inp.get("session_id")),
                         _yonlendirme_ipucu(sd, inp.get("session_id"), metin, L.proje_dizini(inp.get("cwd")),
                                            cwd=inp.get("cwd"))]
             _niyet_otomatik(sd, inp.get("session_id"), L.proje_dizini(inp.get("cwd")), metin)  # iş açıldıktan sonra
+            try:  # ADR-0156: niyet defteri yönergesi (ajan mesajdaki niyetleri yazar); hata hook'u düşürmez
+                import niyet_defteri_kapi
+                ny = niyet_defteri_kapi.yonerge(sd, istek.get("istek_id"), metin) if not inp.get("agent_id") else ""
+                if ny:
+                    parcalar.append(ny)
+            except Exception:
+                pass
             try:  # ADR-0116: sohbet konu defteri (ilk konu, tur sayacı, aday); hata hook'u düşürmez
                 import konu_defteri
                 kh = konu_defteri.hook_istek(sd, inp.get("session_id"), metin) if not inp.get("agent_id") else ""

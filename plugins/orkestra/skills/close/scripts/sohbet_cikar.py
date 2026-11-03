@@ -112,7 +112,33 @@ class Plan:
                 self.maddeler[i - 1]["durum"] = "in_progress"
 
 
-def cikar(dosya, cikti):
+def defter_oku(oturum, yol=None):
+    """Niyet defterinden (ADR-0156) oturumun niyetlerini güncel durumla döner; defter yoksa boş liste.
+
+    Kapanış, kullanıcı mesajlarından niyeti yeniden çıkarmak yerine ajanın anında yazdığı kaydı okur."""
+    yol = yol or os.path.join(os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd(), ".claude", "orkestra", "niyetler.jsonl")
+    niyetler, sira = {}, []
+    try:
+        with open(yol, encoding="utf-8") as f:
+            for l in f:
+                try:
+                    k = json.loads(l)
+                except ValueError:
+                    continue
+                if oturum and k.get("oturum") != oturum:
+                    continue
+                if k.get("tur") == "niyet":
+                    niyetler[k["id"]] = {**k, "durum": "acik", "kanit": None}
+                    sira.append(k["id"])
+                elif k.get("tur") == "durum" and k.get("id") in niyetler:
+                    niyetler[k["id"]]["durum"] = k.get("durum")
+                    niyetler[k["id"]]["kanit"] = k.get("kanit")
+    except OSError:
+        return []
+    return [{a: niyetler[i].get(a) for a in ("id", "istek_id", "niyet_tur", "ne", "kriter", "durum", "kanit")} for i in sira]
+
+
+def cikar(dosya, cikti, defter=None):
     satirlar = []
     with open(dosya, encoding="utf-8") as f:
         for l in f:
@@ -214,6 +240,7 @@ def cikar(dosya, cikti):
         "plan_son_durum": plan.maddeler,
         "cevapsiz_soru": cevapsiz,
         "turlar": [t for t in turlar if t["kaynak"] == "kullanici"],
+        "niyet_defteri": defter_oku(os.path.splitext(os.path.basename(dosya))[0], defter),
         "sistem_olaylari": sum(1 for t in turlar if t["kaynak"] == "sistem"),
     }
     os.makedirs(os.path.dirname(os.path.abspath(cikti)), exist_ok=True)
@@ -361,6 +388,7 @@ def main():
     c.add_argument("--oturum")
     c.add_argument("--dosya")
     c.add_argument("--cikti", required=True)
+    c.add_argument("--defter", help="niyetler.jsonl yolu (varsayılan: proje durum klasörü)")
     d = alt.add_parser("denetle")
     d.add_argument("rapor")
     d.add_argument("--girdi", required=True)
@@ -372,7 +400,7 @@ def main():
     if a.komut == "cikar":
         if not (a.oturum or a.dosya):
             sys.exit("HATA: --oturum ya da --dosya gerekli")
-        cikar(a.dosya or kayit_bul(a.oturum), a.cikti)
+        cikar(a.dosya or kayit_bul(a.oturum), a.cikti, a.defter)
         return 0
     return denetle(a.rapor, a.girdi)
 

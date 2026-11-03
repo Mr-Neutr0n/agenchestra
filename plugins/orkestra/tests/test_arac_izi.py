@@ -296,7 +296,7 @@ class NeAlani(_Ortak):
         r = self.istek()
         self.assertIn("Bu hatayı düzelt", r["ne"])
         self.assertNotIn("Sonra", r["ne"])
-        self.assertEqual(r["metin"], "Bu hatayı düzelt. Sonra testleri çalıştır ve raporla.")  # mevcut alan değişmez
+        self.assertNotIn("metin", r)  # ham mesaj günlüğe yazılmaz (ADR-0156)
 
     def test_k3_soru_ve_unlem_cumle_sonu(self):
         self.prompt("Bu neden çöküyor? Bakar mısın")

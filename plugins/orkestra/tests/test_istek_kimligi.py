@@ -178,7 +178,8 @@ class Istek(_Ortak):
         self.assertEqual(len(s), 1)
         self.assertRegex(s[0].get("istek_id") or "", ID_RE)
         self.assertEqual(s[0]["istek_id"], f"{KISA}-0001")
-        self.assertEqual(s[0]["metin"], "merhaba dünya")  # mevcut alanlar değişmez
+        self.assertNotIn("metin", s[0])  # ham mesaj günlüğe yazılmaz (ADR-0156)
+        self.assertEqual(s[0]["ne"], "merhaba dünya")
 
     def test_k2_iki_mesaj_iki_farkli_kimlik(self):
         self.prompt("bir")

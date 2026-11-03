@@ -6,7 +6,7 @@ Kaynak: `scripts/orkestra.py` ve komut modülleri. Aşağıdaki metin `orkestra 
 
 ```text
 usage: orkestra [-h]
-                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,oturum,teslim,git} ...
+                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git} ...
 
 orkestra — görev kartları, ortak defter, token defteri ve perspektif için komut satırı aracı.
 
@@ -51,6 +51,7 @@ Kullanım (ajanlar Bash'ten çağırır; `orkestra` plugin bin/ ile PATH'tedir):
   orkestra standart liste | goster AD | yol AD | ekle AD   (ekip yapı standartları: PR, commit, dal, review, Jira yorumu; ADR-0006)
   orkestra niyet --ne "şu an ne yapılıyor" --neden "neye yarayacak" | --sonuc "ne çıktı" | --goster   (yalnız ana ajan)
   orkestra konu ac "başlık" [--neden N] | liste [--oturum O] [--json] | rapor [--gun N] [--tum] [--etiket] [--yaz DOSYA] [--json]   sohbet konu defteri (ADR-0116)
+  orkestra niyetler ekle TÜR "niyet" [--kriter K] [--kisit K] [--ilgili ID] | durum ID DURUM [--kanit K] | liste [--json] | rapor [--json]   niyet defteri (ADR-0156)
   orkestra is istek I-nnn [--mesaj-dosya DOSYA | --mesaj METİN] [--talep METİN]...   kullanıcı mesajındaki bağlantıları ve taleplerini istek_defteri.md'ye R1…Rn yazar (ADR-0112)
   orkestra is dalga I-nnn|KLASÖR|plan.md [--yaz] [--json-cikti DOSYA] [--basamak T2]   plan → dalgalar, kritik yol, `## Dalgalar`, kart JSON'u
   orkestra oturum liste [--json] | not HEDEF "metin" | oku | rapor [--gun N]   oturumlar arası farkındalık ve not (veri, talimat değil; ADR-0125)
@@ -60,7 +61,7 @@ Kullanım (ajanlar Bash'ten çağırır; `orkestra` plugin bin/ ile PATH'tedir):
 `--ajan-id/--ajan-tipi` argümanlarını PreToolUse hook'u ekler; elle verilenler silinir.
 
 positional arguments:
-  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,paralel,olay,kapi,oturum,teslim,git}
+  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git}
     update (guncelle)   yayın klonunu GitHub'dan çek, kurulu plugin'leri kendi
                         kapsamıyla güncelle (LLM'siz)
     niyet               sohbetin şu an ne yaptığını ve neye yarayacağını
@@ -105,6 +106,7 @@ positional arguments:
                         ihlali)
     adr                 ADR hedef deposu ve numarası (ADR-0097)
     konu                sohbet konu defteri: ac, liste, rapor (ADR-0116)
+    niyetler            niyet defteri: ekle, durum, liste, rapor (ADR-0156)
     paralel             bağımsız komutları (lint, derleme, doğrulama, test)
                         paralel koşar
     olay                olay kaydı: tür, kategori, sonuç ve gidiş yolu
