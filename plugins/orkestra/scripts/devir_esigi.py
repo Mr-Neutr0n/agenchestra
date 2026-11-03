@@ -26,7 +26,7 @@ VARSAYILAN = {"mod": "ipucu", "esik_onbellek_okuma": 5_000_000, "tekrar_aralik_t
 DUGME_DEVIR = "Devir belgesi üret"
 DUGME_SURDUR = "Burada sürdür"
 # Modele giden yönerge (additionalContext): uyarı kullanıcıya systemMessage ile zaten gösterildi; model yeniden yazmaz,
-# karar sorulacaksa düz metin değil düğme sunar. Düğmenin çıkması modelde zorlanmaz (ADR-0154).
+# karar sorulacaksa düz metin değil düğme sunar. Düğmenin çıkması modelde zorlanmaz (ADR-0157).
 YONERGE = ("Orkestra: devir uyarısı kullanıcıya gösterildi; cümleyi yeniden yazma. Devir kararı gerekirse wrap_up ile "
            f"iki düğme sun: '{DUGME_DEVIR}' (/orkestra:devir) ve '{DUGME_SURDUR}'; düz metinle sorma.")
 
