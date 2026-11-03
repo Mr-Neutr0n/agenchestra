@@ -1,4 +1,4 @@
-# ADR-0151: Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur
+# ADR-0154: Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur
 
 **Durum:** Kabul edildi
 

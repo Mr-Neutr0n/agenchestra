@@ -13,6 +13,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cfg  # noqa: E402
+
 KOK = Path(__file__).resolve().parent.parent
 DEPO = KOK.parent.parent
 CIKTI = KOK / "docs" / "basvuru"
@@ -72,7 +75,7 @@ def ajanlar():
 def cli():
     env = {**os.environ, "PYTHONUTF8": "1"}
     r = subprocess.run([sys.executable, str(KOK / "scripts" / "orkestra.py"), "--help"],
-                       capture_output=True, text=True, encoding="utf-8", env=env)
+                       capture_output=True, text=True, encoding="utf-8", env=env, **cfg.PENCERESIZ)
     return ("# CLI: `orkestra`\n\nKaynak: `scripts/orkestra.py` ve komut modülleri. Aşağıdaki metin `orkestra --help` çıktısıdır; "
             "komut başına ayrıntı için `orkestra <komut> --help`.\n\n```text\n" + r.stdout.rstrip() + "\n```\n")
 
@@ -112,7 +115,7 @@ def kurallar():
     s = ["# Kurallar\n", "Kaynak: `kurallar/eklenti_kurallari.json` (her projeye yüklenir). Tam metin kaynakta; burada kimlik ve ilk cümle.\n",
          "| Kimlik | Kural (ilk cümle) |", "|---|---|"]
     for k in d:
-        m = re.sub(r"^ZORUNLU, istisnasız:\s*", "", k.get("metin", ""))
+        m = re.sub(r"^ZORUNLU, istisnasız: *", "", k.get("metin", ""))
         s.append(f"| {k.get('id')} | {_hucre(_ilk_cumle(m, 260))} |")
     return "\n".join(s) + "\n"
 
