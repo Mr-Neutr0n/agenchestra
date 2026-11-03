@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 120 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 122 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -16,6 +16,7 @@ Kaynakta geçen 120 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_BAGLAM_KAYDI` | baglam_kaydi.py, sessionstart_kritik.py |
 | `ORKESTRA_BAGSIZ_KABUK_KAPISI` | hook.py |
 | `ORKESTRA_BASH` | cfg.py, doktor.py |
+| `ORKESTRA_BASH_SOZDIZIMI` | bash_sozdizimi.py |
 | `ORKESTRA_BEKLEME_KAPISI` | bekleme_kapisi.py |
 | `ORKESTRA_BELGE_DUZELT` | belge_bicim.py |
 | `ORKESTRA_BIC_KAPISI` | is_sirasi.py |
@@ -123,6 +124,7 @@ Kaynakta geçen 120 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_TODO_DENETLE_TTL` | is_kaydi.py |
 | `ORKESTRA_URETIM_ENJEKSIYON` | uretim_enjeksiyonu.py |
 | `ORKESTRA_URETIM_KAPISI` | is_sirasi.py |
+| `ORKESTRA_YAPAMAM_KANITI` | yapamam_kaniti.py |
 | `ORKESTRA_YAYIN` | cfg.py |
 | `ORKESTRA_YOL_NOTU` | soru_sinif.py |
 | `ORKESTRA_YONTEM_ENJEKSIYONU` | yontem_enjeksiyonu.py |
