@@ -13,6 +13,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cfg  # noqa: E402
+
 KOK = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AYAR = os.path.join(KOK, "ayarlar", "refleks.json")
 CLI = os.path.join(KOK, "scripts", "orkestra.py")
@@ -99,7 +102,7 @@ def calistir(kayit: dict, cwd: str | None = None) -> str | None:
     argv = [sys.executable, CLI] + kayit["arguman"][1:]
     env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
     try:
-        p = subprocess.run(argv, cwd=cwd or None, env=env, capture_output=True, stdin=subprocess.DEVNULL, shell=False,
+        p = subprocess.run(argv, cwd=cwd or None, env=env, capture_output=True, stdin=subprocess.DEVNULL, shell=False, **cfg.PENCERESIZ,
                            timeout=min(kayit.get("zaman_asimi", ZAMAN_ASIMI_TAVAN), ZAMAN_ASIMI_TAVAN))
     except (OSError, subprocess.SubprocessError):
         return None

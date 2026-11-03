@@ -64,6 +64,6 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0140](../../../../adr/ADR-0140-hook-agir-isleri-kullanici-yolundan-cikar.md) | Hook'ta ağır işler kullanıcının bekleme yolundan çıkarılır | Kabul edildi |
 | [ADR-0149](../../../../adr/ADR-0149-refleks-katmani-modelsiz-hizli-komutlar.md) | Refleks katmanı: modelsiz hızlı komutlar | Kabul edildi |
 | [ADR-0150](../../../../adr/ADR-0150-kucuk-is-kademesi-golge.md) | Küçük iş kademesi (gölge) | Kabul edildi |
-| [ADR-0151](../../../../adr/ADR-0151-acik-sorular-gelen-kutusu.md) | Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur | Kabul edildi |
 | [ADR-0151](../../../../adr/ADR-0151-bash-sozdizimi-kapisi-bash-n-ile-komut-kosmadan-ret.md) | Bash sözdizimi kapısı: bash -n ile komut koşmadan ret | Kabul edildi |
 | [ADR-0153](../../../../adr/ADR-0153-yapamam-iddiasi-kanit-turu-kapisi-golge-modda.md) | Yapamam iddiası kanıt türü kapısı gölge modda | Kabul edildi |
+| [ADR-0154](../../../../adr/ADR-0154-acik-sorular-gelen-kutusu.md) | Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur | Kabul edildi |
