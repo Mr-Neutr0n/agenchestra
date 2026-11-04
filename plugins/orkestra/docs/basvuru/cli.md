@@ -6,7 +6,7 @@ Kaynak: `scripts/orkestra.py` ve komut modülleri. Aşağıdaki metin `orkestra 
 
 ```text
 usage: orkestra [-h]
-                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git} ...
+                {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git,agac} ...
 
 orkestra — görev kartları, ortak defter, token defteri ve perspektif için komut satırı aracı.
 
@@ -62,7 +62,7 @@ Kullanım (ajanlar Bash'ten çağırır; `orkestra` plugin bin/ ile PATH'tedir):
 `--ajan-id/--ajan-tipi` argümanlarını PreToolUse hook'u ekler; elle verilenler silinir.
 
 positional arguments:
-  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git}
+  {baslat,update,guncelle,kart,defter,maliyet,perspektif,ruya,onay,kural,niyet,ui-ozet,panel,kpi,gunluk,is,teknik,doktor,plan,izin,iz,politika,bakim,harita,standart,kimlik,mcp,push-kapisi,ara,isabet,onbellek,durum,kanit,ortam,hata,adr,konu,niyetler,paralel,olay,kapi,oturum,teslim,git,agac}
     update (guncelle)   yayın klonunu GitHub'dan çek, kurulu plugin'leri kendi
                         kapsamıyla güncelle (LLM'siz)
     niyet               sohbetin şu an ne yaptığını ve neye yarayacağını
@@ -118,6 +118,7 @@ positional arguments:
     teslim              teslim kuyruğu: işi toplu entegrasyon koşusuna ver
     git                 git durumu: dal, stash, gönderilmemiş commit (salt
                         okunur)
+    agac                iş çalışma ağacı: deponun .claude/worktrees altında aç
 
 options:
   -h, --help            show this help message and exit

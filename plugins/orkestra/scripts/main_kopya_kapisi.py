@@ -82,5 +82,6 @@ def karar(yol: str, cwd: str | None, oturum: str = "") -> tuple[str, str] | None
     import kapi_mod
     m = kapi_mod.mod(KAPI, cwd)
     mesaj = (f"{os.path.abspath(yol)} korunan deponun birincil main kopyasında ({kok}); bu kopya yalnız birleştirme yeridir. "
-             f"Değişikliği ayrı çalışma ağacında yap: git -C \"{kok}\" worktree add <yol> -b <dal> main")
+             f"Değişikliği ayrı çalışma ağacında yap: orkestra agac ac <ad> --depo \"{kok}\" "
+             f"({L.agac_yolu(kok, '<ad>', onek='')[0]} altında açılır; yolu kendin seçme)")
     return m, mesaj

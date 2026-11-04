@@ -19,9 +19,9 @@ Notlar:
 - `orkestra` CLI'ı da önbellekten çalışır. HTML paneli geliştirme deposu yolundan `python <depo>/plugins/orkestra/scripts/orkestra.py panel` ile başlat.
 
 ## Yan işler
-- Her iş kendi dalında ve `git worktree` ile ayrı klasörde yürür (`git worktree add ../co-wt/<iş> -b <dal> main`). Desktop kökü `main` çalışma ağacıdır; yeni özellik orada başlatılmaz.
+- Her iş kendi dalında ve ayrı çalışma ağacında yürür: `orkestra agac ac <iş>` deponun `.claude/worktrees/<iş>` altında `<iş>` dalıyla açar (ADR-0161); yolu elle seçme, masaüstüne açma. Desktop kökü `main` çalışma ağacıdır; yeni özellik orada başlatılmaz.
 - `main`'e yalnız `git merge --ff-only <dal>` ya da PR ile girilir; ayrışmış dal önce `main` üzerine alınır.
-- Dal ve worktree iş bitince (ve başka oturum kullanmıyorsa) kaldırılır: `git worktree remove` + `git branch -d`.
+- Dal ve worktree iş bitince (ve başka oturum kullanmıyorsa) kaldırılır: `git worktree remove` + `git branch -d`; birleşmiş (squash dahil) worktree'leri SessionStart ve `orkestra is kapat` kendiliğinden kaldırır.
 - Yayın akışı ("Yayın akışı" bölümü) yalnız `main` içindir; yan dal push edilse bile marketplace'e girmez.
 - Her oturum kapanırken `git status --short` boş ve `git branch --no-merged main` boş olmalıdır; commitsiz dosya ya da `main`'e girmemiş dal bırakılmaz. Detached HEAD'de commit atılmışsa önce `git switch -c <dal>`.
 

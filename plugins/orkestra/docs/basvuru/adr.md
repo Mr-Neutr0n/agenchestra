@@ -71,3 +71,4 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0157](../../../../adr/ADR-0157-kullaniciya-donuk-uyarilar-sabit-systemmessage-secimler-dugm.md) | Kullanıcıya dönük uyarılar sabit systemMessage, seçimler düğme | Kabul edildi |
 | [ADR-0158](../../../../adr/ADR-0158-bekleme-sirasinda-bagimsiz-isi-arka-planda-yurutme-mekanik-a.md) | Bekleme sırasında bağımsız işi arka planda yürütme: mekanik aday listesi | Kabul edildi |
 | [ADR-0159](../../../../adr/ADR-0159-plan-maddesinde-geri-alma-alani-kalkar.md) | Plan maddesinde Geri alma alanı kalkar; P-018 metni kapıyla hizalanır | Kabul edildi |
+| [ADR-0161](../../../../adr/ADR-0161-eklenti-gelistirme-worktree-leri-depo-icinde-claude-worktree.md) | Eklenti geliştirme worktree'leri depo içinde .claude/worktrees altında açılır | Kabul edildi |

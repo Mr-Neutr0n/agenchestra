@@ -53,6 +53,20 @@ def _canli_oturum(ana_yol: str, worktree: str | None, dal: str | None) -> bool:
         return False
 
 
+def birlesmis_mi(depo: str, dal: str) -> bool:
+    """`dal` main'e birleşmiş mi: ata ise ya da squash/rebase ile içeriği zaten main'de ise (ADR-0161).
+
+    İçerik denkliği: dalı main'e birleştirmenin sonuç ağacı main'in ağacına eşitse dalın hiçbir değişikliği main'de eksik değildir
+    (`git merge-tree --write-tree`, çalışma ağacına dokunmaz). Çakışma ya da hata birleşmemiş sayılır."""
+    if _git(depo, "merge-base", "--is-ancestor", dal, ANA).returncode == 0:
+        return True
+    r = _git(depo, "merge-tree", "--write-tree", ANA, dal)
+    if r.returncode != 0 or not r.stdout.strip():
+        return False
+    agac = _git(depo, "rev-parse", f"{ANA}^{{tree}}").stdout.strip()
+    return bool(agac) and r.stdout.split()[0] == agac
+
+
 def adaylar(depo: str, oturum_dali: str = "") -> dict:
     """{'aday': [...], 'birlesmemis': [...]}: worktree'de açık olmayan, oturum dalı ve main dışındaki yerel dallar."""
     _, acik = _worktree_dallari(depo)
@@ -366,7 +380,7 @@ def agaclar_temizle(cwd: str, oturum_dali: str = "", kip: str = "golge", simdi: 
                 neden = "kilitli"
             elif ag["prunable"] or not os.path.isdir(yol):
                 neden = "klasor-yok"
-            elif _git(cwd, "merge-base", "--is-ancestor", dal, ANA).returncode != 0:
+            elif not birlesmis_mi(cwd, dal):
                 neden = "birlesmemis"
             elif _kirli(yol) is None or _kirli(yol):
                 neden = "kirli"

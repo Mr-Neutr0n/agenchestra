@@ -102,13 +102,17 @@ class MainKopyaKapisi(unittest.TestCase):
         self.assertEqual(len(kayit), 1)
         self.assertEqual(kayit[0][1], "main_kopya_kapisi")
         self.assertIn("oturum=abcdef12", kayit[0][2])
-        self.assertIn("worktree add", uyari)
+        self.assertIn("agac ac", uyari)
+        self.assertIn(".claude/worktrees", uyari)
+        self.assertNotIn("<yol>", uyari)
 
     def test_ihlalde_reddeder_ve_worktree_yolunu_gosterir(self):
         red, kayit, _ = self._hook("ihlal", os.path.join(self.depo, "a.txt"))
         self.assertEqual(len(red), 1)
-        self.assertIn("git -C", red[0])
-        self.assertIn("worktree add", red[0])
+        self.assertIn("--depo", red[0])
+        self.assertIn("agac ac", red[0])
+        self.assertIn(".claude/worktrees", red[0])
+        self.assertNotIn("<yol>", red[0])
         self.assertEqual(kayit, [])
 
     def test_ayri_agac_ve_korunmayan_depo_her_modda_gecer(self):

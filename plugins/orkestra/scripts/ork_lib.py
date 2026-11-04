@@ -1344,15 +1344,15 @@ AGAC_GIZLI_KLASOR = ".claude/worktrees"
 NL = chr(10)
 
 
-def agac_yolu(depo: str, gid: str) -> tuple[str, bool]:
-    """Kart çalışma ağacının yolu ve varsayılan (depo içi) düzende olup olmadığı.
+def agac_yolu(depo: str, gid: str, onek: str = "kart-") -> tuple[str, bool]:
+    """Çalışma ağacının yolu ve varsayılan (depo içi) düzende olup olmadığı (kart: `kart-<id>`, iş: `onek=""`).
 
-    `ORKESTRA_AGAC_KOKU` doluysa `<kök>/<depo-adı>/kart-<id>`; değilse `<depo>/.claude/worktrees/kart-<id>`."""
+    `ORKESTRA_AGAC_KOKU` doluysa `<kök>/<depo-adı>/<önek><ad>`; değilse `<depo>/.claude/worktrees/<önek><ad>`."""
     depo = os.path.abspath(depo).replace("\\", "/").rstrip("/")
     kok = (os.environ.get(AGAC_KOKU_ORTAM) or "").strip()
     if kok:
-        return os.path.abspath(os.path.join(kok, os.path.basename(depo), f"kart-{gid}")).replace("\\", "/"), False
-    return f"{depo}/{AGAC_GIZLI_KLASOR}/kart-{gid}", True
+        return os.path.abspath(os.path.join(kok, os.path.basename(depo), f"{onek}{gid}")).replace("\\", "/"), False
+    return f"{depo}/{AGAC_GIZLI_KLASOR}/{onek}{gid}", True
 
 
 def _gizli_klasoru_dislat(depo: str) -> None:
