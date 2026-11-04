@@ -149,9 +149,9 @@ def devir_uyarisi(sd: str, oid: str | None, transkript: str | None) -> str | Non
             f.write(D.datetime.now(D.timezone.utc).isoformat())
         azalan = max(0, s["baglam"] - YENI_SOHBET_BAGLAMI)
         usd = azalan / 1e6 * L.model_fiyati(s["model"]).get("onbellek_okuma", 0)
-        return (f"Orkestra: bu sohbetin bağlamı ~{s['baglam'] // 1000}k token. Ucuz yol: `/orkestra:devir` ile devir belgesi üret, "
-                f"yeni sohbet aç; çağrı başına ~{azalan // 1000}k token (~{usd:.2f} USD) daha az okunur "
-                "(ölçüm: 200k üstünde devir net kazançlı). Burada sürdürmek de mümkün; uyarıyı kapatmak için "
-                "`onbellek_kapisi.json` içinde `devir_uyarisi: false`.")
+        import devir_esigi
+        return devir_esigi.devir_metni(
+            f"bağlam ~{s['baglam'] // 1000}k token",
+            f"yeni sohbette çağrı başına ~{azalan // 1000}k token (~{usd:.2f} USD) daha az okunur (200k üstünde devir net kazançlı)")
     except Exception:
         return None

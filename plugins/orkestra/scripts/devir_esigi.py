@@ -23,6 +23,20 @@ PROJE_DOSYA = "devir_esigi.json"
 VARSAYILAN = {"mod": "ipucu", "esik_onbellek_okuma": 5_000_000, "tekrar_aralik_tur": 20}
 
 
+DUGME_DEVIR = "Devir belgesi üret"
+DUGME_SURDUR = "Burada sürdür"
+# Modele giden yönerge (additionalContext): uyarı kullanıcıya systemMessage ile zaten gösterildi; model yeniden yazmaz,
+# karar sorulacaksa düz metin değil düğme sunar. Düğmenin çıkması modelde zorlanmaz (ADR-0157).
+YONERGE = ("Orkestra: devir uyarısı kullanıcıya gösterildi; cümleyi yeniden yazma. Devir kararı gerekirse wrap_up ile "
+           f"iki düğme sun: '{DUGME_DEVIR}' (/orkestra:devir) ve '{DUGME_SURDUR}'; düz metinle sorma.")
+
+
+def devir_metni(olcu: str, oneri: str) -> str:
+    """Devir uyarısının tek sabit biçimi (kullanıcıya systemMessage); iki tetikleyici de bunu kullanır. Dikey düzen (K-005)."""
+    return (f"Orkestra: oturum uzadı.\nÖlçü: {olcu}\nÖneri: {oneri}\n"
+            f"Seçenek: `/orkestra:devir` ile yeni sohbet ya da burada sürdür.")
+
+
 def _json_oku(yol: str):
     try:
         with open(yol, encoding="utf-8") as f:
@@ -110,7 +124,7 @@ def ipucu_al(sd: str, oid: str) -> str:
             return ""
         okuma_m = int(b.get("okuma") or 0) / 1e6
         esik_m = int(b.get("esik") or 0) / 1e6
-        return (f"Orkestra (pahalı tur): önceki tur {okuma_m:.1f} M token önbellek okudu (eşik {esik_m:g} M). "
-                "Oturumu `/orkestra:devir` ile yeni sohbete taşımayı düşün; sürdürmek de mümkün, bu ipucu engellemez.")
+        return devir_metni(f"önceki tur {okuma_m:.1f} M token önbellek okudu (eşik {esik_m:g} M)",
+                           "sonraki iş için yeni sohbet daha ucuz")
     except Exception:
         return ""
