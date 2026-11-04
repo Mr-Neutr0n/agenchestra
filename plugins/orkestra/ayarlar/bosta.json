@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "Bekleme anı aday listesi (ADR-0158, I-376). Denetçi başlarken hook, plandaki bağımsız ve kesinleşmiş maddeleri en çok 300 karakterlik bağlam olarak ekler; aday yoksa 0 karakter. golge: yalnız bağlam ve gunluk.jsonl'a bosta_aday; hiçbir şey engellenmez, ajanı başlatma kararı ajandadır (hook Agent başlatamaz). Ihlal moduna geçiş yok: bu kapı engelleyici değildir. Kapatma: ORKESTRA_BOSTA=0. Proje ezmesi: .claude/orkestra/bosta.json."
+}

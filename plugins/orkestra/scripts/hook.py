@@ -1128,6 +1128,21 @@ def pre_tool_use(inp: dict):
     except Exception:
         pass
 
+    if arac in ("Agent", "Task") and str(girdi.get("subagent_type") or "") == "orkestra:denetci" and not aid:
+        try:  # ADR-0158: denetçi beklenirken başlatılabilecek bağımsız maddeler; golge, engellemez, hata aracı bozmaz
+            import bosta_baglam as _bb
+            from komutlar.plan import _plan_yolu
+            _oid = _bagli_is(sd, inp.get("session_id"))
+            if _oid:
+                _py, _ik = _plan_yolu(sd, _oid)
+                _py = os.path.join(_py, "plan.md") if os.path.isdir(_py) else _py
+                _bs = _bb.hook_satiri(sd, inp.get("cwd") or os.getcwd(), _oid, _py, _ik)
+                if _bs:
+                    _BEKLEYEN_UYARI = (_BEKLEYEN_UYARI + chr(10) + _bs).strip()
+        except SystemExit:
+            raise
+        except Exception:
+            pass
     try:  # ADR-0125: engellemeyen oturumlar arası çakışma farkındalığı; hata aracı bozmaz
         import oturum_farkindalik as _of
         of = _of.arac_oncesi(sd, inp.get("session_id"), inp.get("cwd"), arac, girdi, bool(aid))

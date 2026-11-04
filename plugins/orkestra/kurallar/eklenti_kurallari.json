@@ -1366,6 +1366,24 @@
       ],
       "etkinlesme": "2026-11-02T19:32:44+03:00",
       "ozet": "Sorulan her soru onay deposunda tur=soru kaydı olarak kalır; yanıtlanana ya da kapatılana kadar Gelen kutusunda 'Açık sorular'da görünür. Karar soruları düğmeyle sunulur, düz metin seçim cümlesi yazılmaz. ORKESTRA_ACIK_SORU=0 yakalamayı kapatır."
+    },
+    {
+      "id": "P-055",
+      "katman": "plugin",
+      "metin": "ZORUNLU, istisnasız: Ajan denetçiyi ya da başka bir süreci beklerken boş durmaz; beklerken başlatılabilecek bağımsız işler mekanik belirlenir. (1) Aday = onaylı işte, plan denetimde değilken, durumu bekliyor olan, Kabul alanı dolu, Önce bağımlılıklarının (Çıktı ve Çakışma) tamamı onaylandi olan ve yazma alanı calisiyor/denetimde/reddedildi maddelerle ve önceden seçilen adaylarla kesişmeyen plan maddesidir (P-035 ile tutarlı). (2) Komut: 'orkestra is bosta <iş> [--bekleyen P1,P2]'; denetçi başlatılırken hook aday varsa en çok 300 karakterlik bağlam ekler, aday yoksa 0 karakter. (3) Başlatma ajandadır (hook Agent başlatamaz); aday işçiye Kabul ve Ne alanındaki ret riski okunarak verilir. Başlatılan işin bağımlılığı sonradan geçersizleşirse 'orkestra is bosta <iş> --gecersiz P<n> --neden …' ile kaydedilir. (4) Sınır: koşullar Önce ve Yazma alanı beyanlarının doğruluğuna dayanır; yanlış beyan mantıksal bağımlılığı yakalamaz. Kapı P-028 gereği golge modda açıldı (güncel mod: `orkestra kapi durum`); engellemez. Zorlama: scripts/bosta.py, scripts/bosta_baglam.py, hook.py (PreToolUse, orkestra:denetci), ayarlar/bosta.json; ORKESTRA_BOSTA=0 kapatır; tests/test_bosta.py, test_bosta_hook.py, test_bosta_ret.py (ret simülasyonu). (ORK-ADR-0158) (P-055, 2026-11-03)",
+      "ozet": "Beklerken başlatılabilir bağımsız plan maddeleri 'orkestra is bosta' ile mekanik bulunur (onaylı, Önce bağımlılığı onaylı, alan ayrık); hook denetçide ≤300 karakter bağlam verir, başlatma ajandadır (ORKESTRA_BOSTA=0 kapatır).",
+      "neden": "Kullanıcı 03.11.2026: denetçi ya da süreç beklenirken ajan boş durmasın; yalnız kesinleşmiş, bağımsız ve alanı kesişmeyen işler arka planda yürüsün (ORK-ADR-0158).",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-03T13:00:00+03:00",
+      "guncelleme": "2026-11-03T13:00:00+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-03T13:00:00+03:00",
+          "olay": "eklendi"
+        }
+      ],
+      "etkinlesme": "2026-11-03T13:00:00+03:00"
     }
   ]
 }

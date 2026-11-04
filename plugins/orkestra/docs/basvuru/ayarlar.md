@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 90 ayar; `açıklama yok` işaretli: 31.
+Toplam 91 ayar; `açıklama yok` işaretli: 31.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -20,6 +20,7 @@ Toplam 90 ayar; `açıklama yok` işaretli: 31.
 | `belge_duzelt` | acik | açıklama yok |
 | `best_in_class` | ihlal | P-030 best in class kapısı. |
 | `bolme_kapisi` | golge | Bölme kapısı (I-297 P5, ADR-0114). |
+| `bosta` | golge | Bekleme anı aday listesi (ADR-0158, I-376). |
 | `cikti_butce` | golge | Kullanıcıya giden sohbet çıktısı bütçesi (P-001, ADR-0075). |
 | `cikti_butce_deney` | golge | Çıktı bütçesi geri bildirim deneyi (I-319 P6; rapor 149 §4). |
 | `cikti_sirasi` | block | Karar sırası kapısı (ADR-0135, I-321, P-001/P-029 tamamlayıcısı): karar bekleyen bölüm yanıtın son bölümü olmalı. |

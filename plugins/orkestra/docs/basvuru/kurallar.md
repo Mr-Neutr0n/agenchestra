@@ -63,3 +63,4 @@ Kaynak: `kurallar/eklenti_kurallari.json` (her projeye yüklenir). Tam metin kay
 | P-051 | Veritabanı, kod, komut ya da API ile bakılabilen hiçbir şey belgede "Doğrulanamayanlar" bölümüne yazılmaz; belge yazılmadan önce bakılır. |
 | P-052 | İşte iki yol varsa (örn. |
 | P-053 | Ajanın kullanıcıya sorduğu her soru kalıcı kaydedilir ve yanıtlanana kadar kaybolmaz; karar soruları her zaman düğmeyle sunulur. |
+| P-055 | Ajan denetçiyi ya da başka bir süreci beklerken boş durmaz; beklerken başlatılabilecek bağımsız işler mekanik belirlenir. |

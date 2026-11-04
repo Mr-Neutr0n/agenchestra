@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 124 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -22,6 +22,7 @@ Kaynakta geçen 123 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_BIC_KAPISI` | is_sirasi.py |
 | `ORKESTRA_BILDIRIM` | bildirim.py, cfg.py, panel.py |
 | `ORKESTRA_BILDIRIM_MIN_S` | bildirim.py |
+| `ORKESTRA_BOSTA` | bosta_baglam.py |
 | `ORKESTRA_CIKTI_BUTCE` | cikti_butce.py |
 | `ORKESTRA_CIKTI_DENEY` | cikti_deney.py |
 | `ORKESTRA_CIKTI_SIRASI` | cikti_sirasi.py |

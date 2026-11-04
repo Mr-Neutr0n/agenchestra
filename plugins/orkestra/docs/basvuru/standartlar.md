@@ -8,6 +8,7 @@
 
 - `bash_komut_yazimi`: Bash komutu yazımı (ADR-0151)
 - `best_in_class`: Best in class standardı (P-030)
+- `cikti_kanallari`: Çıktı kanalları
 - `commit`: Commit mesajı standardı (Conventional Commits)
 - `dal`: Dal adı standardı
 - `jira_yorum`: Jira Done yorum standardı

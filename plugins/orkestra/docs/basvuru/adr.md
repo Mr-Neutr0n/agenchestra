@@ -68,3 +68,6 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0153](../../../../adr/ADR-0153-yapamam-iddiasi-kanit-turu-kapisi-golge-modda.md) | Yapamam iddiası kanıt türü kapısı gölge modda | Kabul edildi |
 | [ADR-0154](../../../../adr/ADR-0154-acik-sorular-gelen-kutusu.md) | Açık sorular Gelen kutusunda kalır ve karar soruları düğmeyle sunulur | Kabul edildi |
 | [ADR-0156](../../../../adr/ADR-0156-niyet-defteri-atomik-niyet-kaydi-ham-mesaj-yok.md) | Niyet defteri: atomik niyet kaydı, ham mesaj yok | Kabul edildi |
+| [ADR-0157](../../../../adr/ADR-0157-kullaniciya-donuk-uyarilar-sabit-systemmessage-secimler-dugm.md) | Kullanıcıya dönük uyarılar sabit systemMessage, seçimler düğme | Kabul edildi |
+| [ADR-0158](../../../../adr/ADR-0158-bekleme-sirasinda-bagimsiz-isi-arka-planda-yurutme-mekanik-a.md) | Bekleme sırasında bağımsız işi arka planda yürütme: mekanik aday listesi | Kabul edildi |
+| [ADR-0159](../../../../adr/ADR-0159-plan-maddesinde-geri-alma-alani-kalkar.md) | Plan maddesinde Geri alma alanı kalkar; P-018 metni kapıyla hizalanır | Kabul edildi |
