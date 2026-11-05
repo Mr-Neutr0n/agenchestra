@@ -130,7 +130,7 @@ def gecikme_yaz(yol: str, sure_s: float, kod: int | None = None) -> None:
                 f.write(json.dumps(satir, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001
         pass
-SURUM = "22"  # sayfa/sunucu sözleşmesi; değişince eski sunucu yeniden başlatılır
+SURUM = "23"  # sayfa/sunucu sözleşmesi; değişince eski sunucu yeniden başlatılır
 GUNCELLEME = panel_guncelleme.Guncelleme()  # eklenti güncelleme durumu (kullanıcı düzeyi, ADR-0039); testte değiştirilir
 
 
@@ -815,6 +815,31 @@ IMZA_AZAMI = 300.0        # sn: kaynak imzası değişmese de değer bundan eski
 ISITMA_TABAN_AGIR = 90.0  # sn: ağır anahtarlar (isler, analitik) için alt sınır (ESKI_AZAMI=120 altında)
 
 
+_SIKISTIRILIR = ("text/", "application/json", "application/javascript", "image/svg")
+_SIKIS_ONBELLEK: dict = {}   # (etag, kodlama) -> sıkıştırılmış gövde; ağır .json'u her istekte yeniden sıkıştırma
+_SIKIS_AZAMI = 24
+
+
+def _etag(govde: bytes) -> str:
+    import hashlib  # noqa: PLC0415
+    return 'W/"' + hashlib.blake2b(govde, digest_size=10).hexdigest() + '"'
+
+
+def _sikistir(govde: bytes, tip: str, etag: str, kabul: str) -> tuple[bytes, str | None]:
+    """gzip: istemci ister, tür metinse ve gövde 1 KB üstündeyse; sonuç ETag ile önbelleklenir."""
+    if len(govde) < 1024 or "gzip" not in kabul.lower() or not tip.startswith(_SIKISTIRILIR)             or os.environ.get("ORKESTRA_PANEL_GZIP") == "0":
+        return govde, None
+    anahtar = (etag, "gzip")
+    z = _SIKIS_ONBELLEK.get(anahtar)
+    if z is None:
+        import gzip  # noqa: PLC0415
+        z = gzip.compress(govde, compresslevel=5, mtime=0)
+        if len(_SIKIS_ONBELLEK) >= _SIKIS_AZAMI:
+            _SIKIS_ONBELLEK.pop(next(iter(_SIKIS_ONBELLEK)), None)
+        _SIKIS_ONBELLEK[anahtar] = z
+    return z, "gzip"
+
+
 def _isleyici():
     kilit = threading.Lock()
     onbellek: dict = {}
@@ -931,6 +956,7 @@ def _isleyici():
             return _uret_ve_sakla(anahtar, uret)
 
     class Isleyici(http.server.BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"   # keep-alive: her istek yeni TCP bağlantısı açmaz (ADR-0167); yanıtlar hep Content-Length taşır
         timeout = 10  # yavaş istemci iş parçacığını süresiz tutmasın
         isitmayi_durdur = staticmethod(lambda: isitici.__setitem__("dur", True))  # sunucu kapanırken (testler)
 
@@ -938,16 +964,39 @@ def _isleyici():
             pass
 
         def _gonder(self, kod, tip, govde: bytes, kapat=False):
+            """Tek yanıt noktası (ADR-0167). GET 200: içerik ETag'i (değişmediyse 304) + gzip + `no-cache` (her seferinde doğrula,
+            eski js/json kalmaz); diğer her yanıt `no-store`. Yazma istekleri bağlantıyı kapatır: gövde okunmadan dönen erken
+            reddin bağlantıda artık bayt bırakmaması için keep-alive yalnız GET'te."""
             self._son_kod = kod
+            etag, sikis = None, None
+            if kod == 200 and self.command == "GET":
+                etag = _etag(govde)
+                if self.headers.get("If-None-Match") == etag:
+                    kod, govde = 304, b""
+                    self._son_kod = 304
+                else:
+                    govde, sikis = _sikistir(govde, tip, etag, self.headers.get("Accept-Encoding") or "")
             self.send_response(kod)
-            if kapat:
+            if kapat or self.command != "GET":
                 self.send_header("Connection", "close")
                 self.close_connection = True
-            self.send_header("Content-Type", tip)
-            self.send_header("Cache-Control", "no-store")
+            if kod == 304:
+                self.send_header("ETag", etag)
+                self.send_header("Cache-Control", "no-cache")
+            else:
+                self.send_header("Content-Type", tip)
+                if etag:
+                    self.send_header("ETag", etag)
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Vary", "Accept-Encoding")
+                    if sikis:
+                        self.send_header("Content-Encoding", sikis)
+                else:
+                    self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(govde)))
             self.end_headers()
-            self.wfile.write(govde)
+            if self.command != "HEAD" and govde:
+                self.wfile.write(govde)
             if kapat:
                 self._temiz_kapat()
 
