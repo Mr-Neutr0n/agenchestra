@@ -418,11 +418,22 @@ def _arka_plan(perspektif_durum: dict | None, uygulama: dict | None) -> list[dic
     return out
 
 
+_GORUNUM_ONB: dict = {}   # alan yolu -> (zaman, niyet.gorunum çıktısı); panel üretimi aynı alan için birkaç kez ister (her biri tüm niyet kaydını okur, ~1,5 sn)
+
+
+def _niyet_gorunum_kisa(yol: str) -> dict:
+    z, v = _GORUNUM_ONB.get(yol, (0.0, None))
+    if v is None or time.time() - z > 4.0:
+        v = niyet.gorunum(alan_yol=yol)
+        _GORUNUM_ONB[yol] = (time.time(), v)
+    return v
+
+
 def _sohbet_arka_plan(a: dict) -> list[dict]:
     """Claude'un şu an çalıştığı sohbetler (İşler sayfası): tur sürerken çalışan iş de, tur bittikten sonra arka planda süren iş de."""
     out = []
     try:
-        for r in niyet.gorunum(alan_yol=a["yol"]).get("oturumlar", []):
+        for r in _niyet_gorunum_kisa(a["yol"]).get("oturumlar", []):
             if r.get("bekleyen") == "claude":
                 baslik = r.get("sohbet")  # kenar çubuğundaki ad; yoksa sohbet adı oturum kimliği kısaltmasına düşer
                 tanimli = bool(baslik) and baslik != r.get("kisa")
@@ -895,7 +906,8 @@ def _isleyici():
             for anahtar, (zi, uret, sure, imza_fn) in adaylar:
                 simdi = time.time()
                 with kilit:
-                    if simdi - zi > ISITMA_PENCERE:
+                    temel = isinstance(anahtar, tuple) and len(anahtar) > 1 and anahtar[1] in ("*", "", None)
+                    if simdi - zi > ISITMA_PENCERE and not temel:   # tarayıcının TEMEL istekleri süresiz sıcak kalır: boşta kalıp dönen kullanıcı soğuk üretimi (saniyeler) beklemesin (I-393)
                         son_istek.pop(anahtar, None)
                         continue
                     if anahtar in yenileniyor or simdi - onbellek.get(anahtar, (0.0, b""))[0] < _isitma_araligi(anahtar, sure):

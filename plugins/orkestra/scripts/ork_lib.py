@@ -2549,7 +2549,21 @@ def _proje_adi(yol: str) -> str:
     return re.sub(r"[^A-Za-z0-9]", "-", yol)
 
 
+_CA_ONB: dict = {"z": 0.0, "v": None}
+_CA_TTL = 4.0   # sn: bir panel üretimi calisma_alanlari'ni onlarca kez çağırır (her biri tüm ~/.claude/projects'i glob'lar); kısa ömürlü bellek
+
+
 def calisma_alanlari() -> list[dict]:
+    """Kısa ömürlü (4 sn) önbellekli sarmalayıcı; ayrıntı _calisma_alanlari_oku."""
+    anahtar = (os.path.expanduser("~"), GENEL_DIZIN)   # ev ya da durum dizini değişince (testler, başka kullanıcı) bellek geçersiz
+    if _CA_ONB["v"] is not None and _CA_ONB.get("k") == anahtar and time.time() - _CA_ONB["z"] <= _CA_TTL:
+        return copy.deepcopy(_CA_ONB["v"])
+    v = _calisma_alanlari_oku()
+    _CA_ONB.update(z=time.time(), v=v, k=anahtar)
+    return copy.deepcopy(v)
+
+
+def _calisma_alanlari_oku() -> list[dict]:
     """Bu bilgisayardaki Claude çalışma alanları (~/.claude/projects): ad, gerçek yol, orkestra kurulu mu, son etkinlik.
 
     Gerçek yol transkriptteki `cwd`dan okunur (önbellekli). Klasör adını üreten `cwd` seçilir; önbellekteki yol
