@@ -8,7 +8,7 @@ P-018 belge BİÇİMİNİ denetler, bu standart çözümün KALİTESİNİ sorar;
 Plan yazılırken yazan kişi, plan bitince plan yazarından AYRI bir `orkestra:denetci` aynı soruları yanıtlar.
 
 - **Kök neden:** çözüm belirtiyi mi kök nedeni mi ortadan kaldırıyor? Hata nerede oluştuysa orada mı önleniyor (K-006)?
-- **Alternatifler:** en az iki uygulanabilir yaklaşım karşılaştırıldı mı, seçim gerekçeli mi? Elenen yaklaşım gerçekten seçilebilir olmalı; göstermelik rakip sayılmaz. Mevcut mekanizmalar (skill, standart, hook, kural) rakip olarak tartıldı mı?
+- **Alternatifler:** en az iki uygulanabilir yaklaşım karşılaştırıldı mı, seçim gerekçeli mi? Elenen yaklaşım gerçekten seçilebilir olmalı; göstermelik rakip sayılmaz. Mevcut mekanizmalar (skill, standart, hook, kural) rakip olarak tartıldı mı? Madde etkilediği kararı (`**Etkilenen karar:**`, P-056) yazıyor ve rakipler o karar için mi?
 - **Kapsam özü:** kapsam daraltılırken çözümün özü (kalıcı ya da yapısal öğe, ör. koruma katmanı, rol kısıtı, bağımsız denetim) çıkarıldı mı? Çıkarıldıysa gerekçesi ve yerine ne konduğu yazılı mı?
 - **Ölçüm:** yöntem istatistiksel olarak yeterli ve gerekçeli mi? Eşik (geçme oranı), örnek büyüklüğü ve neden o sayı yazılı mı? Varlık kontrolü (`grep -c`) davranış ölçümü yerine geçmez.
 
@@ -58,4 +58,4 @@ Gölge kapı `best_in_class` (`ayarlar/best_in_class.json`): eksik uyarılır ve
 
 ## Üretim anı
 
-Bu işe başlarken best in class: (1) İsteği kendi cümlenle yeniden yaz, mevcut analize çıpalanma. (2) Sorunun doğduğu yeri bul ve orada önle; belirtiyi yamama (K-006). (3) En az iki uygulanabilir yaklaşım çıkar, mevcut skill/standart/hook/kuralı da rakip say, seçimi gerekçele. (4) Kapsam daraltırken çözümün yapısal öğesini (koruma, bağımsız denetim) çıkarma. (5) Ölçüm varsa eşik, örnek büyüklüğü ve nedenini yaz; varlık kontrolü davranış ölçümü değildir.
+Bu işe başlarken best in class: (1) İsteği kendi cümlenle yeniden yaz, mevcut analize çıpalanma; işin hangi kararı etkilediğini yaz. (2) Sorunun doğduğu yeri bul ve orada önle; belirtiyi yamama (K-006). (3) En az iki uygulanabilir yaklaşım çıkar, mevcut skill/standart/hook/kuralı da rakip say, seçimi gerekçele. (4) Kapsam daraltırken çözümün yapısal öğesini (koruma, bağımsız denetim) çıkarma. (5) Ölçüm varsa eşik, örnek büyüklüğü ve nedenini yaz; varlık kontrolü davranış ölçümü değildir.

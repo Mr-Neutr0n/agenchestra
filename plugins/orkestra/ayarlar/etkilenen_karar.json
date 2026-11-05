@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "P-056 etkilenen karar yoklaması. mod: golge = plan maddesinde `**Etkilenen karar:**` alanı eksikse uyarılır ve gunluk.jsonl'a kapi_golge/etkilenen_karar olarak düşer; todo yazımı engellenmez. Bu kapı ihlal modunda bile engellemez: çağıran sonucu yok sayar; ihlal geçişi ayrı kod değişikliği ve ADR ister (P-028). Yalnız kalite:true sıralı işlerde çalışır (best_in_class ile aynı kapsam). Kapatma: ORKESTRA_BIC_KAPISI=0. Geçiş ölçütü: `orkestra is rapor` etkilenen_karar sayıları, en az 30 plan."
+}
