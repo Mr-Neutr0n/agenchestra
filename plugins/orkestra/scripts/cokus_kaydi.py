@@ -22,9 +22,8 @@ _SATIR = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[error\] Session (
 
 
 def gunluk_yolu() -> str | None:
-    yol = os.environ.get("ORKESTRA_UYGULAMA_GUNLUGU")
-    if yol:
-        return yol
+    if "ORKESTRA_UYGULAMA_GUNLUGU" in os.environ:  # boş değer = kapalı (testler)
+        return os.environ["ORKESTRA_UYGULAMA_GUNLUGU"] or None
     yerel = os.environ.get("LOCALAPPDATA")
     return os.path.join(yerel, "Claude", "logs", "main.log") if yerel else None
 

@@ -3,11 +3,18 @@ import json
 import os
 import sys
 
+import pytest
+
 KOK = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(KOK, "scripts"))
 import bellek_kapisi as BK  # noqa: E402
 
 AYAR = {"mod": "golge", "bos_ram_gb_esik": 1.0, "commit_yuzde_esik": 90}
+
+
+@pytest.fixture(autouse=True)
+def _kapi_acik(monkeypatch):
+    monkeypatch.delenv("ORKESTRA_BELLEK_KAPISI", raising=False)   # conftest testlerde kapatır; bu dosya kapıyı sınar
 
 
 def test_esik_yuksek_verilince_uyari_cikar_dusuk_verilince_cikmaz():

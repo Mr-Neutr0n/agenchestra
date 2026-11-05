@@ -77,4 +77,5 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0165](../../../../adr/ADR-0165-eklenti-deposunda-pr-yok-yerel-main-birlestirme-ve-main-push.md) | Eklenti deposunda PR açılmaz; dal yerelde main'e birleştirilir ve main push edilir | Kabul edildi |
 | [ADR-0166](../../../../adr/ADR-0166-panel-zaman-penceresi-tek-kaynak-ve-etkin-mod-gostergesi.md) | Panel zaman penceresi tek kaynak ve etkin mod göstergesi | Kabul edildi |
 | [ADR-0167](../../../../adr/ADR-0167-panel-penceresi-son-30-gun-ve-istemci-onbellek-politikasi.md) | Panel penceresi son_30_gun ve istemci önbellek politikası | Kabul edildi |
+| [ADR-0168](../../../../adr/ADR-0168-mcp-sunuculari-kullanim-sinifina-gore-kapsamlanir.md) | MCP sunucuları kullanım sınıfına göre kapsamlanır | Kabul edildi |
 | [ADR-0169](../../../../adr/ADR-0169-kaynak-etiketli-iddia-dogrulama-kapisi-golge.md) | Kaynak etiketli iddia doğrulama kapısı (gölge) | Kabul edildi (gölge modda) |

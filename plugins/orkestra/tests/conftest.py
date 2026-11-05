@@ -12,6 +12,10 @@ os.environ.setdefault("ORKESTRA_PANEL_SERVIS", "0")
 # SessionStart bakım işleri testte ayrık süreç başlatmasın (ADR-0092); test_oturum_bakim.py kendisi açar.
 os.environ.setdefault("ORKESTRA_OTURUM_BAKIM", "0")
 os.environ.setdefault("ORKESTRA_HOME", os.path.join(tempfile.gettempdir(), "orkestra_test_ev"))
+# Açılış bellek uyarısı makinenin anlık durumuna bağlıdır (I-397): SessionStart bağlam boyutu testleri ona bağlanmasın; test_bellek_kapisi.py kendisi açar.
+os.environ.setdefault("ORKESTRA_BELLEK_KAPISI", "0")
+# Çöküş kaydı gerçek uygulama günlüğünü okumasın (hata.jsonl'e dış satır girmesin); test_cokus_kaydi.py yolu kendisi verir.
+os.environ.setdefault("ORKESTRA_UYGULAMA_GUNLUGU", "")
 os.environ.setdefault("ORKESTRA_EKLENTI_KURALLARI",
                       os.path.join(tempfile.gettempdir(), "orkestra_test_eklenti_yok", "kurallar", "eklenti_kurallari.json"))
 # İş sırası kapısı (P-005): eski testler plan.md/todo.md'nin `is ac` ile hemen açılmasını bekler; sıra testleri '1' yapar.

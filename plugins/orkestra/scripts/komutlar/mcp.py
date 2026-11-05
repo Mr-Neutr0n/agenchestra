@@ -19,6 +19,7 @@ import shutil
 import subprocess
 import sys
 
+import cfg  # noqa: E402
 from komutlar._ortak import hata
 
 _BETIK = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "mcp_kimlik.py"))
@@ -220,11 +221,11 @@ def _surecler() -> list:
             ps = ("Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*mcp_kimlik.py*' } | "
                   "Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress")
             r = subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True, text=True,
-                               encoding="utf-8", timeout=60)
+                               encoding="utf-8", timeout=60, **cfg.PENCERESIZ)
             d = json.loads(r.stdout) if r.stdout.strip() else []
             d = [d] if isinstance(d, dict) else d
             return [{"pid": x["ProcessId"], "ppid": x["ParentProcessId"], "cmd": x.get("CommandLine") or ""} for x in d]
-        r = subprocess.run(["ps", "-eo", "pid=,ppid=,args="], capture_output=True, text=True, timeout=30)
+        r = subprocess.run(["ps", "-eo", "pid=,ppid=,args="], capture_output=True, text=True, timeout=30, **cfg.PENCERESIZ)
         cikti = []
         for satir in r.stdout.splitlines():
             parca = satir.split(None, 2)

@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 94 ayar; `açıklama yok` işaretli: 32.
+Toplam 95 ayar; `açıklama yok` işaretli: 32.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -18,6 +18,7 @@ Toplam 94 ayar; `açıklama yok` işaretli: 32.
 | `bekleme_kapisi` | golge | açıklama yok |
 | `belge_bicim` | — | açıklama yok |
 | `belge_duzelt` | acik | açıklama yok |
+| `bellek_kapisi` | golge | Açılışta bellek uyarısı (I-397, ADR-0155, P-028). |
 | `best_in_class` | ihlal | P-030 best in class kapısı. |
 | `bolme_kapisi` | golge | Bölme kapısı (I-297 P5, ADR-0114). |
 | `bosta` | golge | Bekleme anı aday listesi (ADR-0158, I-376). |

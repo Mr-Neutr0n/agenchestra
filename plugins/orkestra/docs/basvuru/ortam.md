@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 128 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -19,6 +19,7 @@ Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_BASH_SOZDIZIMI` | bash_sozdizimi.py |
 | `ORKESTRA_BEKLEME_KAPISI` | bekleme_kapisi.py |
 | `ORKESTRA_BELGE_DUZELT` | belge_bicim.py |
+| `ORKESTRA_BELLEK_KAPISI` | bellek_kapisi.py |
 | `ORKESTRA_BIC_KAPISI` | is_sirasi.py |
 | `ORKESTRA_BILDIRIM` | bildirim.py, cfg.py, panel.py |
 | `ORKESTRA_BILDIRIM_MIN_S` | bildirim.py |
@@ -26,7 +27,7 @@ Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_CIKTI_BUTCE` | cikti_butce.py |
 | `ORKESTRA_CIKTI_DENEY` | cikti_deney.py |
 | `ORKESTRA_CIKTI_SIRASI` | cikti_sirasi.py |
-| `ORKESTRA_CLAUDE_JSON` | araclar_mcp.py |
+| `ORKESTRA_CLAUDE_JSON` | araclar_mcp.py, mcp.py |
 | `ORKESTRA_CURSOR_ASK` | cursor_hook.py |
 | `ORKESTRA_CURSOR_DEBUG` | cursor_hook.py |
 | `ORKESTRA_CURSOR_HOOK_PY` | cursor_hook.py |
@@ -128,6 +129,7 @@ Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_TODO_DENETLE_TTL` | is_kaydi.py |
 | `ORKESTRA_URETIM_ENJEKSIYON` | uretim_enjeksiyonu.py |
 | `ORKESTRA_URETIM_KAPISI` | is_sirasi.py |
+| `ORKESTRA_UYGULAMA_GUNLUGU` | cokus_kaydi.py, hata.py |
 | `ORKESTRA_YAPAMAM_KANITI` | yapamam_kaniti.py |
 | `ORKESTRA_YAYIN` | cfg.py |
 | `ORKESTRA_YOL_NOTU` | soru_sinif.py |
