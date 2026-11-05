@@ -31,3 +31,5 @@
 - Geri alma: istemci süzmesi tek işlevde, kaldırılınca liste eski hâline döner; eski anahtar silinmez.
 
 **İlgili iş:** I-389
+
+**Not (rebase sonrası, 05.11.2026):** I-390 aynı pencere mantığını (pencereIcinde, Bugün karşılaştırması, gün dilimi) main'e aldı; bu ADR'nin P1 gizleme tasarımı ve P3/P4 istemci yardımcıları o tasarımla yerine geçildi ve çıkarıldı. Bu işten kalan: klasik sayfalarda tek depolama anahtarı (orkestra.v2.pencere), /isler.json `mod` alanı, üst çubuk ve İşler satırı mod göstergeleri.
