@@ -1384,6 +1384,25 @@
         }
       ],
       "etkinlesme": "2026-11-03T13:00:00+03:00"
+    },
+    {
+      "id": "P-056",
+      "katman": "plugin",
+      "metin": "ZORUNLU, istisnasız: Her sohbet yanıtı ve her plan maddesi, etkilediği kararı ve en az bir uygulanabilir rakip yaklaşımı (mevcut skill, hook, kural dahil) çıkarmadan verilmez; mevcut plana ya da belgeye çıpalanılmaz. (1) Sohbet: yanıttan önce üç iç soru: soru hangi kararı etkiliyor, en az bir rakip yaklaşım ne, mevcut plana çıpalandım mı. Yanıt kısalığı P-001'de kalır: düşünme yanıtta liste olmaz, rakip yalnız sonucu değiştiriyorsa tek cümleyle anılır. Hook, P-048 YOL notunun metnine bu üç soruyu koyar (ayarlar/soru_sinif.json yol_sozlesmesi); gölge moddur (P-028), ORKESTRA_YOL_NOTU=0 kapatır. (2) Plan: her plan maddesi '**Etkilenen karar:**' alanıyla kararı yazar, '**Alternatifler:**' (P-030) o karar için rakip tartar; plan şablonları, Üretim anı enjeksiyonu (ORK-ADR-0111) ve denetçi sorusu aynı çifti söyler; scripts/is_sirasi.karar_eksikleri alan eksiğini gölgede kapi_golge/etkilenen_karar olarak yazar, engellemez (ayarlar/etkilenen_karar.json; ORKESTRA_BIC_KAPISI=0 kapatır). P-048 ve P-030 metinleri değişmez. Zorlama: tests/test_soru_sinif.py, tests/test_karar_yoklama.py. (ORK-ADR-0164)",
+      "ozet": "Sohbet yanıtı ve plan maddesi etkilenen kararı ve bir rakip yaklaşımı çıkarır; hook P-048 YOL notuna üç soruyu koyar (ORKESTRA_YOL_NOTU=0 kapatır), plan alanı gölgede yoklanır (ORKESTRA_BIC_KAPISI=0 kapatır).",
+      "neden": "Kullanıcı 05.11.2026 (I-383): ajan sohbet sorularına kararı ve rakip yaklaşımı çıkarmadan mevcut plana çıpalanıp dar yanıt veriyordu; P-030 yalnız belge ve plan işlerinde vardı (ORK-ADR-0164).",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-05T07:35:41+03:00",
+      "guncelleme": "2026-11-05T07:35:41+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-05T07:35:41+03:00",
+          "olay": "eklendi",
+          "metin": "ZORUNLU, istisnasız: Her sohbet yanıtı ve her plan maddesi, etkilediği kararı ve en az bir uygulanabilir rakip yaklaşımı (mevcut skill, hook, kural dahil) çıkarmadan verilmez; mevcut plana ya da belgeye çıpalanılmaz. (1) Sohbet: yanıttan önce üç iç soru: soru hangi kararı etkiliyor, en az bir rakip yaklaşım ne, mevcut plana çıpalandım mı. Yanıt kısalığı P-001'de kalır: düşünme yanıtta liste olmaz, rakip yalnız sonucu değiştiriyorsa tek cümleyle anılır. Hook, P-048 YOL notunun metnine bu üç soruyu koyar (ayarlar/soru_sinif.json yol_sozlesmesi); gölge moddur (P-028), ORKESTRA_YOL_NOTU=0 kapatır. (2) Plan: her plan maddesi '**Etkilenen karar:**' alanıyla kararı yazar, '**Alternatifler:**' (P-030) o karar için rakip tartar; plan şablonları, Üretim anı enjeksiyonu (ORK-ADR-0111) ve denetçi sorusu aynı çifti söyler; scripts/is_sirasi.karar_eksikleri alan eksiğini gölgede kapi_golge/etkilenen_karar olarak yazar, engellemez (ayarlar/etkilenen_karar.json; ORKESTRA_BIC_KAPISI=0 kapatır). P-048 ve P-030 metinleri değişmez. Zorlama: tests/test_soru_sinif.py, tests/test_karar_yoklama.py. (ORK-ADR-0164)"
+        }
+      ],
+      "etkinlesme": "2026-11-05T07:35:41+03:00"
     }
   ]
 }

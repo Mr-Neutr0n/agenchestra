@@ -421,6 +421,30 @@ def _bekleyenli_ret(klasor: str, kapi: str, eksik: list[str], ret: bool) -> list
     return sonuc
 
 
+def karar_eksikleri(klasor: str) -> list[str]:
+    """P-056: her P maddesi `**Etkilenen karar:**` alanını dolu taşır. Yalnız ölçer (gölge); kapsam best in class ile aynı."""
+    if not bic_kapsaminda_mi(klasor):
+        return []
+    metin = _plan_oku(klasor)
+    if metin is None:
+        return []
+    eksik = []
+    for n, blok in sorted(_p_bloklari(metin).items()):
+        m = re.search(r"\*\*Etkilenen karar:\*\*[ \t]*(.*)", _YORUM.sub("", blok))
+        if m is None or not m.group(1).strip():
+            eksik.append(f"P{n}: `**Etkilenen karar:**` alanı yok ya da boş (P-056)")
+    return eksik
+
+
+def karar_uyari(klasor: str) -> None:
+    """Gölge yoklama (P-056): eksikleri uyarır ve `kapi_golge/etkilenen_karar` yazar; sonucu çağıran kullanmaz, engellemez."""
+    try:
+        import kapi_mod as KM
+        KM.ihlal_ver(klasor, "etkilenen_karar", karar_eksikleri(klasor))
+    except Exception:
+        pass
+
+
 def bic_durumu(klasor: str) -> str:
     """Best in class kapısının sonucu: `tamam` | `bekleniyor` | `ret`."""
     return kapi_durumu(bic_eksikleri(klasor))
@@ -1304,6 +1328,7 @@ def todo_onkosulu(klasor: str) -> list[str]:
     engel = sozlesme_engeli(klasor, baglanti=True) or mevcut_durum_eksikleri(klasor) or plan_eksikleri(klasor)
     if not engel:
         bic_uyari(klasor)  # P-030 gölge: uyarır ve kaydeder, todo yazımını engellemez
+        karar_uyari(klasor)  # P-056 gölge: aynı biçimde
         gorunum_olcumu_uyari(klasor)  # P-044 gölge: aynı biçimde
     return engel
 

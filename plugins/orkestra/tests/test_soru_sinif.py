@@ -431,6 +431,32 @@ class TestYolNotu(_Ayarli):
         self.assertEqual(soru_sinif.yol_metni(self.GERCEK_1, self.sd), self.ayar["yol_sozlesmesi"])
         self.assertEqual(soru_sinif.yol_metni(self.GERCEK_2, self.sd), self.ayar["yol_sozlesmesi"])
 
+    # P-056: karar + rakip + çıpa soruları (davranış: 20 sabit mesajda kapsam ve boy)
+    SORULAR = [
+        "bu kuralı eklemek mantıklı mı, alternatif ne", "PE-612 için hangi yaklaşım daha iyi olur",
+        "hook mu skill mi kullanmalıyız bu işte", "neden iki denetçi çağırıyoruz sence",
+        "bu planı onaylamadan önce neye bakmalıyım", "yeni tabloyu şemaya nasıl eklemek en doğru",
+        "kopya sunucuda sorgu atmak güvenli mi şu an", "langfuse yerine ne kullanabiliriz",
+        "bu hatanın kökü nerede olabilir", "eval setini kaça bölmek gerekir",
+        "push etmeden önce ne kontrol edilir", "bu metrik doğru hesaplanıyor mu sence",
+        "rakip yaklaşım olarak ne düşünürsün", "mevcut plan yeterli mi yoksa baştan mı yazalım",
+        "tenant bazlı sayıları nasıl göstermeliyiz raporda", "bu ADR gerekir mi yoksa gerekmez mi",
+        "agentic değerlendirmede hangi seviyeyi seçelim", "token maliyetini düşürmek için ne yapabiliriz",
+        "bu test tek başına yeterli kanıt sayılır mı", "şablona alan eklemek mi yoksa kural mı daha doğru",
+    ]
+
+    def test_yol_uc_ic_soru_metinde(self):
+        m = self.ayar["yol_sozlesmesi"]
+        for parca in ("kararı etkiliyor", "rakip yaklaşım", "çıpalandım"):
+            self.assertIn(parca, m)
+
+    def test_yol_yirmi_mesajda_not_ve_sinir(self):
+        self.assertEqual(len(self.SORULAR), 20)
+        for q in self.SORULAR:
+            n = soru_sinif.yol_metni(q, self.sd)
+            self.assertEqual(n, self.ayar["yol_sozlesmesi"], q)
+            self.assertLessEqual(len(n), 300, q)
+
     def test_yol_selam_ve_onay_not_almaz(self):
         for m in ("merhaba", "tamam", "evet", "devam", "yap.", "", None, "   "):
             self.assertEqual(soru_sinif.yol_metni(m, self.sd), "", repr(m))

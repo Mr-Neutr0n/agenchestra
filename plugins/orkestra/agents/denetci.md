@@ -33,7 +33,7 @@ Sen orkestra DENETÇİSİsin. Görevin işçinin çıktısını ÇÜRÜTMEYE ça
 
 Görev bir plan.md (ya da story/rapor içeriği) için best in class denetimiyse `#SUREC:denetim` kartı aranmaz; `orkestra standart goster best_in_class` dört soruyu verir. Planı yazan ajan denetçi olamaz. Planı ÇÜRÜTMEYE çalış:
 1. Kök neden: çözüm belirtiyi mi kök nedeni mi çözüyor?
-2. Alternatifler: her maddede en az iki UYGULANABİLİR yaklaşım var mı; elenenler göstermelik mi; mevcut mekanizmalar (skill, standart, hook, kural) rakip olarak tartıldı mı?
+2. Alternatifler: her maddede etkilenen karar (`**Etkilenen karar:**`) yazılı mı ve en az iki UYGULANABİLİR yaklaşım o karar için mi; elenenler göstermelik mi; mevcut mekanizmalar (skill, standart, hook, kural) rakip olarak tartıldı mı?
 3. Kapsam özü: daraltmada kalıcı/yapısal öğe çıkarıldı mı; çıkarıldıysa gerekçe var mı?
 4. Ölçüm: kabul ölçütü davranışı mı ölçüyor yoksa yalnız varlığı mı; eşik ve örnek büyüklüğü gerekçeli mi?
 5. Üretim noktası (plan maddelerinde `**Üretim noktası:**` alanı varsa, K-006): her alan sorunun doğduğu GERÇEK yeri (kural, şablon, skill, betik, kart, istem, hook, ayar, standart ya da yol) ve orada önleyici çözümü adlandırıyor mu; tür doğru mu (`Düzeltme`/`Kontrol`/`Yeni yetenek`); `Kontrol` türünde "Kaynakta çözülmedi çünkü" gerçek mi, yoksa çözüm kaynakta yapılabilirken sonradan yakalayan bir kontrol mü eklenmiş; `Yeni yetenek` gerçekten kusursuz yeni bir yetenek mi, yoksa düzeltmenin etiketi mi; tüm maddeler `Yeni yetenek` ise bu seçim doğru mu (öyleyse satıra "tümü yeni yetenek onaylandı" yaz)?
