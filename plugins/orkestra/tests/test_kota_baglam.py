@@ -1,4 +1,4 @@
-"""I-401 P16: durum çubuğu bağlam boyutunu gösterir; 150k sarı, 200k kırmızı + devir önerisi; bilinmiyorsa satır bozulmaz."""
+"""I-401 P16: durum çubuğu bağlam boyutunu gösterir; 120k sarı, 150k kırmızı + devir önerisi; bilinmiyorsa satır bozulmaz."""
 import json
 import os
 import sys
@@ -14,8 +14,8 @@ def girdi_cw(n):
 
 def test_alti_renksiz_sari_kirmizi_basamaklari():
     assert kota.baglam_parcasi(90_000) == "bağlam 90k"
-    assert "devir yaklaşıyor" in kota.baglam_parcasi(160_000) and "\x1b[33m" in kota.baglam_parcasi(160_000)
-    k = kota.baglam_parcasi(230_000)
+    assert "devir yaklaşıyor" in kota.baglam_parcasi(130_000) and "\x1b[33m" in kota.baglam_parcasi(130_000)
+    k = kota.baglam_parcasi(180_000)
     assert "DEVİR ÖNER" in k and "/orkestra:devir" in k and "\x1b[1;31m" in k
 
 

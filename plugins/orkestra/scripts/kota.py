@@ -92,8 +92,8 @@ def kaydet(girdi: dict) -> dict | None:
     return nokta
 
 
-DEVIR_SARI = 150_000  # bu bağlamdan sonra sarı: devir yaklaşıyor
-DEVIR_KIRMIZI = 200_000  # ölçülen devir eşiği (soguk_onbellek.devir_esik_token): kırmızı + DEVİR
+DEVIR_SARI = 120_000  # bu bağlamdan sonra sarı: devir yaklaşıyor
+DEVIR_KIRMIZI = 150_000  # ölçülen devir eşiği (soguk_onbellek.devir_esik_token): kırmızı + DEVİR
 _RENK = {"sari": "\x1b[33m", "kirmizi": "\x1b[1;31m", "son": "\x1b[0m"}
 
 
@@ -116,7 +116,7 @@ def _baglam_tokeni(girdi: dict) -> int | None:
 
 
 def baglam_parcasi(token: int | None) -> str:
-    """`bağlam 148k` (150k'dan sonra sarı, 200k'dan sonra kırmızı ve DEVİR); token bilinmiyorsa boş."""
+    """`bağlam 148k` (120k'dan sonra sarı, 150k'dan sonra kırmızı ve DEVİR); token bilinmiyorsa boş."""
     if not token:
         return ""
     metin = f"bağlam {token // 1000}k"

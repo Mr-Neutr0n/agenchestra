@@ -226,14 +226,15 @@ def _test_yonlendirme(komut: str, cwd: str | None) -> str:
     if bek:
         durum += f", bekleyen: {len(bek)}"
     ileti = (f"çıplak tam test koşusu ({parca}) kira, ortak işçi bütçesi ve sonuç önbelleği almaz; tam takım için "
-             f"`python {kosucu}` kullan. Tek dosya ya da -k hedefli çağrı serbesttir. {durum}.")
+             f"`python {kosucu}` kullan (tam takım şart değil, P-060: değişen alanın hedefli testini koş). "
+             f"Tek dosya ya da -k hedefli çağrı serbesttir. {durum}.")
     import kapi_mod
     if kapi_mod.mod(TEST_YONLENDIRME_KAPI, cwd) == "ihlal":
         kapi_mod.ret_kaydet(cwd or os.getcwd(), TEST_YONLENDIRME_KAPI, f"çıplak test koşusu: {parca}")
         reddet(f"çıplak tam test koşusu reddedildi ({parca}): kira, ortak işçi bütçesi ve sonuç önbelleği almaz.\n"
-               f"- tam takım: `python {kosucu}` (ek yol ve -n verilebilir; aynı kod için sonuç önbellekten döner)\n"
-               f"- hedefli: tek dosya `pytest tests/test_x.py`, düğüm `pytest tests/test_x.py::Sinif::test_y`, "
+               f"- hedefli: önce bu (P-060, tam takım şart değil) — tek dosya `pytest tests/test_x.py`, düğüm `pytest tests/test_x.py::Sinif::test_y`, "
                f"süzgeç `pytest -k <ad>` ya da `python -m unittest tests.test_x` engellenmez\n"
+               f"- tam takım: `python {kosucu}` yalnız istenirse (ek yol ve -n verilebilir; aynı kod için sonuç önbellekten döner)\n"
                f"- {durum}. Kapatma: ORKESTRA_TEST_YONLENDIRME=0 ya da .claude/orkestra/{TEST_YONLENDIRME_KAPI}.json "
                f"içinde \"mod\": \"golge\".")
     kapi_mod.kaydet(cwd or os.getcwd(), TEST_YONLENDIRME_KAPI, f"çıplak test koşusu: {parca}")

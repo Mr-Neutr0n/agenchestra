@@ -1,11 +1,6 @@
 ---
 name: arsivle
-description: >-
-  Scratchpad ya da başka bir çalışma klasörünü proje arşivine taşır: önce kaynakta sır taraması (sır
-  bulunursa hiçbir şey kopyalanmaz), kimlik/bağlantı dosyalarını (db.py, .env, *.pem, *.key) atlar,
-  e-posta ve IP maskeler, ad eşlemesini uygular, kopyalar, hedefte son tarama yapar, taşıma kaydına satır
-  ve klasör README iskeleti ekler. Kullanıcı "arşivle", "çalışma klasörünü arşive taşı", "ham çıktıları
-  arşive al", "scratchpad'i kalıcı yap" dediğinde kullan.
+description: "Çalışma klasörünü proje arşivine taşır: sır taramasından geçirir (sır varsa kopyalamaz), db.py/.env/anahtar dosyalarını atlar, e-posta/IP maskeler, README iskeleti ekler. Tetik: 'arşivle', 'arşive taşı', 'ham çıktıları arşive al'."
 when_to_use: >-
   "arşivle", "arşive taşı", "ham çıktıları arşive al", "scratchpad kalıcı olsun", "98_calisma'yı temizle",
   "sır taraması yap" (yalnız tarama için --yalniz-tara).

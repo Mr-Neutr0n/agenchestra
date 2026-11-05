@@ -1,6 +1,6 @@
 ---
 name: yaklasim
-description: "Sohbet sorusunu yanıtlamadan önce aday yolları (skill, MCP aracı, kod ya da canlı kayıt, resmi belge) sayıp en ucuz yeterli olanı seçtirir. Hook bağlamında 'YOL:' notu göründüğünde, kullanıcı 'nasıl bir yaklaşım', 'best in class yanıt', 'hangi yoldan çözelim', 'farklı çözüm yolları' dediğinde kullan. Yeni skill aramak için find-skills, yapı standardı için standart kullanılır; bu skill yalnız yanıt öncesi yol taraması içindir."
+description: "Yanıttan önce aday yolları (skill, MCP, kod/kayıt, resmi belge) sayıp en ucuz yeterliyi seçtirir. Tetik: hook bağlamında 'YOL:' notu, 'best in class yanıt', 'hangi yoldan çözelim'. Skill aramak için find-skills."
 ---
 
 ## Amaç

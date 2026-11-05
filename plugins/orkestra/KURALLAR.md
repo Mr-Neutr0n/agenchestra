@@ -163,5 +163,5 @@ Sorgu üreten, veriyle cevap veren ya da araç çağıran bir sistem (ajan, rapo
 
 Tam metin ve nedenler `KURALLAR_KAYITLI.md` dosyasındadır (`orkestra kural` yönetir); kuralı kimliğiyle ara.
 
-Etkin kimlikler: K-003, K-004, K-005, K-006, P-001, P-005, P-006, K-007, P-008, P-009, P-010, P-011, P-012, P-013, P-014, P-015, P-016, P-017, P-018, P-019, P-020, P-021, P-022, P-023, P-024, P-025, P-026, P-027, P-028, P-029, P-031, P-030, P-032, P-033, P-034, P-035, P-036, P-037, P-038, P-039, P-040, P-042, P-043, P-044, P-045, P-048, P-046, P-047, P-049, P-050, P-051, P-052, P-053, P-055, P-056, P-057, P-058, P-059.
+Etkin kimlikler: K-003, K-004, K-005, K-006, P-001, P-005, P-006, K-007, P-008, P-009, P-010, P-011, P-012, P-013, P-014, P-015, P-016, P-017, P-018, P-019, P-020, P-021, P-022, P-023, P-024, P-025, P-026, P-027, P-028, P-029, P-031, P-030, P-032, P-033, P-034, P-035, P-036, P-037, P-038, P-039, P-040, P-042, P-043, P-044, P-045, P-048, P-046, P-047, P-049, P-050, P-051, P-052, P-053, P-055, P-056, P-057, P-058, P-059, P-060.
 <!-- eklenti-kurallari:bitis -->

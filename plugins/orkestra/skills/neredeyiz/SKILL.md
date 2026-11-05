@@ -1,6 +1,6 @@
 ---
 name: neredeyiz
-description: "Durum özeti çıkarır: bu konuşmada ne yapıyoruz, nereye kadar geldik, sırada ne var. Şu ifadelerde tetiklenir: 'nerede kaldık', 'ne yapıyoruz', 'şu ana kadar ne yaptık', 'durum özeti', 'özet geç', 'kaybettim', 'baştan anlat', 'recap', '/neredeyiz', '/orkestra:neredeyiz'. Uzun veya dağılmış konuşmalarda kullanıcıyı yeniden yönlendirmek için. Tek bir teknik soruya cevap verirken veya kullanıcı bir dosyanın/metnin özetini istediğinde KULLANMA."
+description: "Durum özeti çıkarır: ne yapıyoruz, nereye geldik, sırada ne var. Tetik: 'nerede kaldık', 'durum özeti', 'özet geç', 'kaybettim', 'recap', '/orkestra:neredeyiz'. Tek teknik soruda ya da dosya özetinde kullanma."
 ---
 
 ## Amaç

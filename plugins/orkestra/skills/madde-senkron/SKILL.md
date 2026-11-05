@@ -1,10 +1,6 @@
 ---
 name: madde-senkron
-description: >-
-  Aynı madde kimliğini (G/A/V/K/Y/E, C1–C20, ST-xxx) taşıyan kanonik belgeleri birlikte ve güvenli biçimde
-  günceller: yedek alır, her değişikliği birebir eşleşmeyle yapar, eşleşme yoksa ya da birden fazlaysa hiçbir
-  şey yazmadan durur. Kullanıcı "kimliği tüm belgelerde güncelle", "bu maddeyi senkronla", "A7'nin metni
-  değişti, belgelere işle", "kimlik hangi belgelerde geçiyor" dediğinde kullan.
+description: "Aynı madde kimliğini (G/A/V/K/Y/E, C1-C20, ST-xxx) taşıyan kanonik belgeleri birlikte günceller: yedek alır, birebir eşleşme yoksa hiçbir şey yazmaz. Tetik: 'kimliği tüm belgelerde güncelle', 'bu maddeyi senkronla'."
 when_to_use: >-
   "A7 metni değişti, hepsine işle", "maddeyi tüm belgelerde güncelle", "kimlik hangi belgelerde geçiyor",
   "madde senkronu", "dış sürümle taslağı eşitle".

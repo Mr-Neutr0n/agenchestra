@@ -37,6 +37,9 @@ class _Ortak(unittest.TestCase):
         os.makedirs(os.path.join(self.sd, "oturumlar"))
         self.tr = os.path.join(self.proje, "tr.jsonl")
         self.baglam(200_000)
+        # bu sınıf iş değişimi uyarısını sınar; devir uyarısı (150k, I-401) ayrı testlerde
+        with open(os.path.join(self.sd, "onbellek_kapisi.json"), "w", encoding="utf-8") as f:
+            json.dump({"devir_uyarisi": False}, f)
 
     def tearDown(self):
         shutil.rmtree(self.proje, ignore_errors=True)
@@ -127,6 +130,7 @@ class HookCikti(_Ortak):
         self.assertNotIn("systemMessage", json.loads(cikti) if cikti.strip() else {})
 
     def test_devir_uyarisi_hookta_200k_ustunde_bir_kez_engellemez(self):
+        os.remove(os.path.join(self.sd, "onbellek_kapisi.json"))  # devir uyarısı bu testte açık
         self.baglam(250_000)
         cikti, kod = self.kos("aynı konuya devam edelim")
         self.assertEqual(kod, 0)

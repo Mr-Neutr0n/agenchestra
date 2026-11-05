@@ -1467,6 +1467,25 @@
         }
       ],
       "etkinlesme": "2026-11-05T08:00:00+03:00"
+    },
+    {
+      "id": "P-060",
+      "katman": "plugin",
+      "metin": "Push öncesi test şartı yalnız repoda GitHub CI/CD (.github/workflows) varsa geçerlidir ve yalnız değişen alanın hedefli testlerini (tek dosya, düğüm, -k) kapsar; tam takım şart değildir, tam takımı CI koşar. CI/CD yoksa push öncesi test şartı yoktur. Tam takım yalnız kullanıcı isterse koşulur.",
+      "neden": "Tam takım koşusu 10-17 dk sürüyor ve I-401'de 4 kez tekrarlandı; yaptığımız her değişiklikte ilgili test zaten koşuluyor, tam takımın asıl kapısı CI. Kullanıcı kararı 05.11.2026.",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-05T15:05:36+03:00",
+      "guncelleme": "2026-11-05T15:05:36+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-05T15:05:36+03:00",
+          "olay": "eklendi",
+          "metin": "Push öncesi test şartı yalnız repoda GitHub CI/CD (.github/workflows) varsa geçerlidir ve yalnız değişen alanın hedefli testlerini (tek dosya, düğüm, -k) kapsar; tam takım şart değildir, tam takımı CI koşar. CI/CD yoksa push öncesi test şartı yoktur. Tam takım yalnız kullanıcı isterse koşulur."
+        }
+      ],
+      "etkinlesme": "2026-11-05T15:05:36+03:00",
+      "ozet": "Push öncesi test şartı yalnız repoda GitHub CI/CD (.github/workflows) varsa geçerli ve yalnız değişen alanın hedefli testleridir; tam takım şart değil (CI koşar). CI/CD yoksa şart yok."
     }
   ]
 }

@@ -1,6 +1,6 @@
 ---
 name: auto
-description: "Orkestra'da /auto modunu açar: kullanıcının mesajı onay yerine geçer, üç belge (mevcut durum, plan, todo) yazılır, onay hook tarafından kendiliğinden verilir ve iş çalışma özetine kadar onaysız yürütülür. '/orkestra:auto <iş>', '/auto <iş>', 'onay almadan bitir', 'otomatik koş' dendiğinde kullan. Onay beklemek isteyen kullanıcı için /plan (varsayılan) vardır."
+description: "/auto modunu açar: kullanıcı mesajı onay yerine geçer, mevcut durum-plan-todo yazılır, iş çalışma özetine kadar onaysız yürür. Tetik: '/orkestra:auto <iş>', '/auto <iş>', 'onay almadan bitir'. Onay beklemek için /plan."
 ---
 
 ## Amaç

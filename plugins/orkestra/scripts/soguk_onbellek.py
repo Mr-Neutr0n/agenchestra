@@ -15,7 +15,7 @@ import os
 import ork_lib as L
 
 VARSAYILAN = {"acik": True, "esik_token": 150_000, "esik_dk": 60, "tekrar_dk": 15, "is_degisimi": True,
-              "devir_uyarisi": True, "devir_esik_token": 200_000,
+              "devir_uyarisi": True, "devir_esik_token": 150_000,
               "devir_tekrar_token": 50_000}  # ilk uyarıdan sonra bağlam bu kadar büyüdükçe yeniden uyar (I-401 P16)
 # Yeni sohbetin ölçülen açılış bağlamı (tasarruf tahmini için): ilk çağrı medyanı 91.223 token, 205 oturum, 22.10.2026
 # (`orkestra maliyet taban`; I-159 P4). Eski 30.000 sabiti tasarrufu 1,6-2 kat şişiriyordu.
@@ -133,7 +133,7 @@ def is_degisimi_uyarisi(sd: str, oid: str | None, transkript: str | None, bagli_
 def devir_uyarisi(sd: str, oid: str | None, transkript: str | None) -> str | None:
     """I-159 P5: son ana ajan çağrısının bağlamı `devir_esik_token` üstündeyse ENGELLEMEYEN devir uyarısı, yoksa None.
 
-    Ölçüm (22.10.2026, 7 gün, I-159 P4): 200 bin üstünde devir (yeni sohbet + devir belgesi) net kazançlı.
+    Ölçüm (22.10.2026, I-159 P4: 200k; 05.11.2026, I-401: 422 oturum 150k'yı aştı, sonrasında medyan 155 çağrı kaldı, %89'unda ≥25): 150 bin üstünde devir (yeni sohbet + devir belgesi) net kazançlı.
     İlk uyarıdan sonra bağlam `devir_tekrar_token` (50k) büyüdükçe yeniden uyarır (işaret `<oid>.devir`: son uyarılan bağlam);
     ayar `devir_uyarisi: false` kapatır, `devir_tekrar_token: 0` eski davranışı verir (oturum başına bir kez). Hata her zaman None."""
     try:
@@ -163,6 +163,6 @@ def devir_uyarisi(sd: str, oid: str | None, transkript: str | None) -> str | Non
         import devir_esigi
         return devir_esigi.devir_metni(
             f"bağlam ~{s['baglam'] // 1000}k token",
-            f"yeni sohbette çağrı başına ~{azalan // 1000}k token (~{usd:.2f} USD) daha az okunur (200k üstünde devir net kazançlı)")
+            f"yeni sohbette çağrı başına ~{azalan // 1000}k token (~{usd:.2f} USD) daha az okunur (150k üstünde devir net kazançlı)")
     except Exception:
         return None

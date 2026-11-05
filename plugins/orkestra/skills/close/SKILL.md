@@ -1,11 +1,6 @@
 ---
 name: close
-description: >-
-  Sohbet bitmeden önce çalışır: bu sohbette kullanıcının istediği her şeyi kanıta bakarak sınar ve AÇIK
-  KALAN İŞLERİ sohbette madde madde verir; her madde tek cümleyle "bu iş şu nedenle yapılmalı" der.
-  Kapalı işler sohbete girmez, yalnız rapor dosyasında durur. Hiçbir kullanıcı mesajı atlanmaz (betik sayar).
-  Kullanıcı "/orkestra:close", "sohbeti kapatıyorum", "ne açıkta kaldı", "yapılmayanlar neler",
-  "açık işler", "kapanış kontrolü" dediğinde kullan.
+description: "Sohbet bitmeden önce kullanıcının istediği her şeyi kanıta bakarak sınar ve AÇIK KALAN İŞLERİ madde madde verir; kapalı işler yalnız rapor dosyasında kalır. Tetik: '/orkestra:close', 'sohbeti kapatıyorum', 'ne açıkta kaldı', 'açık işler'."
 argument-hint: "[konu filtresi, isteğe bağlı]"
 ---
 # /orkestra:close: sohbet → kanıtlı karar → sohbette "açık iş — neden" listesi

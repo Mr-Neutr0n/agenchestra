@@ -1,11 +1,6 @@
 ---
 name: db-olcum
-description: >-
-  Projenin veritabanında (kopya ya da prod) salt okuma ölçüm yapar: hipotezden Python sorgu betiği üretir,
-  kapı denetimlerinden (VPN, saat penceresi, kimlik dosyasının yeri, SQL güvenliği) geçirip çalıştırır,
-  saatli CSV ve bulgu raporu yazar, arşivler. Kullanıcı "DB'de ölç", "veriyle tasdik edelim", "şu tabloya
-  bak", "sorgu yaz ve çalıştır", "kaç satır var", "hangi şemalarda var" dediğinde kullan. İddia listesi
-  için iddia-dogrula kullanılır.
+description: "Veritabanında salt okuma ölçüm yapar: hipotezden sorgu betiği üretir, kapı denetimlerinden (VPN, saat, kimlik yeri, SQL güvenliği) geçirip çalıştırır, CSV ve bulgu raporu yazar. Tetik: 'DB'de ölç', 'şu tabloya bak', 'kaç satır var'. İddia listesi için iddia-dogrula."
 when_to_use: >-
   "DB'de ölç", "veriyle tasdik edelim", "şu hipotezi veriyle kontrol et", "sorgu yaz ve çalıştır",
   "kopyada bak", "prod'da bak", "kaç satır / hangi şemalarda var", "senkron bitti mi".

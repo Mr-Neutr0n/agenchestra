@@ -1,10 +1,6 @@
 ---
 name: harita-kur
-description: >-
-  Bir projenin bilgi grafiğini ilk kez kurar ya da yeniler: koddan statik kenarları çıkarır, konu kartlarını (md)
-  yazar, kenar listesini (JSONL) ve INDEX'i üretir. Sonra yeni istekler bu grafikle eşlenir ve etki kümesi plana girer.
-  Kullanıcı "projeyi haritala", "bilgi grafiğini kur", "bu proje neyle neye bağlı", "konu kartlarını üret",
-  "harita eski, yenile" dediğinde ya da projeye ilk kez dahil olunduğunda kullan.
+description: "Projenin bilgi grafiğini kurar ya da yeniler: statik kenarlar, konu kartları, kenar listesi ve INDEX. Tetik: 'projeyi haritala', 'bilgi grafiğini kur', 'harita eski, yenile'; projeye ilk dahil olunduğunda."
 when_to_use: >-
   "projeyi haritala", "bilgi grafiği kur", "konu kartı yaz", "bağlantıları çıkar", "yeni projeye başlıyoruz",
   "harita kenarları eskimiş".
