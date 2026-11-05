@@ -16,7 +16,9 @@ import sys
 
 EKLENTI = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 AYAR_AD = "mcp_kimlik"
-IZINLI_ALAN = {"aciklama", "komut", "kimlik_servisi", "ortam", "gerek"}
+IZINLI_ALAN = {"aciklama", "komut", "kimlik_servisi", "ortam", "gerek", "sinif"}
+# Kullanım sınıfı (I-397, ADR-0155): hafif = her oturumda açılması ucuz (kullanıcı düzeyi); agir ve tarayici proje düzeyinde istenir.
+SINIFLAR = ("hafif", "agir", "tarayici")
 PROJE_YER_TUTUCU = "${CLAUDE_PROJECT_DIR}"
 _ORTAM_ADI = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 _GEREK_ADI = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]*$")
@@ -35,8 +37,9 @@ def kayit_oku(proje: str | None = None) -> dict:
     """Eklenti kaydı + proje ezmesi; aynı adlı MCP girdisi bütünüyle yerine konur. Şemadan geçirilmiş sözlük döner."""
     proje = proje or proje_koku()
     sonuc: dict = {}
-    for yol in (os.path.join(EKLENTI, "ayarlar", AYAR_AD + ".json"),
-                os.path.join(proje, ".claude", "orkestra", AYAR_AD + ".json")):
+    # Eklenti kaydında sınıf zorunlu (sınıfsız girdi kayda giremez); proje ezmesi sınıfsız olabilir, kur onu proje düzeyine koyar.
+    for yol, zorunlu in ((os.path.join(EKLENTI, "ayarlar", AYAR_AD + ".json"), True),
+                         (os.path.join(proje, ".claude", "orkestra", AYAR_AD + ".json"), False)):
         try:
             with open(yol, encoding="utf-8-sig") as f:
                 d = json.load(f)
@@ -44,19 +47,25 @@ def kayit_oku(proje: str | None = None) -> dict:
             continue
         mcp = d.get("mcp") if isinstance(d, dict) else None
         if isinstance(mcp, dict):
+            for ad, girdi in mcp.items():
+                dogrula(ad, girdi, sinif_zorunlu=zorunlu)
             sonuc.update(mcp)
-    for ad, girdi in sonuc.items():
-        dogrula(ad, girdi)
     return sonuc
 
 
-def dogrula(ad: str, girdi) -> None:
-    """Şema: değer alanı yok. Bilinmeyen alan, ad dışı ortam girdisi ve boş komut reddedilir (mesaj değer taşımaz)."""
+def dogrula(ad: str, girdi, sinif_zorunlu: bool = False) -> None:
+    """Şema: değer alanı yok. Bilinmeyen alan, ad dışı ortam girdisi ve boş komut reddedilir (mesaj değer taşımaz).
+    `sinif` varsa SINIFLAR'dan biri olmalı; `sinif_zorunlu` ise eksik sınıf reddedilir (eklenti kaydı)."""
     if not isinstance(girdi, dict):
         raise KayitHata(f"{ad}: girdi nesne olmalı")
     fazla = sorted(set(girdi) - IZINLI_ALAN)
     if fazla:
         raise KayitHata(f"{ad}: bilinmeyen alan(lar) {', '.join(fazla)} (kayıtta değer alanı olamaz)")
+    sinif = girdi.get("sinif")
+    if sinif is None and sinif_zorunlu:
+        raise KayitHata(f"{ad}: sinif gerekir ({', '.join(SINIFLAR)})")
+    if sinif is not None and sinif not in SINIFLAR:
+        raise KayitHata(f"{ad}: sinif {', '.join(SINIFLAR)} değerlerinden biri olmalı")
     komut = girdi.get("komut")
     if not (isinstance(komut, list) and komut and all(isinstance(x, str) and x for x in komut)):
         raise KayitHata(f"{ad}: komut boş olmayan metin listesi olmalı")

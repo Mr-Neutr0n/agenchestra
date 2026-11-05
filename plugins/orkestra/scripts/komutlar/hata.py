@@ -3,6 +3,7 @@
 `orkestra hata en-cok [--gun N] [--kaynak hook|cli|ozet|kart|kural | --tum] [--ilk N] [--json]`
 Varsayılan görünüm kural ihlallerini dışlar (uyum sayacı, hata değil); `--kaynak kural` ya da `--tum` ile görünür.
 `orkestra hata liste [--ilk N] [--json]`   (hata.jsonl'in son satırları)
+`orkestra hata cokus`   (uygulama günlüğündeki çöken oturum çıkış kodlarını hata.jsonl'e yazar; kaynak `cokus`, I-397)
 `orkestra hata ozet [--baslangic T] [--bitis T] [--oncesi T] [--sonrasi T] [--json]`   (ret_olcum: R1–R9 oranı, I-224 P10)
 """
 from __future__ import annotations
@@ -28,6 +29,15 @@ def cmd_en_cok(a):
         print(HE.satir_metni(r))
     if not a.tum and not a.kaynak:
         print("(kural ihlalleri dışarıda: --kaynak kural ya da --tum)")
+
+
+def cmd_cokus(a):
+    import cokus_kaydi as CK
+    yol = CK.gunluk_yolu()
+    if not yol or not os.path.isfile(yol):
+        print(f"uygulama günlüğü bulunamadı: {yol or '-'} (ORKESTRA_UYGULAMA_GUNLUGU ile verilir)")
+        return
+    print(f"{CK.tara(sd_gerekli(), yol)} yeni çöküş kaydı yazıldı ({yol})")
 
 
 def cmd_liste(a):
@@ -59,11 +69,13 @@ def kaydet(alt):
     e = h.add_parser("en-cok", help="aynı imzalı hataları sayıya göre sıralar (salt okuma)")
     e.add_argument("--gun", type=int, default=0, help="son N gün (0 = tümü)")
     g = e.add_mutually_exclusive_group()
-    g.add_argument("--kaynak", choices=("hook", "cli", "ozet", "kart", "kural", "davranis"))
+    g.add_argument("--kaynak", choices=("hook", "cli", "ozet", "kart", "kural", "davranis", "cokus"))
     g.add_argument("--tum", action="store_true", help="kural ihlalleri dahil tüm kaynaklar")
     e.add_argument("--ilk", type=int, default=0, help="ilk N satır (0 = tümü)")
     e.add_argument("--json", action="store_true")
     e.set_defaults(f=cmd_en_cok)
+    co = h.add_parser("cokus", help="uygulama günlüğündeki çöken oturum çıkış kodlarını hata defterine yaz (I-397)")
+    co.set_defaults(f=cmd_cokus)
     li = h.add_parser("liste", help="hata.jsonl'in son satırları")
     li.add_argument("--ilk", type=int, default=20, help="son N satır (0 = tümü)")
     li.add_argument("--json", action="store_true")

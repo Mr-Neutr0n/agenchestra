@@ -84,10 +84,10 @@ def birlestir(sd: str, gun=0, kaynak: str | None = None, kural_haric: bool = Fal
     sayim: dict = {}
     hatalar = _dict(L.jsonl_oku(os.path.join(sd, HK.DOSYA)))
     gunluk = _dict(L.jsonl_oku(os.path.join(sd, "gunluk.jsonl")))
-    if kaynak in (None, "hook", "cli", "ozet", "davranis"):  # davranis: ajanın kod dışı hataları (ADR-0037)
+    if kaynak in (None, "hook", "cli", "ozet", "davranis", "cokus"):  # davranis: ajanın kod dışı hataları (ADR-0037); cokus: uygulama günlüğünden (I-397)
         for h in hatalar:
             k = h.get("kaynak")
-            if k in ("hook", "cli", "ozet", "davranis") and kaynak in (None, k) and pencerede(h.get("zaman")):
+            if k in ("hook", "cli", "ozet", "davranis", "cokus") and kaynak in (None, k) and pencerede(h.get("zaman")):
                 im = imza_goster(h.get("tur"), h.get("ileti")) if h.get("tur") else h.get("imza") or "?"
                 _topla(sayim, k, im, h.get("zaman"), h.get("ileti"))
     if kaynak in (None, "hook"):

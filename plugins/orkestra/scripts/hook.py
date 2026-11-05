@@ -3207,6 +3207,19 @@ def session_start(inp: dict):
     except Exception:
         pass
     _m("farkindalik")
+    try:  # I-397, ADR-0155: açılışta boş RAM / commit ölçümü; eşik altındaysa tek satır uyarı (gölge, engellemez)
+        import bellek_kapisi as _bk
+        bu = _bk.oturum_basi(sd, inp.get("session_id"))
+        if bu:
+            ek = ek + chr(10) + bu
+    except Exception:
+        pass
+    try:  # I-397 P5: çöken oturumların çıkış kodları uygulama günlüğünden hata defterine (oturum içi hook çökmede çalışmaz)
+        import cokus_kaydi as _ck
+        _ck.tara(sd)
+    except Exception:
+        pass
+    _m("bellek")
     _sure_yaz(sd, inp.get("session_id"), (time.perf_counter() - _t0) * 1000, _bol)
     import baglam_kaydi
     baglam_kaydi.kaydet(sd, "SessionStart", inp.get("session_id"), ek)

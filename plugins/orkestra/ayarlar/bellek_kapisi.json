@@ -1,0 +1,7 @@
+{
+  "mod": "golge",
+  "bos_ram_gb_esik": 1.0,
+  "commit_yuzde_esik": 90,
+  "esik_yuzdeligi": 10,
+  "aciklama": "Açılışta bellek uyarısı (I-397, ADR-0155, P-028). golge: her oturum açılışında gunluk.jsonl'a `bellek_olcum` düşer; boş RAM bos_ram_gb_esik altındaysa ya da commit kullanımı commit_yuzde_esik üstündeyse bağlama tek satır uyarı eklenir ve `kapi_golge / bellek_kapisi` yazılır; hiçbir şey engellenmez. Başlangıç eşikleri çöküş anı ölçümünden gelir (05.11.2026 08:31: boş RAM 0,1 GB, commit %92); en az 7 gün ölçümden sonra eşik, `bellek_olcum` kayıtlarındaki boş RAM değerlerinin esik_yuzdeligi (%10) yüzdeliğinden güncellenir (bellek_kapisi.esik_oner). Kapatma: ORKESTRA_BELLEK_KAPISI=0. Proje ezmesi: .claude/orkestra/bellek_kapisi.json. İhlal modu bu sürümde yok; geçiş ölçümden sonra ayrı kararla (P-028)."
+}

@@ -1,8 +1,9 @@
 {
-  "aciklama": "MCP kimlik kaydı (ADR-0096, ADR-0097). Her MCP için çalıştırma komutu ve kimlik klasöründen hangi anahtarların hangi ortam değişkenine verileceği. Bu dosyada DEĞER yoktur, yalnız ad: `ortam` her girdisi `ORTAM_DEGISKENI: ANAHTAR` ya da `ORTAM_DEGISKENI: servis.ANAHTAR` biçimindedir; `gerek` = ön koşul komut adları, şema başka alanı ve ad dışı değeri reddeder. Proje ezmesi: .claude/orkestra/mcp_kimlik.json (aynı adlı MCP girdisi yerine konur). Komut başındaki ~ kullanıcı klasörüne açılır. Sarmalayıcı: scripts/mcp_kimlik.py <ad>; config üretimi: orkestra mcp config.",
+  "aciklama": "MCP kimlik kaydı (ADR-0096, ADR-0097). Her MCP için çalıştırma komutu ve kimlik klasöründen hangi anahtarların hangi ortam değişkenine verileceği. Bu dosyada DEĞER yoktur, yalnız ad: `ortam` her girdisi `ORTAM_DEGISKENI: ANAHTAR` ya da `ORTAM_DEGISKENI: servis.ANAHTAR` biçimindedir; `gerek` = ön koşul komut adları, `sinif` = kullanım sınıfı (hafif | agir | tarayici; I-397, ADR-0155): yalnız hafif kullanıcı düzeyine kurulur, agir ve tarayici proje düzeyine (.mcp.json) yazılır; eklenti kaydında sınıf zorunludur. Şema başka alanı ve ad dışı değeri reddeder. Proje ezmesi: .claude/orkestra/mcp_kimlik.json (aynı adlı MCP girdisi yerine konur). Komut başındaki ~ kullanıcı klasörüne açılır. Sarmalayıcı: scripts/mcp_kimlik.py <ad>; config üretimi: orkestra mcp config.",
   "mcp": {
     "markitdown": {
       "aciklama": "Belgeleri (pdf, docx, xlsx, html...) Markdown'a çevirir. Anahtar gerekmez. Ayrı venv: ~/.orkestra/mcp/markitdown (pip install --pre markitdown-mcp; PyPI'da yalnız alfa sürüm var).",
+      "sinif": "agir",
       "komut": [
         "~/.orkestra/mcp/markitdown/Scripts/markitdown-mcp.exe"
       ],
@@ -11,6 +12,7 @@
     },
     "sequential-thinking": {
       "aciklama": "Adım adım düşünme aracı. Anahtar gerekmez; Node 24 ve üstü ister.",
+      "sinif": "hafif",
       "komut": [
         "npx",
         "-y",
@@ -21,6 +23,7 @@
     },
     "firecrawl": {
       "aciklama": "Web tarama ve kazıma. Anahtar kimlik klasöründe firecrawl servisinde FIRECRAWL_API_KEY adıyla durur (orkestra kimlik ekle firecrawl FIRECRAWL_API_KEY).",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",
@@ -33,6 +36,7 @@
     },
     "memory": {
       "aciklama": "Bilgi grafiği belleği. Anahtar gerekmez; isteğe bağlı MEMORY_FILE_PATH. Node 24+.",
+      "sinif": "hafif",
       "komut": [
         "npx",
         "-y",
@@ -41,6 +45,7 @@
     },
     "filesystem": {
       "aciklama": "Dosya sistemi erişimi; yalnız proje dizini (${CLAUDE_PROJECT_DIR}) açılır. Anahtar gerekmez. Node 24+.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",
@@ -50,6 +55,7 @@
     },
     "context7": {
       "aciklama": "Kütüphane belgeleri. doğrulanmadı: stdio komutu README'de yok, npm paketi var (4.4.4). İsteğe bağlı API anahtarı eşlenmedi.",
+      "sinif": "hafif",
       "komut": [
         "npx",
         "-y",
@@ -58,6 +64,7 @@
     },
     "playwright": {
       "aciklama": "Tarayıcı otomasyonu (Playwright). Anahtar gerekmez. Tarayıcı kurulumu doğrulanmadı.",
+      "sinif": "tarayici",
       "komut": [
         "npx",
         "@playwright/mcp@latest"
@@ -65,6 +72,7 @@
     },
     "chrome-devtools": {
       "aciklama": "Chrome DevTools erişimi. Anahtar gerekmez; güncel Chrome ister.",
+      "sinif": "tarayici",
       "komut": [
         "npx",
         "-y",
@@ -73,6 +81,7 @@
     },
     "github": {
       "aciklama": "GitHub MCP (Docker stdio). Docker ve GITHUB_PERSONAL_ACCESS_TOKEN gerekir (orkestra kimlik ekle github GITHUB_PERSONAL_ACCESS_TOKEN).",
+      "sinif": "agir",
       "komut": [
         "docker",
         "run",
@@ -91,6 +100,7 @@
     },
     "repomix": {
       "aciklama": "Depoyu tek dosyada paketler. Anahtar gerekmez. --sandbox dizin kısıtı doğrulanmadığı için eklenmedi.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",
@@ -100,6 +110,7 @@
     },
     "serena": {
       "aciklama": "Kod tabanı anlama (LSP). doğrulanmadı: komut README'den; önce `uv tool install -p 3.13 serena-agent` gerekir.",
+      "sinif": "agir",
       "komut": [
         "serena",
         "start-mcp-server",
@@ -114,6 +125,7 @@
     },
     "beads": {
       "aciklama": "Beads görev takibi. bd ikilisi ve Dolt gerekir; PyPI beads-mcp.",
+      "sinif": "agir",
       "komut": [
         "beads-mcp"
       ],
@@ -124,6 +136,7 @@
     },
     "mcp-chrome": {
       "aciklama": "Chrome eklentisi + `npm i -g mcp-chrome-bridge` ister (elle). doğrulanmadı: stdio köprü komut adı.",
+      "sinif": "tarayici",
       "komut": [
         "mcp-chrome-stdio"
       ],
@@ -133,6 +146,7 @@
     },
     "git-mcp": {
       "aciklama": "Uzak GitMCP'ye mcp-remote köprüsü (genel docs sunucusu). Depo başına ayrı kayıt eklenebilir. Anahtar gerekmez.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",
@@ -142,6 +156,7 @@
     },
     "browsermcp": {
       "aciklama": "Tarayıcı kontrolü; Browser MCP Chrome eklentisi elle kurulur. Node 24+.",
+      "sinif": "tarayici",
       "komut": [
         "npx",
         "@browsermcp/mcp@latest"
@@ -149,6 +164,7 @@
     },
     "desktop-commander": {
       "aciklama": "YÜKSEK YETKİ: tüm dosya sistemi ve kabuk erişimi. Bilinçli kur.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",
@@ -157,6 +173,7 @@
     },
     "claude-context": {
       "aciklama": "Kod aramasında vektör dizini. İki dış hesap: Zilliz (MILVUS_*) ve OpenAI. doğrulanmadı: MILVUS_ADDRESS zorunluluğu.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "@zilliz/claude-context-mcp@latest"
@@ -169,6 +186,7 @@
     },
     "windows-mcp": {
       "aciklama": "YÜKSEK YETKİ: Windows masaüstü kontrolü. doğrulanmadı: komut ikincil kaynaktan; uv ve Python 3.13 ister.",
+      "sinif": "tarayici",
       "komut": [
         "uvx",
         "windows-mcp"
@@ -179,6 +197,7 @@
     },
     "task-master": {
       "aciklama": "Görev yönetimi. En az bir sağlayıcı anahtarı gerekir (ANTHROPIC_API_KEY, OPENAI_API_KEY...); hangisinin kullanılacağı kullanıcı kararı, anahtar eşlemesi eklenmedi.",
+      "sinif": "agir",
       "komut": [
         "npx",
         "-y",

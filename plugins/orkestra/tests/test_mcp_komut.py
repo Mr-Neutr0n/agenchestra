@@ -48,7 +48,7 @@ def test_config_claude_code_hedefi(tmp_path):
     env, _ = ortam(tmp_path)
     p = cli(env, "config", "--mcp", "firecrawl", "--hedef", "claude-code")
     assert p.returncode == 0, p.stderr
-    assert p.stdout.startswith("claude mcp add --scope user firecrawl -- python ") and SIR not in p.stdout
+    assert p.stdout.startswith("claude mcp add --scope project firecrawl -- python ") and SIR not in p.stdout   # firecrawl: agir sınıf (ADR-0155)
 
 
 def test_liste_kimlik_durumu_var_yok_degersiz(tmp_path):
@@ -89,10 +89,11 @@ def test_kur_argv_sir_icermez_ve_kayitliyi_atlar():
             return R(0 if komut[3] == "markitdown" else 1)
         return R(0)
 
-    sonuc = dict(M.kur(["markitdown", "firecrawl"], calistir=sahte))
+    kayit = {"markitdown": {"sinif": "agir"}, "firecrawl": {"sinif": "hafif"}}
+    sonuc = dict(M.kur(["markitdown", "firecrawl"], calistir=sahte, kayit=kayit))
     assert sonuc == {"markitdown": "zaten kayıtlı", "firecrawl": "eklendi"}
     ekle = [c for c in cagrilar if c[1:3] == ["mcp", "add"]]
-    assert len(ekle) == 1 and ekle[0][3:6] == ["--scope", "user", "firecrawl"]
+    assert len(ekle) == 1 and ekle[0][3:6] == ["--scope", "user", "firecrawl"]    # kapsam sınıftan gelir (ADR-0155)
     assert SIR not in " ".join(" ".join(c) for c in cagrilar)
 
 
@@ -132,7 +133,7 @@ def test_liste_eksik_gerek_yazar(tmp_path):
     (proje / ".claude" / "orkestra" / "mcp_kimlik.json").write_text(
         json.dumps({"mcp": {"uvli": {"komut": ["x"], "gerek": ["uv-yok-boyle"]}}}), encoding="utf-8")
     p = cli(env, "liste")
-    assert "uvli: kimlik gerekmez; komut x; gerek: uv-yok-boyle yok" in p.stdout
+    assert "uvli: kimlik gerekmez; sinif -; komut x; gerek: uv-yok-boyle yok" in p.stdout
     assert SIR not in p.stdout + p.stderr
 
 
