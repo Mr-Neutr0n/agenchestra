@@ -90,16 +90,17 @@ class OnceKesim(unittest.TestCase):
         self.assertEqual(L.onceki_kesim("son_3_gun", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 10, 31), self.D(2026, 11, 2, 12, 0)))
         self.assertEqual(L.onceki_kesim("son_7_gun", self.D(2026, 11, 5, 6, 0)), (self.D(2026, 10, 23), self.D(2026, 10, 29, 6, 0)))
 
-    def test_bu_ay_kisa_aya_kirpilir(self):
-        # 31 Mart 15:00 -> önceki ay Şubat (28 gün): kesim Şubat'ı aşmaz
-        bas, son = L.onceki_kesim("bu_ay", self.D(2026, 3, 31, 15, 0))
-        self.assertEqual((bas, son), (self.D(2026, 2, 1), self.D(2026, 3, 1)))
+    def test_son_30_gun_ay_ortasi(self):
+        # 5 Kasım 12:00: pencere 7 Ekim'den başlar; önceki 30 gün 7 Eylül-6 Ekim, aynı geçen süre (29 gün 12 saat) kadar
+        self.assertEqual(L.onceki_kesim("son_30_gun", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 9, 7), self.D(2026, 10, 6, 12, 0)))
 
-    def test_ayin_birinde(self):
-        self.assertEqual(L.onceki_kesim("bu_ay", self.D(2026, 11, 1, 3, 0)), (self.D(2026, 10, 1), self.D(2026, 10, 1, 3, 0)))
+    def test_son_30_gun_ayin_birinde(self):
+        self.assertEqual(L.onceki_kesim("son_30_gun", self.D(2026, 11, 1, 3, 0)), (self.D(2026, 9, 3), self.D(2026, 10, 2, 3, 0)))
 
-    def test_bu_ay_ay_ortasi(self):
-        self.assertEqual(L.onceki_kesim("bu_ay", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 10, 1), self.D(2026, 10, 5, 12, 0)))
+    def test_son_30_gun_ay_uzunluguna_bagli_degil(self):
+        # 31 Mart 15:00: önceki dönem yine 30 gün (31 Ocak-1 Mart); kesim önceki dönemin sonunu aşmaz
+        bas, son = L.onceki_kesim("son_30_gun", self.D(2026, 3, 31, 15, 0))
+        self.assertEqual((bas, son), (self.D(2026, 1, 31), self.D(2026, 3, 1, 15, 0)))
 
     def test_tum_zaman_yok(self):
         self.assertIsNone(L.onceki_kesim("tum_zaman", self.D(2026, 11, 5, 12, 0)))
