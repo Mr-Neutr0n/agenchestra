@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 91 ayar; `açıklama yok` işaretli: 31.
+Toplam 92 ayar; `açıklama yok` işaretli: 31.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -31,6 +31,7 @@ Toplam 91 ayar; `açıklama yok` işaretli: 31.
 | `devir_hatirlatma` | hatirlat | açıklama yok |
 | `dis_skill_kaynaklari` | — | açıklama yok |
 | `durum_satiri` | acik | mod: acik = iş bağlıyken SessionStart ve UserPromptSubmit bağlamına tek satırlık durum özeti (iş kimliği, onay durumu, sıradaki belge/adım; en çok 200 karakter) eklenir; kapali = eklenmez. |
+| `etkilenen_karar` | golge | P-056 etkilenen karar yoklaması. |
 | `genis_tarama_hatirlatma` | reddet | açıklama yok |
 | `gorev_turleri` | ihlal | Görev türü kataloğu (v2 ataması, ADR-0092). |
 | `gorunum_olcumu` | golge | mod: golge = görünen yerleşim/konum değiştiren P maddesinin Kabul alanı tarayıcı ölçümü içermiyorsa uyarılır ve gunluk.jsonl'a kapi_golge düşer, iş engellenmez; ihlal = plan reddedilir. |
