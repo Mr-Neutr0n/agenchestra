@@ -4,12 +4,13 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 95 ayar; `açıklama yok` işaretli: 32.
+Toplam 96 ayar; `açıklama yok` işaretli: 33.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
 | `ajan_kapsam` | ihlal | Ajan türüne göre araç kapsamı (I-292 P3, ADR-0120). |
 | `arka_plan_yas` | — | ADR-0123 (G3): Stop arka plan satırına yaş eki. |
+| `arsiv_dugmesi` | ihlal | açıklama yok |
 | `auto_devam` | golge | mod: golge = /auto işi açıkken ve çalışma özeti yokken tur biterse gunluk.jsonl'a kapi_golge olarak düşer, tur engellenmez; ihlal = tur başına bir kez devam hatırlatmasıyla block. |
 | `auto_karar_alan` | golge | mod: golge = auto işin çalışma özetinde `## Otomatik kararlar` girdilerinde karar, gerekçe, alternatifler ya da geri alma alanı eksikse uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, is kapat engellenmez; ihlal = a… |
 | `auto_kararlar` | ihlal | mod: golge = auto modundaki işin çalışma özetinde `## Otomatik kararlar` bölümü yok ya da boşsa uyarılır ve gunluk.jsonl'a kapi_golge olarak düşer, is kapat engellenmez; ihlal = bölüm olmadan özet doldurulmuş sayılmaz. |

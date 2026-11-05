@@ -959,6 +959,52 @@ def _auto_soru_kapisi(arac: str, girdi: dict, sd: str, oturum, aid) -> None:
                "wrap_up'ı ask alanı olmadan çağır.")
 
 
+def _arsiv_dugmesi_kapisi(arac: str, girdi: dict, sd: str, oturum, aid) -> None:
+    """ADR-0170: iş kalmadıysa ana ajanın `wrap_up` girdisine uygulamanın `archive` düğmesi eklenir (updatedInput).
+    Çıkış izin kipi güncel girdiyi `ask`'e düşürecekse (onay penceresi doğardı) çağrı eksiksiz yönergeyle reddedilir.
+    Hatada ve `golge` kipinde çağrı değişmeden geçer (golge: günlüğe `kapi_golge`)."""
+    global _GUNCEL_GIRDI
+    try:
+        import arsiv_dugmesi as AD
+        yeni = AD.dugme_girdisi(arac, girdi, sd, oturum, aid)
+        if yeni is None:
+            return
+        kip = AD.mod(sd)
+        if kip != "ihlal":
+            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oturum, "tur": "kapi_golge",
+                                                             "kapi": "arsiv_dugmesi", "neden": "wrap_up düğmesiz, iş yok"})
+            return
+        if _VARSAYILAN_IZIN or _IZIN_KIPI in _KENDILIGINDEN_YAZAN_KIPLER:
+            _GUNCEL_GIRDI = yeni
+            return
+    except SystemExit:
+        raise
+    except Exception:
+        return
+    reddet("iş kalmadı: wrap_up'ı ask olmadan ve actions=[{\"action\":\"archive\"}] ile çağır (kullanıcı Arşivle'ye "
+           "basınca sohbet arşivlenir); recap tek kısa cümle (ADR-0170).")
+
+
+def _arsiv_dugmesi_yanit(sd: str, oid, inp: dict) -> None:
+    """ADR-0170: çalışma turu, açık iş yok ama turda `wrap_up` çağrılmadı: günlüğe `kural_ihlal / arsiv_dugmesi`, `ihlal`
+    kipinde tur başına bir kez block (`stop_hook_active` döngüyü keser). Plan listesi 'devam ediyor' diye takılı kalmasın."""
+    try:
+        import arsiv_dugmesi as AD
+        tetik = AD.stop_tetik(inp.get("transcript_path"), inp.get("last_assistant_message"), sd, oid, inp)
+        if not tetik:
+            return
+        kip = AD.mod(sd)
+        L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kural_ihlal",
+                                                         "kural": "arsiv_dugmesi", "mod": kip, "tetik": tetik,
+                                                         "is": _oturum_isi(sd, oid)})
+        if kip == "ihlal" and not inp.get("stop_hook_active"):
+            L.hook_cikti({"decision": "block", "reason": AD.hatirlatma_metni(sd)})
+    except SystemExit:
+        raise
+    except Exception:
+        return
+
+
 def _kapi_uygula(kar, neden: str):
     if kar == "deny":
         reddet(neden)
@@ -1107,6 +1153,7 @@ def pre_tool_use(inp: dict):
     elif arac not in KABUK_ARACLARI:
         _kapi_uygula(kar, kneden)
     _auto_soru_kapisi(arac, girdi, sd, inp.get("session_id"), aid)
+    _arsiv_dugmesi_kapisi(arac, girdi, sd, inp.get("session_id"), aid)
     try:  # P-053: ana ajanın sorusu açık soru olarak kaydedilir; hata aracı bozmaz
         import acik_soru
         acik_soru.yakala(sd, arac, girdi, inp.get("session_id"), aid, _bagli_is(sd, inp.get("session_id")))
@@ -2196,6 +2243,7 @@ def stop(inp: dict):
         _cikti_butce_yanit(sd, oid, inp)
         _cikti_sirasi_yanit(sd, oid, inp)
         _kapanis_kapisi(sd, oid, inp)
+        _arsiv_dugmesi_yanit(sd, oid, inp)
     # Bitiş kapısı: bu oturumun açık kartları
     if perspektif:
         gec()

@@ -23,7 +23,7 @@ Model kanalı sayısı: 3.
 
 - **Alıcı:** model
 - **Düğme:** hayır
-- **hook.py'de geçiş:** 8
+- **hook.py'de geçiş:** 9
 - **Not:** Turu zorla sürdürür; reason modele gider.
 
 ### permissionDecision

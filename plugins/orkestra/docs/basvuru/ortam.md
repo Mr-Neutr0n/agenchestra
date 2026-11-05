@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 128 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 129 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -10,6 +10,7 @@ Kaynakta geçen 128 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_ADR_KAPISI` | isler.py |
 | `ORKESTRA_AGAC_KOKU` | ork_lib.py, orkestra.py |
 | `ORKESTRA_AJAN_KAPSAM` | ajan_kapsam.py, hook.py |
+| `ORKESTRA_ARSIV_DUGMESI` | arsiv_dugmesi.py |
 | `ORKESTRA_AUTO_DEVAM_KAPISI` | auto_devam.py |
 | `ORKESTRA_AUTO_KARAR_ALAN_KAPISI` | isler.py |
 | `ORKESTRA_AUTO_YETKI` | hook.py, izin_politikasi.py |

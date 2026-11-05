@@ -1,0 +1,7 @@
+{
+  "mod": "ihlal",
+  "ask": "Sohbet arşivlensin mi?",
+  "plan_araclari": ["update_plan"],
+  "degisiklik_araclari": ["Edit", "Write", "NotebookEdit"],
+  "hatirlatma": "Orkestra (ADR-0170): iş bitti, açık kart/todo/karar yok ama turda wrap_up çağrılmadı; plan listesi 'devam ediyor' diye takılı kalır. wrap_up'ı ask ve actions olmadan çağır; recap tek kısa cümle; hook ask'i ve arşiv düğmesini ekler. Kullanıcı Arşivle'ye basınca sohbet arşivlenir. Açık bir iş ya da konu kaldıysa bu uyarıyı yok say."
+}

@@ -79,3 +79,4 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0167](../../../../adr/ADR-0167-panel-penceresi-son-30-gun-ve-istemci-onbellek-politikasi.md) | Panel penceresi son_30_gun ve istemci önbellek politikası | Kabul edildi |
 | [ADR-0168](../../../../adr/ADR-0168-mcp-sunuculari-kullanim-sinifina-gore-kapsamlanir.md) | MCP sunucuları kullanım sınıfına göre kapsamlanır | Kabul edildi |
 | [ADR-0169](../../../../adr/ADR-0169-kaynak-etiketli-iddia-dogrulama-kapisi-golge.md) | Kaynak etiketli iddia doğrulama kapısı (gölge) | Kabul edildi (gölge modda) |
+| [ADR-0170](../../../../adr/ADR-0170-arsiv-dugmesi-is-kalmayinca-wrap-up-kutusu-tek-arsivle-dugme.md) | Arşiv düğmesi: iş kalmayınca wrap_up kutusu tek Arşivle düğmesi | Kabul edildi |

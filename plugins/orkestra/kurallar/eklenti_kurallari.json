@@ -1441,6 +1441,24 @@
       ],
       "etkinlesme": "2026-11-05T09:55:14+03:00",
       "ozet": "Sayı ve değerlendirme iddiası bu turda komutla doğrulanır, iddia cümlesi kaynak türü etiketi taşır (örn. (Kod: dosya.py:12)); doğrulanamayan 'doğrulanmadı' yazılır. Stop'ta gölge ölçülür, engel yok (ORKESTRA_KANIT_KAPISI=0 kapatır)."
+    },
+    {
+      "id": "P-059",
+      "katman": "plugin",
+      "metin": "ZORUNLU, istisnasız: Oturumda yapılacak başka iş ve konuşulacak konu kalmadığında kapanış kutusu (wrap_up) tek düğme taşır: uygulamanın Arşivle eylemi (actions=[{\"action\":\"archive\"}]); kullanıcı basınca sohbet arşivlenir ve plan listesi 'devam ediyor' diye takılı kalmaz. (1) İş kalmadı = açık kart yok, onay bekleyen iş yok, bağlı işte açık todo yok, kullanıcıdan karar bekleyen ask yok. (2) Hook düğmeyi kendisi ekler: ana ajanın ask'siz ve düğmesiz wrap_up çağrısına PreToolUse updatedInput ile kısa arşiv sorusu (ask) ve düğme konur (uygulama kutuyu ask ve actions birlikte olunca çizer); izin kipi güncel girdiyi onaya düşürecekse çağrı eksiksiz yönergeyle reddedilir. (3) Çalışma yapan tur (plan listesi ya da dosya değişikliği), iş kalmamışken wrap_up'sız biterse Stop tur başına bir kez block eder. (4) Açık iş ya da karar varsa düğme çıkmaz. Kapı kullanıcı kararıyla ilk günden açıldı (güncel mod: {{mod:arsiv_dugmesi}}; P-028 istisnası, ORK-ADR-0170). Zorlama: scripts/arsiv_dugmesi.py, hook._arsiv_dugmesi_kapisi ve _arsiv_dugmesi_yanit, ayarlar/arsiv_dugmesi.json, tests/test_arsiv_dugmesi.py; ORKESTRA_ARSIV_DUGMESI=0 kapatır. (ORK-ADR-0170)",
+      "ozet": "İş kalmayınca wrap_up kutusu tek Arşivle düğmesi taşır; hook düğmeyi ekler, wrap_up'sız biten çalışma turunu bir kez block eder (ORKESTRA_ARSIV_DUGMESI=0 kapatır).",
+      "neden": "Kullanıcı 05.11.2026: iş kalmayınca Arşivle düğmesi çıksın, basınca sohbet arşivlensin; takılı '0/6 yapıldı' şeridi yerine yalnız Arşivle görünsün (ORK-ADR-0170).",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-05T08:00:00+03:00",
+      "guncelleme": "2026-11-05T08:00:00+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-05T08:00:00+03:00",
+          "olay": "eklendi"
+        }
+      ],
+      "etkinlesme": "2026-11-05T08:00:00+03:00"
     }
   ]
 }
