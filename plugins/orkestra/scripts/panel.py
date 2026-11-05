@@ -554,6 +554,7 @@ def _isler_json(alan_id) -> dict:
         if r.get("gorev") not in (None, "-"):
             usd[r["gorev"]] += r.get("maliyet_usd", 0) or 0
             kart_satir[r["gorev"]].append(r)
+    import is_onay  # noqa: PLC0415
     is_kal = IK.is_kalem(sd, kartlar)
     bos_kalem = L.kalemler([])
     kalem_k = lambda i: L.kalemler(kart_satir.get(i, []))  # noqa: E731
@@ -568,6 +569,7 @@ def _isler_json(alan_id) -> dict:
         son = IK.is_son_etkinlik(g, [k.get("guncelleme") for k in ks], is_harcama_son.get(g["id"], ""))
         o = {"id": g["id"], "baslik": g.get("baslik", ""), "ad": IK.is_adi(g.get("baslik", "")),
              "durum": "kapandi" if g.get("durum") == "kapandi" else "acik", "klasor": g.get("klasor", ""),
+             "mod": is_onay.mod(g, sd),   # I-389: işin çalışma modu (iş kaydı, yoksa varsayılan)
              "ilerleme": {"biten": 0, "toplam": 0},
              "usd": round(is_usd.get(g["id"], 0.0), 4), "son": son, "pencere": is_pencere.get(g["id"]) or _PENCERE_SIFIR,
              "token": (is_kal.get(g["id"]) or bos_kalem)["token"]["toplam"], "kalem": is_kal.get(g["id"]) or bos_kalem,

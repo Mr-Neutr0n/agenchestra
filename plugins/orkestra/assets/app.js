@@ -187,7 +187,7 @@
   const tazele = (taze = false) => gerekler(rota()).concat(TEMEL).forEach(y => getir(y, { taze }));
   const GUNC_YOL = '/api/guncelleme';   // eklenti güncelleme durumu: kullanıcı düzeyi, çalışma alanından bağımsız (ADR-0039)
   const GUNC_ARALIK = 1000;             // ms: koşu sürerken ilerleme yoklaması
-  const TEMEL = ['/onaylar.json', '/simdi.json', '/ozet.json', '/isler.json', GUNC_YOL];
+  const TEMEL = ['/onaylar.json', '/simdi.json', '/ozet.json', '/isler.json', GUNC_YOL, '/api/ayarlar'];
   const YAP_YOL = '/api/kullanici-todo';
   const ARAC_MCP = '/api/araclar-mcp';       // hazır MCP'ler: kullanıcı düzeyi (claude mcp add/remove --scope user)
   const ARAC_SKILL = '/api/araclar-skill';   // skill'ler: seçili çalışma alanının .claude/settings.local.json'u
@@ -607,7 +607,7 @@
       return H`<a class="satir-l" role="option" data-gez href="#/is/${enc(i.id)}${ek(r.q, i)}" aria-selected="${secili(i)}">
         <span class="nokta" style="--renk:${i.durum === 'kapandi' ? 'var(--notr)' : surer ? 'var(--bilgi)' : 'var(--vurgu)'}"></span>
         <span class="kimlik">${i.id}</span>${alanRozeti(i)}<span class="ad" title="${i.ad}">${i.ad}</span>
-        <span class="sag">${t ? H`<span class="mini-ilerleme">${ilerleme(b / t, i.durum === 'kapandi' ? 'var(--notr)' : '')}</span>` : ''}<span>${B.paraP(i)}</span><span style="min-width:62px;text-align:right">${B.goreli(i.son)}</span></span></a>`;
+        <span class="sag">${modMini(i)}${t ? H`<span class="mini-ilerleme">${ilerleme(b / t, i.durum === 'kapandi' ? 'var(--notr)' : '')}</span>` : ''}<span>${B.paraP(i)}</span><span style="min-width:62px;text-align:right">${B.goreli(i.son)}</span></span></a>`;
     })}</div>` : bos('Eşleşen iş yok', q ? `“${q}” için sonuç yok.` : 'Bu süzgeçte iş yok.', 'ara'));
     const sol = H`<div class="liste-yan" id="isListe" data-kaydir>
       <div class="suzgec">${[['acik', 'Açık'], ['kapandi', 'Kapanan'], ['tum', 'Tümü']].map(([k, ad]) =>
@@ -647,7 +647,7 @@
       ${bitenM.length ? H`<details class="ac" style="margin-top:8px"><summary>${bitenM.length} biten madde</summary><ul class="todo" style="margin-top:6px">${bitenM.map(m => H`<li class="bitti"><span class="kutu"></span><span>${m}</span></li>`)}</ul></details>` : ''}`
       : H`<p class="soluk">Todo yok.</p>`) : td.hata ? hataKutu(td.hata) : iskelet(3, 18);
     return H`<div class="yigin">
-      <div class="yigin sik"><div class="yatay"><span class="kimlik">${i.id}</span>${alanRozeti(i)}${rozet(i.durum)}${(i.kovalar?.simdi || []).length ? rozet('suruyor') : ''}</div>
+      <div class="yigin sik"><div class="yatay"><span class="kimlik">${i.id}</span>${alanRozeti(i)}${rozet(i.durum)}${modMini(i, true)}${(i.kovalar?.simdi || []).length ? rozet('suruyor') : ''}</div>
         <h1>${i.ad}</h1>
         ${i.klasor ? H`<div class="yatay soluk kucuk-y"><code title="${i.klasor}">${yolKisa(i.klasor)}</code><button class="dugme hayalet kucuk" data-eylem="kopyala" data-metin="${i.klasor}">Yolu kopyala</button></div>` : ''}
         ${i.durum === 'acik' && t - b <= 0 ? H`<div class="yatay"><button class="dugme kucuk" data-eylem="is-kapat" data-is="${i.id}" data-alan="${i.alan?.id || ''}" title="Açık todo maddesi yok; kapanış kapıları (çalışma özeti, ADR) denetlenir">İşi kapat</button></div>` : ''}</div>
@@ -1095,13 +1095,22 @@
   let cizPlan = 0;
   function planla() { if (!cizPlan) cizPlan = requestAnimationFrame(() => { cizPlan = 0; gorunumCiz(); }); }
 
+  // Çalışma modu göstergeleri (I-389): üst çubukta varsayılan mod, İşler satırında ve ayrıntıda işin kendi modu.
+  const MOD_AD = { plan: 'Plan', auto: 'Auto' };
+  function modRozeti() {
+    const m = d('/api/ayarlar').veri?.varsayilan_mod;
+    if (!m || !MOD_AD[m.deger]) return '';
+    return H`<a class="mod-rozet" href="#/ayarlar" data-mod="${m.deger}" title="Bu çalışma alanının varsayılan modu (${MOD_KAYNAK[m.kaynak] || m.kaynak}). Sohbette /plan ya da /auto bunu aşar; işin modu İşler listesindedir.">Varsayılan mod: ${MOD_AD[m.deger]}</a>`;
+  }
+  const modMini = (i, uzun = false) => MOD_AD[i.mod] && i.durum === 'acik' ? H`<span class="mod-mini" data-mod="${i.mod}" title="Bu işin çalışma modu">${uzun ? 'Mod: ' : ''}${MOD_AD[i.mod]}</span>` : '';
+
   function gorunumCiz() {
     const r = rota();
     const g = (GORUNUM[r.ad] || gGelen)(r);
     // odak, imleç ve kaydırma korunur (yeniden çizim yazmayı bölmesin)
     const ae = document.activeElement, odakId = ae && ae.id, imlec = odakId && 'selectionStart' in ae ? [ae.selectionStart, ae.selectionEnd] : null;
     const kaydir = [...document.querySelectorAll('[data-kaydir]')].map(e => [e.id, e.scrollTop]);
-    document.getElementById('bas').innerHTML = H`${g.yol ? H`<span class="yol">${g.yol}</span>` : H`<h1>${g.baslik}</h1>`}<span class="bosluk"></span>${g.sag || ''}${kontroller(r)}`.__h;
+    document.getElementById('bas').innerHTML = H`${g.yol ? H`<span class="yol">${g.yol}</span>` : H`<h1>${g.baslik}</h1>`}<span class="bosluk"></span>${g.sag || ''}${modRozeti()}${kontroller(r)}`.__h;
     const ana = document.getElementById('ana');
     // birleşik kipte okunamayan alan sessizce eksik kalmaz: hangi alanın neden atlandığı sayfanın başında yazılır
     const atlanan = tumMu() ? [...new Map(gerekler(r).flatMap(y => d(y).veri?.atlanan || []).map(a => [a.alan?.id, a])).values()] : [];

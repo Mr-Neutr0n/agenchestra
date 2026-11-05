@@ -481,3 +481,8 @@ dialog.onay .eylemler { display: flex; justify-content: flex-end; gap: var(--a2)
 .konum3-d:focus-visible { outline: 2px solid var(--vurgu, currentColor); outline-offset: -2px; }
 @media (max-width: 600px) { .konum3-d { padding: 6px 8px; font-size: .8em; } }
 
+/* I-389: çalışma modu göstergeleri */
+.mod-rozet, .mod-mini { display: inline-flex; align-items: center; white-space: nowrap; border: 1px solid var(--cizgi); border-radius: 999px; font-size: var(--y12); color: var(--metin-2); text-decoration: none; }
+.mod-rozet { height: 26px; padding: 0 var(--a3); }
+.mod-mini { height: 20px; padding: 0 var(--a2, 6px); }
+.mod-rozet[data-mod="auto"], .mod-mini[data-mod="auto"] { color: var(--metin); border-color: var(--vurgu, var(--metin)); }
