@@ -1,4 +1,4 @@
-"""I-137 P3: panel v2'de pencere (Bugün / Son 3 gün / Son 7 gün / Bu ay) ve birim (USD / Token) seçimi her sayfada tutarlı uygulanır.
+"""I-137 P3: panel v2'de pencere (Bugün / Son 3 gün / Son 7 gün / Son 30 gün) ve birim (USD / Token) seçimi her sayfada tutarlı uygulanır.
 
 İki kapı:
 - Statik: app.js'te biçimleyici (B.usd, B.token) yalnız B nesnesinin içinde çağrılır; sabit '$' yoktur.
@@ -16,9 +16,9 @@ import unittest
 KOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 APP = os.path.join(KOK, "assets", "app.js")
 DUMAN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "panel_duman.js")
-SECILEBILIR = ["bugun", "son_3_gun", "son_7_gun", "bu_ay", "tum_zaman"]   # Tümü dahil
+SECILEBILIR = ["bugun", "son_3_gun", "son_7_gun", "son_30_gun", "tum_zaman"]   # Tümü dahil
 TUM = SECILEBILIR
-GUN = {"bugun": 1, "son_3_gun": 3, "son_7_gun": 7, "bu_ay": 20, "tum_zaman": 40}
+GUN = {"bugun": 1, "son_3_gun": 3, "son_7_gun": 7, "son_30_gun": 20, "tum_zaman": 40}
 ISO = "2026-10-18T10:00:00+03:00"
 
 # aile -> değer: a = 100*(aile+1) + 11*(pencere sırası+1); usd = a,25 ; token = a bin
@@ -80,7 +80,7 @@ def fixture():
     kart_a = {"id": "G-1", "baslik": "Koşu kartı", "basamak": "T2", "durum": "teslim", "olusturma": ISO, "toplam_dk": 33, "kuyruk_dk": 3, "is_dk": 20,
               "denetim_toplam_dk": 10, "pencere": _pen(5), "penceresi": list(TUM)}
     kart_b = {"id": "G-2", "baslik": "ESKI-KART-B", "basamak": "T1", "durum": "teslim", "olusturma": ISO, "toplam_dk": 40, "kuyruk_dk": 4, "is_dk": 26,
-              "denetim_toplam_dk": 10, "pencere": _sifir(), "penceresi": ["bu_ay", "tum_zaman"]}
+              "denetim_toplam_dk": 10, "pencere": _sifir(), "penceresi": ["son_30_gun", "tum_zaman"]}
     return {
         "/alanlar.json": [{"id": "a1", "ad": "proje", "orkestra": True}],
         "/onaylar.json": {"kayitlar": [], "sayac": {"uygulanacak": 0}},
@@ -269,7 +269,7 @@ class KacakKapisiCalisma(unittest.TestCase):
             if r == "kosular":
                 with self.subTest(pencere=w, birim=o):
                     self.assertIn("Koşu kartı", c["ana"])
-                    self.assertEqual("ESKI-KART-B" in c["ana"], w in ("bu_ay", "tum_zaman"))
+                    self.assertEqual("ESKI-KART-B" in c["ana"], w in ("son_30_gun", "tum_zaman"))
                     i = TUM.index(w)
                     self.assertIn("1 sa %d dk" % (1 + i), c["ana"], "akış karoları pencereden gelmeli")
                     self.assertNotIn("8 sa 20 dk", c["ana"])

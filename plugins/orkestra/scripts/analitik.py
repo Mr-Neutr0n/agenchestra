@@ -818,7 +818,7 @@ def _ders(kartlar: list[dict], kayitlar: list[dict]) -> dict:
 
 AYAR_DIZINI = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ayarlar")
 ONAYLI_DURUM = ("onaylandi", "teslim")
-PENCERE_SIRASI = ("bugun", "son_3_gun", "son_7_gun", "bu_ay", "tum_zaman")
+PENCERE_SIRASI = ("bugun", "son_3_gun", "son_7_gun", "son_30_gun", "tum_zaman")
 OLCU_SIRASI = ("ana_ajan_payi", "isci_cagrisi_kart", "onayli_kart_usd", "ret_orani", "teknik_not_kapsama")
 
 
@@ -986,9 +986,9 @@ def ek_olculer(ks: list, rs: list, onayli: list) -> dict:
 
 
 def hedef_panosu(kartlar: list, kayitlar: list, simdi=None, hedef: dict | None = None, esik: dict | None = None) -> dict:
-    """5 hedef ölçüsü x PENCERE_SIRASI (bugun, son_3_gun, son_7_gun, bu_ay, tum_zaman) ve önlenebilir israf.
+    """5 hedef ölçüsü x PENCERE_SIRASI (bugun, son_3_gun, son_7_gun, son_30_gun, tum_zaman) ve önlenebilir israf.
     Her ölçü {deger, hedef, durum, sapma, ornek, pay, payda}. Pencere: kart olusturma / defter satırı zamanı >= pencere başı
-    (takvim günü, ozet._pencere_icinde ile aynı: bugun: yerel gün başı, son_3_gun: bugün dahil 3 gün, son_7_gun: 7 gün, bu_ay: ayın 1'i 00:00).
+    (takvim günü, ozet._pencere_icinde ile aynı: bugun: yerel gün başı, son_3_gun: bugün dahil 3 gün, son_7_gun: 7 gün, son_30_gun: bugün dahil 30 gün).
     Payda 0 -> deger None, durum veri-yok."""
     hedef = hedef if hedef is not None else _ayar("hedef.json")
     esik = esik if esik is not None else _ayar("kpi_esikleri.json")
@@ -1004,7 +1004,7 @@ def hedef_panosu(kartlar: list, kayitlar: list, simdi=None, hedef: dict | None =
         kapi = kapi.replace(tzinfo=simdi.tzinfo)
     gun_basi = simdi.replace(hour=0, minute=0, second=0, microsecond=0)
     pencereler = {"bugun": gun_basi, "son_3_gun": gun_basi - datetime.timedelta(days=2),
-                  "son_7_gun": gun_basi - datetime.timedelta(days=6), "bu_ay": gun_basi.replace(day=1), "tum_zaman": None}
+                  "son_7_gun": gun_basi - datetime.timedelta(days=6), "son_30_gun": gun_basi - datetime.timedelta(days=29), "tum_zaman": None}
 
     usd_ajan: dict = collections.defaultdict(float)
     tok_ajan: dict = collections.defaultdict(int)

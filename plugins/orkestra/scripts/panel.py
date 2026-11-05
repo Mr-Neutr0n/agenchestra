@@ -264,7 +264,7 @@ def _ayarlar_yaz(acik: bool) -> dict:
 
 def _imza_alan(alan_id) -> tuple:
     """Üreticinin kaynak imzası: alanın (ya da '*' / None için orkestralı tüm alanların) durum dosyaları + takvim günü.
-    Isıtıcı imza değişmediyse ağır üreticiyi yeniden koşturmaz (gün dönümü bugun/bu_ay pencerelerini değiştirdiği için imzada)."""
+    Isıtıcı imza değişmediyse ağır üreticiyi yeniden koşturmaz (gün dönümü bugun/son_30_gun pencerelerini değiştirdiği için imzada)."""
     alanlar = [a for a in L.calisma_alanlari() if a.get("orkestra") and (alan_id in (None, TUM_ALAN) or a["id"] == alan_id)]
     return (time.strftime("%Y-%m-%d"), tuple((a["id"], _akis_imza(a, os.path.join(a["yol"], ".claude", "orkestra"))) for a in alanlar))
 

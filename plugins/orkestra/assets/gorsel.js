@@ -152,7 +152,7 @@
   };
   // Pencere seçici (segmented radiogroup): tek seçim, ok tuşları ve 1-N kısayolu, seçim alan başına saklanır.
   // Sayfadaki bütün pencereli bölümler 'orkestra:pencere' olayını dinler; kaynak tek yerde durur (G.pencere.al()).
-  const PENCERELER = [['bugun', 'Bugün', 'Bugün'], ['son_3_gun', '3 gün', 'Son 3 gün'], ['son_7_gun', '7 gün', 'Son 7 gün'], ['bu_ay', 'Ay', 'Bu ay'], ['tum_zaman', 'Tümü', 'Tüm zaman']];
+  const PENCERELER = [['bugun', 'Bugün', 'Bugün'], ['son_3_gun', '3 gün', 'Son 3 gün'], ['son_7_gun', '7 gün', 'Son 7 gün'], ['son_30_gun', '30 gün', 'Son 30 gün'], ['tum_zaman', 'Tümü', 'Tüm zaman']];
   const PENCERE_ANAHTAR = () => 'orkestra.pencere.' + O.alan;
   G.pencere = (nav, { varsayilan = 'son_3_gun', aralik = null } = {}) => {
     const kap = typeof nav === 'string' ? document.querySelector(nav) : nav;

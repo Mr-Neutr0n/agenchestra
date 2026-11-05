@@ -32,8 +32,8 @@ KAYITLAR = [satir(0, 1.0, 100, saat=9), satir(1, 2.0, 200), satir(2, 4.0, 400, g
             satir(25, 16.0, 1600, gorev="G-2"), satir(70, 32.0, 3200)]
 
 
-def ay_icinde(gun_once):
-    return (BUGUN - datetime.timedelta(days=gun_once)).month == BUGUN.month
+def son_30_icinde(gun_once):
+    return gun_once <= 29   # bugün dahil 30 takvim günü
 
 
 class PencereToplamlari(unittest.TestCase):
@@ -44,8 +44,8 @@ class PencereToplamlari(unittest.TestCase):
         self.assertEqual(t["son_7_gun"]["usd"], 15.0)
         self.assertEqual(t["tum_zaman"]["usd"], 63.0)
         self.assertEqual(t["tum_zaman"]["token"], 6300)
-        bu_ay = sum(r["maliyet_usd"] for r, g in zip(KAYITLAR, (0, 1, 2, 5, 25, 70)) if ay_icinde(g))
-        self.assertAlmostEqual(t["bu_ay"]["usd"], bu_ay)
+        son_30_gun = sum(r["maliyet_usd"] for r, g in zip(KAYITLAR, (0, 1, 2, 5, 25, 70)) if son_30_icinde(g))
+        self.assertAlmostEqual(t["son_30_gun"]["usd"], son_30_gun)
 
     def test_anahtarli_toplam_kart_basina(self):
         t = L.pencere_toplamlari(KAYITLAR, BUGUN, lambda r: r.get("gorev"))
@@ -141,7 +141,7 @@ class AnalitikPencere(unittest.TestCase):
             a = A.olustur("x", "x")
         satirlar = {r["id"]: r for r in a["akis"]["kartlar"]}
         self.assertEqual(satirlar["G-1"]["penceresi"], list(PENCERELER))
-        self.assertEqual(satirlar["G-2"]["penceresi"], ["bu_ay", "tum_zaman"] if ay_icinde(25) else ["tum_zaman"])
+        self.assertEqual(satirlar["G-2"]["penceresi"], ["son_30_gun", "tum_zaman"] if son_30_icinde(25) else ["tum_zaman"])
 
 
 class IsKaydiPencere(unittest.TestCase):

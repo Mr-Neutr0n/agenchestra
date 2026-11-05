@@ -178,8 +178,8 @@
   // ------------------------------------------------------------ 2. Sohbetler
   const SOHBET_ILK = 10;
   // Dönem süzmesi ve görünüm (grafik | liste) alan başına hatırlanır. Dönemli veri token defterindendir (ozet.sohbet_dokum).
-  const SD_ADLARI = { gun: 'Bugün', uc: 'Son 3 gün', hafta: 'Son 7 gün', ay: 'Bu ay', tum: 'Tüm zaman' };
-  const PENCERE_DONEM = { bugun: 'gun', son_3_gun: 'uc', son_7_gun: 'hafta', bu_ay: 'ay', tum_zaman: 'tum' };
+  const SD_ADLARI = { gun: 'Bugün', uc: 'Son 3 gün', hafta: 'Son 7 gün', otuz: 'Son 30 gün', tum: 'Tüm zaman' };
+  const PENCERE_DONEM = { bugun: 'gun', son_3_gun: 'uc', son_7_gun: 'hafta', son_30_gun: 'otuz', tum_zaman: 'tum' };
   const SD_ANAHTAR = a => 'orkestra.maliyet.sohbet.' + a + '.' + O.alan;
   const sDonem = () => PENCERE_DONEM[G.pencere.al()] || 'uc';
   const sGorunum = () => O.depo.al(SD_ANAHTAR('gorunum')) === 'liste' ? 'liste' : 'grafik';
@@ -191,13 +191,13 @@
     gun: g => g === bugun,
     uc: g => g >= gunKaydir(bugun, -2) && g <= bugun,
     hafta: g => g >= gunKaydir(bugun, -6) && g <= bugun,
-    ay: g => g.slice(0, 7) === bugun.slice(0, 7),
+    otuz: g => g >= gunKaydir(bugun, -29) && g <= bugun,
     tum: () => true,
   })[donem];
   // Seçici yanındaki tarih aralığı ipucu (ör. «15–17 Eki»); gün bilinmiyorsa boş
   const pencereAralik = id => {
     const dk = dokum(); if (!dk || !dk.gun) return '';
-    const bg = dk.gun, ilk = { bugun: bg, son_3_gun: gunKaydir(bg, -2), son_7_gun: gunKaydir(bg, -6), bu_ay: bg.slice(0, 8) + '01' }[id];
+    const bg = dk.gun, ilk = { bugun: bg, son_3_gun: gunKaydir(bg, -2), son_7_gun: gunKaydir(bg, -6), son_30_gun: gunKaydir(bg, -29) }[id];
     if (!ilk) return 'ilk kayıttan bugüne';
     return ilk === bg ? B.gun(bg) : B.gun(ilk) + ' – ' + B.gun(bg);
   };
@@ -220,7 +220,7 @@
     const ic = gunIcinde(donem, bugun);
     const gunler = sohbetler.flatMap(e => Object.keys(e.g || {})).filter(ic).sort();
     if (!gunler.length) return [];
-    const ilk = donem === 'uc' ? gunKaydir(bugun, -2) : donem === 'hafta' ? gunKaydir(bugun, -6) : donem === 'ay' ? bugun.slice(0, 8) + '01' : gunler[0];
+    const ilk = donem === 'uc' ? gunKaydir(bugun, -2) : donem === 'hafta' ? gunKaydir(bugun, -6) : donem === 'otuz' ? gunKaydir(bugun, -29) : gunler[0];
     const haftalik = donem === 'tum' && (new Date(bugun) - new Date(ilk)) / 864e5 > 45;
     const kovalar = [], goruldu = new Set();
     for (let g = ilk; g <= bugun; g = gunKaydir(g, 1)) {

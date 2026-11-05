@@ -43,8 +43,8 @@
     ['ret_orani', 'Ret oranı', 'ust', x => B.yuzde(x), 'ret / (ret + onay) denetimi', v => B.sayi(v), 'puan'],
     ['teknik_not_kapsama', 'Teknik not kapsaması', 'alt', x => B.yuzde(x), 'teknik notu dolu kart / kapı sonrası onaylı kart', v => B.sayi(v), 'puan'],
   ];
-  const PENCERE_SIRASI = ['bugun', 'son_3_gun', 'son_7_gun', 'bu_ay', 'tum_zaman'];
-  const PENCERE_AD = { bugun: 'Bugün', son_3_gun: 'Son 3 gün', son_7_gun: 'Son 7 gün', bu_ay: 'Bu ay', tum_zaman: 'Tüm zaman' };
+  const PENCERE_SIRASI = ['bugun', 'son_3_gun', 'son_7_gun', 'son_30_gun', 'tum_zaman'];
+  const PENCERE_AD = { bugun: 'Bugün', son_3_gun: 'Son 3 gün', son_7_gun: 'Son 7 gün', son_30_gun: 'Son 30 gün', tum_zaman: 'Tüm zaman' };
   const EKSI = '−';
   // Sapma: işaretli fark, ölçünün kendi biriminde (oran ölçülerinde yüzde puan). Artı = hedefin üstünde; 0 = hedef (bant) içinde.
   const sapmaMetni = (x, birim) => {

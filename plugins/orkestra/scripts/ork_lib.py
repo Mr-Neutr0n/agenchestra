@@ -2235,7 +2235,7 @@ def kalemler(satirlar: list[dict]) -> dict:
 
 # ---------------------------------------------------------------- panel pencereleri (tek takvim günü tanımı, I-137)
 
-PENCERELER = ("bugun", "son_3_gun", "son_7_gun", "bu_ay", "tum_zaman")
+PENCERELER = ("bugun", "son_3_gun", "son_7_gun", "son_30_gun", "tum_zaman")
 
 
 def yerel_zaman(s) -> "datetime.datetime | None":
@@ -2257,24 +2257,21 @@ def pencere_icinde(pencere: str, gun: "datetime.date", bugun: "datetime.date") -
         return bugun - datetime.timedelta(days=2) <= gun <= bugun
     if pencere == "son_7_gun":
         return bugun - datetime.timedelta(days=6) <= gun <= bugun
-    if pencere == "bu_ay":
-        return (gun.year, gun.month) == (bugun.year, bugun.month)
+    if pencere == "son_30_gun":
+        return bugun - datetime.timedelta(days=29) <= gun <= bugun
     return True
 
 
 def pencere_gun_sayisi(pencere: str, bugun: "datetime.date") -> "int | None":
     """Pencerenin takvim günü sayısı (bugüne kadar); tum_zaman için None."""
-    return {"bugun": 1, "son_3_gun": 3, "son_7_gun": 7, "bu_ay": bugun.day}.get(pencere)
+    return {"bugun": 1, "son_3_gun": 3, "son_7_gun": 7, "son_30_gun": 30}.get(pencere)
 
 
 def onceki_aralik(pencere: str, bugun: "datetime.date") -> "tuple | None":
-    """Aynı uzunluktaki önceki dönemin (ilk gün, son gün) aralığı; bu_ay için önceki ayın aynı gün sayısı. tum_zaman için None."""
+    """Aynı uzunluktaki önceki dönemin (ilk gün, son gün) aralığı; son_30_gun için önceki 30 gün. tum_zaman için None."""
     n = pencere_gun_sayisi(pencere, bugun)
     if n is None:
         return None
-    if pencere == "bu_ay":
-        gecen_ay_sonu = bugun.replace(day=1) - datetime.timedelta(days=1)
-        return gecen_ay_sonu.replace(day=1), gecen_ay_sonu.replace(day=min(n, gecen_ay_sonu.day))
     bit = bugun - datetime.timedelta(days=n)
     return bit - datetime.timedelta(days=n - 1), bit
 
@@ -2287,7 +2284,7 @@ def onceki_kesim(pencere: str, simdi: "datetime.datetime") -> "tuple | None":
     if aralik is None:
         return None
     ilk = {"bugun": bugun, "son_3_gun": bugun - datetime.timedelta(days=2),
-           "son_7_gun": bugun - datetime.timedelta(days=6), "bu_ay": bugun.replace(day=1)}[pencere]
+           "son_7_gun": bugun - datetime.timedelta(days=6), "son_30_gun": bugun - datetime.timedelta(days=29)}[pencere]
     gecen = simdi.replace(tzinfo=None) - datetime.datetime.combine(ilk, datetime.time.min)
     bas = datetime.datetime.combine(aralik[0], datetime.time.min)
     son = datetime.datetime.combine(aralik[1] + datetime.timedelta(days=1), datetime.time.min)
