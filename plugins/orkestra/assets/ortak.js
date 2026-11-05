@@ -386,7 +386,7 @@
     if (degisti && yay) window.dispatchEvent(new CustomEvent('orkestra:alan', { detail: { alan: O.alan, bilgi: O.alanBilgi() } }));
   }
   async function alanlariYukle() {
-    const r = await fetch('/alanlar.json', { cache: 'no-store' });
+    const r = await fetch('/alanlar.json', { cache: 'no-cache' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const liste = await r.json();
     if (!Array.isArray(liste)) return;
@@ -432,7 +432,7 @@
     });
   }
   // İstek zaman aşımıyla sınırlı: takılı tek istek rozetYolda'yı sonsuza dek açık tutup rozeti dondurmasın.
-  const rozetGetir = yol => fetch(yol, { cache: 'no-store', signal: AbortSignal.timeout(8000) })
+  const rozetGetir = yol => fetch(yol, { cache: 'no-cache', signal: AbortSignal.timeout(8000) })
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(v => (v && typeof v === 'object' && !v.hata ? v : null));
   O.rozetTazele = () => {
@@ -632,7 +632,7 @@
         }, sinirMs);
       });
       const istek = (async () => {
-        const r = await fetch(adres, { cache: 'no-store', signal: iptal.signal });
+        const r = await fetch(adres, { cache: 'no-cache', signal: iptal.signal });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })();

@@ -38,7 +38,7 @@
   const url = ek => '/teknik.json?alan=' + encodeURIComponent(O.alan) + ek;
   const retUrl = () => url('&ret=1' + RET_SUZGEC.filter(a => S.ret && S.ret[a]).map(a => '&' + a + '=' + encodeURIComponent(S.ret[a])).join(''));
   const getir = async yol => {
-    const r = await fetch(yol, { cache: 'no-store' });
+    const r = await fetch(yol, { cache: 'no-cache' });
     const v = await r.json().catch(() => ({ hata: 'Yanıt JSON değil (HTTP ' + r.status + ')' }));
     if (!r.ok || v.acik === false || v.hata) throw new Error(v.hata || ('HTTP ' + r.status));
     return v;

@@ -123,7 +123,7 @@
     yerlestirAcik(kap, sol + sag);
   }
   async function jsonGet(url) {
-    const r = await fetch(url, { cache: 'no-store' });
+    const r = await fetch(url, { cache: 'no-cache' });
     let v = null; try { v = await r.json(); } catch (e) { /* JSON değil */ }
     if (!r.ok || !v || v.tamam === false || v.acik === false) throw new Error((v && v.hata) || ('HTTP ' + r.status));
     return v;
