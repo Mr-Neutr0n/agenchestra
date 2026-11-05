@@ -6,7 +6,7 @@ Bu dosya eklentiyi geliştirenler içindir. Kullanım kuralları için `KURALLAR
 Oturumlar eklentiyi `~/.claude/plugins/cache/claude-orchestration/<plugin>/<sürüm>/` altındaki önbellek kopyasından yükler (göreli yol girdisine rağmen). Sürüm commit SHA'sıdır (12 hane); `version` alanı bilerek yoktur.
 
 1. Eklenti deposunda geliştir. Skill, ajan, ayar, hook ya da kural değiştirdiysen `python scripts/dokuman_uret.py` çalıştır; başvuru sayfaları (`docs/basvuru/`) güncellenir. `tests/test_dokuman_uret.py` eski başvuruyu reddeder.
-2. Değişikliği kendi dalında commitle; `main`'e yalnız `--ff-only` ya da PR ile gir (aşağıda "Yan işler").
+2. Değişikliği kendi dalında commitle; hedefli testler geçince dalı `origin/main` üzerine al, yerelde `main`'e `--ff-only` birleştir; PR açılmaz (P-057, aşağıda "Yan işler").
 3. Uzak `main`'e push et (yalnız kullanıcının açık isteğiyle). Git hook'u yoktur; hiçbir betik yayın klonuna yazmaz.
 4. `orkestra guncelle` çalıştır: yayın klonu GitHub `origin`'den çekilir (klon kirliyse reddeder). Çalıştırmazsan `autoUpdate` ilk mesajdan en çok 10 dk sonra alır.
 5. Sonraki oturumda ya da `/reload-plugins` ile yeni sürüm yüklenir.
@@ -20,7 +20,7 @@ Notlar:
 
 ## Yan işler
 - Her iş kendi dalında ve ayrı çalışma ağacında yürür: `orkestra agac ac <iş>` deponun `.claude/worktrees/<iş>` altında `<iş>` dalıyla açar (ADR-0161); yolu elle seçme, masaüstüne açma. Desktop kökü `main` çalışma ağacıdır; yeni özellik orada başlatılmaz.
-- `main`'e yalnız `git merge --ff-only <dal>` ya da PR ile girilir; ayrışmış dal önce `main` üzerine alınır.
+- `main`'e yalnız `git merge --ff-only <dal>` ile girilir; ayrışmış dal önce `origin/main` üzerine alınır (rebase), sonra `main` push edilir. Eklenti deposunda PR açılmaz (P-057).
 - Dal ve worktree iş bitince (ve başka oturum kullanmıyorsa) kaldırılır: `git worktree remove` + `git branch -d`; birleşmiş (squash dahil) worktree'leri SessionStart ve `orkestra is kapat` kendiliğinden kaldırır.
 - Yayın akışı ("Yayın akışı" bölümü) yalnız `main` içindir; yan dal push edilse bile marketplace'e girmez.
 - Her oturum kapanırken `git status --short` boş ve `git branch --no-merged main` boş olmalıdır; commitsiz dosya ya da `main`'e girmemiş dal bırakılmaz. Detached HEAD'de commit atılmışsa önce `git switch -c <dal>`.

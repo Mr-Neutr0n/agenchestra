@@ -65,3 +65,4 @@ Kaynak: `kurallar/eklenti_kurallari.json` (her projeye yüklenir). Tam metin kay
 | P-053 | Ajanın kullanıcıya sorduğu her soru kalıcı kaydedilir ve yanıtlanana kadar kaybolmaz; karar soruları her zaman düğmeyle sunulur. |
 | P-055 | Ajan denetçiyi ya da başka bir süreci beklerken boş durmaz; beklerken başlatılabilecek bağımsız işler mekanik belirlenir. |
 | P-056 | Her sohbet yanıtı ve her plan maddesi, etkilediği kararı ve en az bir uygulanabilir rakip yaklaşımı (mevcut skill, hook, kural dahil) çıkarmadan verilmez; mevcut plana ya da belgeye çıpalanılmaz. |
+| P-057 | Eklenti deposunda (Desktop\Claude-Orchestration, uzak mertdurukan/agenchestra) iş şu akışla yayınlanır: iş kendi dalında commitlenir; hedefli testler geçince dal origin/main üzerine alınır, yerelde main'e fast-forward birleştirilir ve main push edilir. |

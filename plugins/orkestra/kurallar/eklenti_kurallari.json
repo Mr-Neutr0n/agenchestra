@@ -1403,6 +1403,25 @@
         }
       ],
       "etkinlesme": "2026-11-05T07:35:41+03:00"
+    },
+    {
+      "id": "P-057",
+      "katman": "plugin",
+      "metin": "ZORUNLU, istisnasız: Eklenti deposunda (Desktop\\Claude-Orchestration, uzak mertdurukan/agenchestra) iş şu akışla yayınlanır: iş kendi dalında commitlenir; hedefli testler geçince dal origin/main üzerine alınır, yerelde main'e fast-forward birleştirilir ve main push edilir. PR açılmaz; açılmış PR varsa birleşen commit anılarak kapatılır. Push kuralları değişmez: zorla, silme ve ayna push reddedilir; push yalnız açık istek ya da /auto ile yapılır (P-006, ORK-ADR-0086); Eklenti dışındaki depolar bu akışın dışındadır. Gerekçe: depo kullanıcıya aittir, PR bu depoda gözden geçirme kapısı değildir. Zorlama: kod kapısı yoktur; akış plugins/orkestra/GELISTIRME.md 'Yayın akışı' ve 'Yan işler' bölümlerinde yazılıdır, tekrar ederse gölge kapı ayrıca açılır (P-028). (ORK-ADR-0165)",
+      "ozet": "Eklenti deposunda PR yok: dal origin/main üzerine alınır, yerelde main'e fast-forward birleşir, main push edilir; push kuralları aynı.",
+      "neden": "Kullanıcı 05.11.2026 (I-386): eklenti deposu kullanıcıya ait, PR açılmayacak; yerelde main'e birleştirip main push edilecek (ORK-ADR-0165).",
+      "durum": "etkin",
+      "kaynak": "cli",
+      "olusturma": "2026-11-05T08:11:10+03:00",
+      "guncelleme": "2026-11-05T08:11:10+03:00",
+      "gecmis": [
+        {
+          "zaman": "2026-11-05T08:11:10+03:00",
+          "olay": "eklendi",
+          "metin": "ZORUNLU, istisnasız: Eklenti deposunda (Desktop\\Claude-Orchestration, uzak mertdurukan/agenchestra) iş şu akışla yayınlanır: iş kendi dalında commitlenir; hedefli testler geçince dal origin/main üzerine alınır, yerelde main'e fast-forward birleştirilir ve main push edilir. PR açılmaz; açılmış PR varsa birleşen commit anılarak kapatılır. Push kuralları değişmez: zorla, silme ve ayna push reddedilir; push yalnız açık istek ya da /auto ile yapılır (P-006, ORK-ADR-0086); Eklenti dışındaki depolar bu akışın dışındadır. Gerekçe: depo kullanıcıya aittir, PR bu depoda gözden geçirme kapısı değildir. Zorlama: kod kapısı yoktur; akış plugins/orkestra/GELISTIRME.md 'Yayın akışı' ve 'Yan işler' bölümlerinde yazılıdır, tekrar ederse gölge kapı ayrıca açılır (P-028). (ORK-ADR-0165)"
+        }
+      ],
+      "etkinlesme": "2026-11-05T08:11:10+03:00"
     }
   ]
 }
