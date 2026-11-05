@@ -65,7 +65,7 @@ class PencereToplamlari(unittest.TestCase):
 
 class OzetPencere(unittest.TestCase):
     def test_kirilim_usd_ve_token_pencere_toplamiyla_ayni(self):
-        k = O._pencere_kirilimlari(KAYITLAR, BUGUN)
+        k = O._pencere_kirilimlari(KAYITLAR, BUGUN, datetime.datetime.combine(BUGUN, datetime.time(23, 59)))   # gün sonu: eşit süreli kesim tam güne eşit
         t = L.pencere_toplamlari(KAYITLAR, BUGUN)
         for w in PENCERELER:
             self.assertAlmostEqual(k[w]["usd"], t[w]["usd"], places=3)
@@ -74,6 +74,40 @@ class OzetPencere(unittest.TestCase):
         self.assertEqual(k["bugun"]["onceki"]["usd"], 2.0)   # dün
         self.assertEqual(k["son_3_gun"]["onceki"]["usd"], 8.0)   # önceki 3 gün = bugün-5..bugün-3: yalnız 5 gün önceki satır
         self.assertIsNone(k["tum_zaman"]["onceki"])
+
+
+class OnceKesim(unittest.TestCase):
+    """I-390 P1: önceki dönem, içinde bulunulan dönemle eşit geçen süre kadar kıyaslanır."""
+    D = datetime.datetime
+
+    def test_bugun_ogle(self):
+        self.assertEqual(L.onceki_kesim("bugun", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 11, 4), self.D(2026, 11, 4, 12, 0)))
+
+    def test_gece_yarisi_siniri(self):
+        self.assertEqual(L.onceki_kesim("bugun", self.D(2026, 11, 5, 0, 0)), (self.D(2026, 11, 4), self.D(2026, 11, 4)))
+
+    def test_son_3_ve_son_7(self):
+        self.assertEqual(L.onceki_kesim("son_3_gun", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 10, 31), self.D(2026, 11, 2, 12, 0)))
+        self.assertEqual(L.onceki_kesim("son_7_gun", self.D(2026, 11, 5, 6, 0)), (self.D(2026, 10, 23), self.D(2026, 10, 29, 6, 0)))
+
+    def test_bu_ay_kisa_aya_kirpilir(self):
+        # 31 Mart 15:00 -> önceki ay Şubat (28 gün): kesim Şubat'ı aşmaz
+        bas, son = L.onceki_kesim("bu_ay", self.D(2026, 3, 31, 15, 0))
+        self.assertEqual((bas, son), (self.D(2026, 2, 1), self.D(2026, 3, 1)))
+
+    def test_ayin_birinde(self):
+        self.assertEqual(L.onceki_kesim("bu_ay", self.D(2026, 11, 1, 3, 0)), (self.D(2026, 10, 1), self.D(2026, 10, 1, 3, 0)))
+
+    def test_bu_ay_ay_ortasi(self):
+        self.assertEqual(L.onceki_kesim("bu_ay", self.D(2026, 11, 5, 12, 0)), (self.D(2026, 10, 1), self.D(2026, 10, 5, 12, 0)))
+
+    def test_tum_zaman_yok(self):
+        self.assertIsNone(L.onceki_kesim("tum_zaman", self.D(2026, 11, 5, 12, 0)))
+
+    def test_ozet_bugun_ogleden_once_dunu_yarimdan_alir(self):
+        simdi = datetime.datetime.combine(BUGUN, datetime.time(10, 0))
+        k = O._pencere_kirilimlari([satir(1, 2.0, 200, saat=9), satir(1, 5.0, 500, saat=15)], BUGUN, simdi)
+        self.assertEqual(k["bugun"]["onceki"]["usd"], 2.0)   # dün 00:00-10:00 yalnız 09:00 satırı
 
 
 class AnalitikPencere(unittest.TestCase):

@@ -334,8 +334,10 @@ PENCERELER = L.PENCERELER
 _pencere_icinde = L.pencere_icinde   # tek takvim günü tanımı ork_lib'de (hedef panosu ve panel aynı tanımı kullanır)
 
 
-def _pencere_kirilimlari(kayitlar: list, bugun: datetime.date) -> dict:
-    """Her pencere için iş türü, model ve ajan x iş türü harcaması (panel: Maliyet > Harcama dağılımı)."""
+def _pencere_kirilimlari(kayitlar: list, bugun: datetime.date, simdi: "datetime.datetime | None" = None) -> dict:
+    """Her pencere için iş türü, model ve ajan x iş türü harcaması (panel: Maliyet > Harcama dağılımı).
+    Önceki dönem, içinde bulunulan dönemle eşit geçen süre kadardır (L.onceki_kesim); simdi verilmezse şimdiki saat."""
+    simdi = simdi or datetime.datetime.combine(bugun, datetime.datetime.now().time())
     cikti = {}
     ilk = min((z.date() for r in kayitlar if (z := A._zaman(r.get("zaman")))), default=bugun)
     for w in PENCERELER:
@@ -361,10 +363,10 @@ def _pencere_kirilimlari(kayitlar: list, bugun: datetime.date) -> dict:
             a["giris"] += (r.get("giris", 0) or 0) + (r.get("onbellek_okuma", 0) or 0) + (r.get("onbellek_yazma", 0) or 0)
         n = L.pencere_gun_sayisi(w, bugun)
         gun = (bugun - ilk).days + 1 if n is None else max(1, min(n, (bugun - ilk).days + 1))   # veri başlamadan önceki günler ortalamaya girmez
-        onc = L.onceki_aralik(w, bugun)
+        onc = L.onceki_kesim(w, simdi)
         onceki = None
         if onc:
-            satir_o = [r for r in kayitlar if (z := A._zaman(r.get("zaman"))) and onc[0] <= z.date() <= onc[1]]
+            satir_o = [r for r in kayitlar if (z := A._zaman(r.get("zaman"))) and onc[0] <= z.replace(tzinfo=None) < onc[1]]
             onceki = {"usd": round(sum(r.get("maliyet_usd", 0) or 0 for r in satir_o), 4), "token": sum(_tok(r) for r in satir_o)}
         cikti[w] = {"usd": round(toplam, 4), "token": toplam_t, "gun": gun, "onceki": onceki, "surec": _yuvarla(dict(surec.most_common(10))),
                     "model": _yuvarla(dict(model.most_common(6))),

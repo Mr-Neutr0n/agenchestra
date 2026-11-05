@@ -580,12 +580,26 @@
   // ================================================================ 6. Görünüm: İşler (liste + ayrıntı)
   const KOVA = [['simdi', 'Şimdi', 'var(--bilgi)'], ['sirada', 'Sırada', 'var(--uyari)'], ['planda_kart_yok', 'Planda', 'var(--notr)'], ['yapildi', 'Yapıldı', 'var(--iyi)'], ['iptal', 'İptal', 'var(--notr)']];
 
+  // Sunucudaki L.pencere_icinde ile aynı takvim günü kuralı (yerel gün): bugun, son_3_gun, son_7_gun, bu_ay
+  function pencereIcinde(w, iso) {
+    const z = iso ? new Date(iso) : null;
+    if (!z || isNaN(z)) return false;
+    if (w === 'tum_zaman') return true;
+    const n = new Date(), g0 = x => new Date(x.getFullYear(), x.getMonth(), x.getDate());
+    const ilk = w === 'bu_ay' ? new Date(n.getFullYear(), n.getMonth(), 1) : new Date(g0(n).getTime() - ({ bugun: 0, son_3_gun: 2, son_7_gun: 6 }[w] ?? 0) * 864e5);
+    return g0(z) >= ilk && g0(z) <= g0(n);
+  }
+
   function gIsler(r) {
     const f = r.q.get('f') || 'acik', q = r.q.get('q') || '';
     const yuk = bekle('/isler.json');
     const tum = d('/isler.json').veri?.isler || [];
     const say = { acik: tum.filter(i => i.durum === 'acik').length, kapandi: tum.filter(i => i.durum === 'kapandi').length, tum: tum.length };
-    const liste = tum.filter(i => (f === 'tum' || i.durum === f) && (!q || eslesir(i.id + ' ' + i.ad + ' ' + (i.alan?.ad || ''), q)));
+    // I-390: açık işler hiç süzülmez; kapanmış işler seçili pencerede harcaması ya da son etkinliği olanlarla sınırlanır ('pd=1' hepsini açar)
+    const w = B.pencere(), pdTum = r.q.get('pd') === '1';
+    const pencerede = i => i.durum === 'acik' || w === 'tum_zaman' || !!(i.pencere?.[w]?.usd || i.pencere?.[w]?.token) || pencereIcinde(w, i.son);
+    const adaylar = tum.filter(i => (f === 'tum' || i.durum === f) && (!q || eslesir(i.id + ' ' + i.ad + ' ' + (i.alan?.ad || ''), q)));
+    const liste = pdTum ? adaylar : adaylar.filter(pencerede), disarda = adaylar.length - liste.length;
     const sorgu = ek(r.q);   // alan süzgeçlerle taşınmaz; her satır kendi alanını ekler
     const secili = i => i.id === r.id && (!tumMu() || i.alan?.id === rotaAlani(r));
     const satirlar = yuk || (liste.length ? H`<div class="liste" role="listbox" aria-label="İşler">${liste.map(i => {
@@ -599,6 +613,8 @@
       <div class="suzgec">${[['acik', 'Açık'], ['kapandi', 'Kapanan'], ['tum', 'Tümü']].map(([k, ad]) =>
         H`<button class="cip" data-eylem="sorgu" data-k="f" data-v="${k}" aria-pressed="${f === k}">${ad}<span class="say">${say[k]}</span></button>`)}
         <input class="arama" id="isAra" type="search" placeholder="İş ara…  /" value="${q}" data-sorgu="q" aria-label="İş ara"></div>
+      ${disarda || pdTum ? H`<div class="soluk kucuk-y" style="padding:6px 10px">${pdTum ? 'Pencere dışı işler de gösteriliyor.' : disarda + ' kapanmış iş ' + pencereAd(w) + ' penceresi dışında.'}
+        <button class="cip" data-eylem="sorgu" data-k="pd" data-v="${pdTum ? '0' : '1'}">${pdTum ? 'Yalnız pencereyi göster' : 'Pencere dışını da göster'}</button></div>` : ''}
       ${satirlar}</div>`;
     const sag = H`<section class="ayrinti">${r.id ? isAyrinti(r.id, tum.find(secili)) : bos('Bir iş seç', 'Soldan bir iş seç.', 'isler')}</section>`;
     return {
@@ -825,7 +841,7 @@
     const p = B.pencere(), tok = B.olcu() === 'token', ad = pencereAd(p);
     const pw = oz.maliyet?.pencere?.[p] || {}, ap = an.pencere?.[p] || {}, hp = an.hedef_panosu || {}, olc = hp.olculer || {}, israf = hp.israf?.[p];
     const tr = an.trend || {}, ay = tr.ay_sonu || {}, gun = tr.gunluk || [];
-    const dilim = { bugun: tr.saatlik || [], son_3_gun: gun.slice(-3), son_7_gun: gun.slice(-7), bu_ay: gun.slice(-(ay.gecen_gun || gun.length)), tum_zaman: gun }[p] || [];
+    const dilim = { bugun: tr.saatlik || [], son_3_gun: gun.filter(x => pencereIcinde('son_3_gun', x.donem + 'T12:00:00')), son_7_gun: gun.filter(x => pencereIcinde('son_7_gun', x.donem + 'T12:00:00')), bu_ay: gun.filter(x => pencereIcinde('bu_ay', x.donem + 'T12:00:00')), tum_zaman: gun }[p] || [];   // I-390: tarihe göre, dizi konumuna göre değil
     const modelRenk = modelRenkleri(dilim);
     const modelL = Object.entries((tok ? pw.model_token : pw.model) || {}).sort((a, b) => b[1] - a[1]);
     const surec = Object.entries((tok ? pw.surec_token : pw.surec) || {}).sort((a, b) => b[1] - a[1]);

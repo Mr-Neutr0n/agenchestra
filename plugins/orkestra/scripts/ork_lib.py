@@ -2279,6 +2279,21 @@ def onceki_aralik(pencere: str, bugun: "datetime.date") -> "tuple | None":
     return bit - datetime.timedelta(days=n - 1), bit
 
 
+def onceki_kesim(pencere: str, simdi: "datetime.datetime") -> "tuple | None":
+    """Önceki dönemin [başlangıç, bitiş) zaman aralığı; içinde bulunulan dönemde geçen süre kadar (eşit süreli kıyas).
+    Bitiş önceki dönemin sonunu aşmaz (kısa ay). tum_zaman için None."""
+    bugun = simdi.date()
+    aralik = onceki_aralik(pencere, bugun)
+    if aralik is None:
+        return None
+    ilk = {"bugun": bugun, "son_3_gun": bugun - datetime.timedelta(days=2),
+           "son_7_gun": bugun - datetime.timedelta(days=6), "bu_ay": bugun.replace(day=1)}[pencere]
+    gecen = simdi.replace(tzinfo=None) - datetime.datetime.combine(ilk, datetime.time.min)
+    bas = datetime.datetime.combine(aralik[0], datetime.time.min)
+    son = datetime.datetime.combine(aralik[1] + datetime.timedelta(days=1), datetime.time.min)
+    return bas, min(bas + gecen, son)
+
+
 def _satir_tok(r: dict) -> int:
     return sum(int(r.get(a) or 0) for a in _TOKEN_ALANLARI)
 
