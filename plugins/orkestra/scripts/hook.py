@@ -3555,6 +3555,11 @@ def user_prompt_submit(inp: dict):
             except Exception:
                 pass
             ek = "\n".join(p for p in parcalar if p)
+            try:  # I-401 P4: son turlarda aynen verilmiş sabit satırlar yinelenmez (hata metni değiştirmez)
+                import baglam_tekil
+                ek = baglam_tekil.suz(sd, inp.get("session_id"), ek)
+            except Exception:
+                pass
             try:  # G-125: iş değişimi uyarısı systemMessage olur, isteği engellemez
                 uyari = _is_degisimi_uyarisi(sd, inp.get("session_id"), inp.get("transcript_path"), metin)
             except Exception:

@@ -63,6 +63,21 @@ class SogukOnbellek(unittest.TestCase):
             json.dump({"esik_token": 400_000}, f)
         self.assertIsNone(S.karar(self.sd, "o1", self.tp, SIMDI))
 
+    def test_devir_uyarisi_her_50k_buyumede_tekrarlanir(self):  # I-401 P16
+        self.yaz(asistan(1, 250_000))
+        self.assertIsNotNone(S.devir_uyarisi(self.sd, "o1", self.tp))
+        self.yaz(asistan(1, 290_000))
+        self.assertIsNone(S.devir_uyarisi(self.sd, "o1", self.tp))  # +40k: henüz değil
+        self.yaz(asistan(1, 301_000))
+        m = S.devir_uyarisi(self.sd, "o1", self.tp)
+        self.assertIsNotNone(m)
+        self.assertIn("301k", m)
+        self.assertIsNone(S.devir_uyarisi(self.sd, "o1", self.tp))
+        with open(os.path.join(self.sd, "onbellek_kapisi.json"), "w", encoding="utf-8") as f:
+            json.dump({"devir_tekrar_token": 0}, f)
+        self.yaz(asistan(1, 900_000))
+        self.assertIsNone(S.devir_uyarisi(self.sd, "o1", self.tp))  # tekrar kapalı: eski davranış
+
     def test_devir_uyarisi_200k_ustunde_bir_kez_ayarla_kapanir(self):
         self.yaz(asistan(1, 150_000))
         self.assertIsNone(S.devir_uyarisi(self.sd, "o1", self.tp))  # eşik altı: uyarı yok

@@ -1,6 +1,6 @@
 ---
 name: standart
-description: "Ekip yapı standartlarını (PR başlığı ve gövdesi, commit mesajı, Conventional Commits türleri, dal adı, review kuralı, Jira Done yorumu) okutur ve uyulmasını sağlar. Kullanıcı pull request ya da PR açıp yazdığında veya incelediğinde, commit mesajı yazdığında, dal adlandırdığında, Jira görevine Done yorumu yazdığında, 'standart', 'şablon', 'commit türü', 'PR gövdesi', 'review kuralı' dediğinde ya da yeni bir yapı standardı eklemek istediğinde kullan. Standart yazmayan, yalnız kod değiştiren işlerde kullanma."
+description: "Ekip standartlarını (PR başlığı/gövdesi, commit mesajı, dal adı, review, Jira Done yorumu) okutur ve uyumu sağlar. Tetik: PR açma/inceleme, commit yazma, dal adlandırma, Done yorumu, 'standart', 'şablon'."
 ---
 
 ## Amaç

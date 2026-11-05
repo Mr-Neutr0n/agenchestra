@@ -372,6 +372,20 @@ def kural_dosyasi_esitle(sd: str) -> bool:
     return kural_dosyasi_esitle_fark(sd)[0]
 
 
+KAYITLI_DOSYA = "KURALLAR_KAYITLI.md"
+
+
+def _kayitli_yaz(yol: str, metin: str) -> None:
+    """Kayıtlı eklenti kurallarının tam metni; içerik aynıysa yazmaz."""
+    try:
+        with open(yol, encoding="utf-8", newline="") as f:
+            if f.read().replace("\r\n", "\n") == metin:
+                return
+    except OSError:
+        pass
+    L.atomik_yaz(yol, metin)
+
+
 def _kurallar_md_blogu_yaz(liste: list[dict]) -> None:
     """Eklenti KURALLAR.md'sindeki kayıtlı-kural bloğunu (işaretçiler arası) eklenti deposundan yeniden üretir.
     KURALLAR.md yoksa dokunmaz (test ve özel kurulum)."""
@@ -385,15 +399,23 @@ def _kurallar_md_blogu_yaz(liste: list[dict]) -> None:
     etkin = [r for r in liste if r.get("durum") == "etkin"]
     blok = ""
     if etkin:
-        blok = [ESKI_BASLA, "## Kayıtlı eklenti kuralları", "",
-                "Bu bölüm `orkestra kural` komutuyla yönetilir (`kurallar/eklenti_kurallari.json`); elle düzenleme.", ""]
+        # Tam metin ayrı dosyada: KURALLAR.md her okunduğunda ~77 KB kural metni taşımaz (I-401 P3).
+        tam = ["# Kayıtlı eklenti kuralları (tam metin)", "",
+               "Bu dosya `orkestra kural` komutuyla yönetilir (`kurallar/eklenti_kurallari.json`); elle düzenleme.", ""]
         for r in etkin:
             tarih = (r.get("etkinlesme") or r.get("olusturma") or "")[:10]
-            blok.append(f"- {_tek_satir(KM.mod_coz(r['metin']))} ({r['id']}, {tarih})")
+            tam.append(f"- {_tek_satir(KM.mod_coz(r['metin']))} ({r['id']}, {tarih})")
             if r.get("neden"):
-                blok.append(f"  - Neden: {_tek_satir(r['neden'])}")
-        blok.append(ESKI_BITIS)
-        blok = "\n".join(blok)
+                tam.append(f"  - Neden: {_tek_satir(r['neden'])}")
+        _kayitli_yaz(os.path.join(os.path.dirname(yol), KAYITLI_DOSYA), "\n".join(tam) + "\n")
+        blok = "\n".join([ESKI_BASLA, "## Kayıtlı eklenti kuralları", "",
+                          f"Tam metin ve nedenler `{KAYITLI_DOSYA}` dosyasındadır (`orkestra kural` yönetir); kuralı kimliğiyle ara.",
+                          "", "Etkin kimlikler: " + ", ".join(r["id"] for r in etkin) + ".", ESKI_BITIS])
+    if not etkin:  # etkin kural kalmadıysa tam metin dosyası da kalkar
+        try:
+            os.remove(os.path.join(os.path.dirname(yol), KAYITLI_DOSYA))
+        except OSError:
+            pass
     desen = re.compile(re.escape(ESKI_BASLA) + r".*?" + re.escape(ESKI_BITIS), re.S)
     if desen.search(t):
         t = desen.sub(lambda _: blok, t, count=1)

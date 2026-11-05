@@ -1,12 +1,6 @@
 ---
 name: is-anlati
-description: >-
-  Bir orkestra işini (I-nnn) iş kaydındaki kanıttan "Ne yaptım?" ve "Nasıl yaptım?" başlıklı, birinci
-  tekil şahısla yazılmış tam iki Türkçe paragrafta anlatır. Kanıt paketini betik çıkarır, model yazar,
-  taslağı betik denetler. Kullanıcı "ne yaptım", "nasıl yaptım", "bu işi anlat", "iş özeti",
-  "sprint güncellemesi", "yöneticiye anlat", "/orkestra:is-anlati" dediğinde kullan.
-  KULLANMA: sohbetin durumu için neredeyiz, açık iş listesi için close, yeni sohbete devir belgesi için
-  devir, Jira Done yorumu için standart kullanılır.
+description: "Bir orkestra işini (I-nnn) kanıttan 'Ne yaptım?' ve 'Nasıl yaptım?' başlıklı iki Türkçe paragrafta anlatır. Tetik: 'ne yaptım', 'nasıl yaptım', 'iş özeti', 'sprint güncellemesi', '/orkestra:is-anlati'."
 argument-hint: "<I-nnn | Jira anahtarı | klasör no | all> [--yaz]"
 ---
 # /orkestra:is-anlati: iş kaydı → kanıt paketi → iki paragraf

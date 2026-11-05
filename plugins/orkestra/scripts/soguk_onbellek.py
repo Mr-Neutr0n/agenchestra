@@ -15,7 +15,8 @@ import os
 import ork_lib as L
 
 VARSAYILAN = {"acik": True, "esik_token": 150_000, "esik_dk": 60, "tekrar_dk": 15, "is_degisimi": True,
-              "devir_uyarisi": True, "devir_esik_token": 200_000}
+              "devir_uyarisi": True, "devir_esik_token": 200_000,
+              "devir_tekrar_token": 50_000}  # ilk uyarıdan sonra bağlam bu kadar büyüdükçe yeniden uyar (I-401 P16)
 # Yeni sohbetin ölçülen açılış bağlamı (tasarruf tahmini için): ilk çağrı medyanı 91.223 token, 205 oturum, 22.10.2026
 # (`orkestra maliyet taban`; I-159 P4). Eski 30.000 sabiti tasarrufu 1,6-2 kat şişiriyordu.
 YENI_SOHBET_BAGLAMI = 91_000
@@ -133,7 +134,8 @@ def devir_uyarisi(sd: str, oid: str | None, transkript: str | None) -> str | Non
     """I-159 P5: son ana ajan çağrısının bağlamı `devir_esik_token` üstündeyse ENGELLEMEYEN devir uyarısı, yoksa None.
 
     Ölçüm (22.10.2026, 7 gün, I-159 P4): 200 bin üstünde devir (yeni sohbet + devir belgesi) net kazançlı.
-    Oturum başına bir kez (işaret `<oid>.devir`); ayar `devir_uyarisi: false` kapatır. Hata her zaman None."""
+    İlk uyarıdan sonra bağlam `devir_tekrar_token` (50k) büyüdükçe yeniden uyarır (işaret `<oid>.devir`: son uyarılan bağlam);
+    ayar `devir_uyarisi: false` kapatır, `devir_tekrar_token: 0` eski davranışı verir (oturum başına bir kez). Hata her zaman None."""
     try:
         a = ayarlar(sd)
         if not a.get("devir_uyarisi") or not oid:
@@ -142,11 +144,20 @@ def devir_uyarisi(sd: str, oid: str | None, transkript: str | None) -> str | Non
         if not s or s["baglam"] <= a["devir_esik_token"]:
             return None
         isaret = os.path.join(sd, "oturumlar", f"{oid}.devir")
+        son = 0  # en son uyarıldığı bağlam; eski işaret dosyası (yalnız zaman) eşik kadar sayılır (I-401 P16)
         if os.path.exists(isaret):
-            return None
+            son = a["devir_esik_token"]
+            try:
+                with open(isaret, encoding="utf-8") as f:
+                    son = int(json.load(f).get("baglam") or son)
+            except (OSError, ValueError, AttributeError):
+                pass
+            tekrar = int(a.get("devir_tekrar_token") or 0)
+            if tekrar <= 0 or s["baglam"] < son + tekrar:  # tekrar kapalıysa ya da bağlam yeterince büyümediyse yeniden uyarma
+                return None
         os.makedirs(os.path.dirname(isaret), exist_ok=True)
         with open(isaret, "w", encoding="utf-8") as f:
-            f.write(D.datetime.now(D.timezone.utc).isoformat())
+            json.dump({"zaman": D.datetime.now(D.timezone.utc).isoformat(), "baglam": s["baglam"]}, f)
         azalan = max(0, s["baglam"] - YENI_SOHBET_BAGLAMI)
         usd = azalan / 1e6 * L.model_fiyati(s["model"]).get("onbellek_okuma", 0)
         import devir_esigi

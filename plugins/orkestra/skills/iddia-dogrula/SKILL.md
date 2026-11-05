@@ -1,11 +1,6 @@
 ---
 name: iddia-dogrula
-description: >-
-  Bir iddia ya da eksiklik listesini madde madde doğrular. Her madde için kanıt toplar (kod dosya:satır,
-  DB sorgusu + saat + ortam, belge), DOĞRULANDI / KISMEN / ÇÜRÜTÜLDÜ / TEYİT / BELİRSİZ kararı verir ve
-  gerekirse yeni metin önerir. Rapor ayrı bir denetçiden geçer. Kullanıcı "doğrulamanı ya da çürütmeni
-  istiyorum", "bu listeyi doğrula", "eksiklik listesini kontrol et", "bu iddialar doğru mu", "veriyle ve
-  kodla teyit et" dediğinde kullan. Tek bir DB ölçümü için db-olcum kullanılır.
+description: "İddia ya da eksiklik listesini madde madde kanıtla doğrular (DOĞRULANDI/KISMEN/ÇÜRÜTÜLDÜ/TEYİT/BELİRSİZ); rapor ayrı denetçiden geçer. Tetik: 'bu listeyi doğrula', 'iddialar doğru mu'. Tek DB ölçümü için db-olcum."
 when_to_use: >-
   "doğrulamanı ya da çürütmeni istiyorum", "bu listeyi doğrula", "eksiklik listesini kontrol et",
   "bu iddialar doğru mu", "veriyle ve kodla teyit et", "rakip tablosundaki satırları doğrula",

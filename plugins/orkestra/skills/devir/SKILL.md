@@ -1,6 +1,6 @@
 ---
 name: devir
-description: "Bu sohbeti sıfır bağlamlı yeni bir sohbete kayıpsız devreden, yapıştırılmaya hazır bir devir belgesi üretir: güncel hedef, kısıtlar, kesinleşmiş kararlar, elenen seçenekler, mevcut durum, birebir taşınması gereken içerik, dosyalar ve ilk hamle. Şu ifadelerde mutlaka kullan: '/orkestra:devir', '/yeni-sohbet', 'yeni sohbet', 'yeni sohbet aç', 'yeni sohbete geç', 'devret', 'devir', 'devir belgesi', 'yeni sohbete taşı', 'yeni sohbette devam edelim', 'başka sohbete geçelim', 'sohbet çok uzadı', 'context doldu', 'bağlam doldu', 'handoff', 'hand off', '/devir'. Kullanıcı sohbetin yavaşladığından, uzadığından veya Claude'un baştaki şeyleri unuttuğundan yakınıp devam etmek istediğinde de öner. Kullanıcı yalnızca kendisi için durum özeti istiyorsa ('nerede kaldık', 'özet geç') KULLANMA; o iş neredeyiz skill'inindir."
+description: "Sohbeti sıfır bağlamlı yeni sohbete devreden yapıştırılabilir devir belgesi üretir. Tetik: '/orkestra:devir', 'yeni sohbet', 'devret', 'devir belgesi', 'handoff', 'bağlam doldu', 'sohbet çok uzadı'. Yalnız durum özeti isteyene neredeyiz kullanılır."
 ---
 
 ## Amaç

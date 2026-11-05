@@ -6,6 +6,7 @@ import contextlib
 import io
 import json
 import os
+os.environ["ORKESTRA_HOOK_TEKIL"] = "0"  # bu test ham hook çıktısını ölçer; satır tekilleştirme (I-401 P4) ayrı test
 import re
 import shutil
 import sys

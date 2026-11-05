@@ -265,18 +265,24 @@ class KurallarMdBlokTest(Temel):
         with open(self.kurallar_md, encoding="utf-8", newline="") as f:
             return f.read()
 
+    def kayitli(self):
+        with open(os.path.join(self.eklenti_kok, "KURALLAR_KAYITLI.md"), encoding="utf-8") as f:
+            return f.read()
+
     def test_blok_eklenir_guncellenir_kalkar_ve_crlf_korunur(self):
         onay.kural_ekle(self.sd, "Birinci", "n1", katman="plugin")
         s = self.oku()
         self.assertIn("<!-- eklenti-kurallari:basla -->", s)
-        self.assertIn("- Birinci (P-001", s)
+        self.assertIn("P-001", s)  # blokta yalnız kimlik dizini (I-401 P3)
+        self.assertIn("- Birinci (P-001", self.kayitli())
         self.assertEqual(s.count("\r\n"), s.count("\n"))  # CRLF bozulmadı
         self.assertTrue(s.startswith("# Orkestra kuralları\r\n\r\n## Ana ajan\r\n- el yazısı kural\r\n"))
         onay.kural_duzenle(self.sd, "P-001", "Birinci v2")
         s = self.oku()
         self.assertEqual(s.count("<!-- eklenti-kurallari:basla -->"), 1)
-        self.assertIn("- Birinci v2 (P-001", s)
+        self.assertIn("- Birinci v2 (P-001", self.kayitli())
         onay.kural_kaldir(self.sd, "P-001", "x")
+        self.assertFalse(os.path.exists(os.path.join(self.eklenti_kok, "KURALLAR_KAYITLI.md")))
         s = self.oku()
         self.assertNotIn("eklenti-kurallari", s)
         self.assertEqual(s, "# Orkestra kuralları\r\n\r\n## Ana ajan\r\n- el yazısı kural\r\n")

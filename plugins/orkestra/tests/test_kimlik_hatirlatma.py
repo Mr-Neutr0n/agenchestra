@@ -66,7 +66,7 @@ class TestDosyalarVeKural(unittest.TestCase):
         self.assertEqual(kayit["P-023"]["katman"], "plugin")
         for parca in ("orkestra kimlik liste", "orkestra kimlik calistir", "cosmos_yusuf"):
             self.assertIn(parca, kayit["P-023"]["metin"])
-        with open(os.path.join(KOK, "KURALLAR.md"), encoding="utf-8") as f:
+        with open(os.path.join(KOK, "KURALLAR_KAYITLI.md"), encoding="utf-8") as f:  # tam metin ayrı dosyada (I-401 P3)
             self.assertIn("orkestra kimlik liste", f.read())
 
     def test_ayar_anahtarlari(self):

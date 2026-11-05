@@ -1,6 +1,7 @@
 """I-139 P2: hook'un enjekte ettiği bağlamın kaydı (gunluk.jsonl tur=baglam: hash ve uzunluk, metin yok)."""
 import json
 import os
+os.environ["ORKESTRA_HOOK_TEKIL"] = "0"  # bu test ham hook çıktısını ölçer; satır tekilleştirme (I-401 P4) ayrı test
 import sys
 import unittest
 from unittest import mock

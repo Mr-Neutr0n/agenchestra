@@ -1,11 +1,6 @@
 ---
 name: sade-excel
-description: >-
-  CSV ya da JSON tabloyu ev stilinde sade bir Excel teslimatına çevirir: Özet sayfası + en çok 2 veri
-  sayfası, koyu lacivert başlık, donmuş başlık satırı, filtre, otomatik sütun genişliği; isteğe bağlı
-  masaüstüne kopya. Kullanıcı "Excel'e dök", "sade excel", "minimum, en anlamlı", "xlsx olarak ver",
-  "excel çok karışık, sadeleştir", "masaüstüne de koy" dediğinde kullan. Çağırırken girdi dosya
-  yollarını, başlığı ve (biliniyorsa) sütun seçimini argümana yaz; çatallı bağlamda sohbeti görmez.
+description: "CSV/JSON tabloyu sade Excel'e çevirir: Özet + en çok 2 veri sayfası, donmuş başlık, filtre. Tetik: 'Excel'e dök', 'sade excel', 'xlsx olarak ver', 'masaüstüne de koy'. Girdi yollarını argümana yaz."
 when_to_use: >-
   "Excel'e dök", "xlsx yap", "sade excel", "minimum en anlamlı", "excel karışık olmuş", "tek sayfa
   özet + liste", "masaüstüne kopyala". Bir betiğin ürettiği CSV/JSON'un teslim edilecek son hali.

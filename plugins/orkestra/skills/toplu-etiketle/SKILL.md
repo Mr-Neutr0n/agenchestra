@@ -1,11 +1,6 @@
 ---
 name: toplu-etiketle
-description: >-
-  Yüzlerce satırı (rakip özelliği, task, story, bulgu) yazılı kurallara göre etiketler ya da bir taksonomiye
-  eşler: kuralları ana ajan yazar, veri parçalara bölünür, her parça paralel bir Haiku işçisine gider,
-  birleştirme ve sayım betikle denetlenir, örneklemi ayrı denetçi kontrol eder. Kullanıcı "hepsini etiketle",
-  "agentic mi yapay zeka mı işaretle", "kavramlara ata", "sınıflandır", "eşle", "her satıra kategori ver"
-  dediğinde kullan. Tek tek 20 satırdan azsa gerek yok; doğrudan yap.
+description: "Yüzlerce satırı kurallara göre etiketler ya da taksonomiye eşler (paralel Haiku işçileri, betikle sayım, örneklem denetimi). Tetik: 'hepsini etiketle', 'sınıflandır', 'eşle'. 20 satırdan azsa doğrudan yap."
 when_to_use: >-
   "etiketle", "sınıflandır", "kategorize et", "taksonomiye ata", "kavramlarla eşle", "her task'a
   agentic / yapay zeka / boş yaz", "rakip satırlarını kavramlara dağıt"; satır sayısı ≥ ~50 ve kural yazılabilir.

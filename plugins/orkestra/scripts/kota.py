@@ -92,10 +92,51 @@ def kaydet(girdi: dict) -> dict | None:
     return nokta
 
 
+DEVIR_SARI = 150_000  # bu bağlamdan sonra sarı: devir yaklaşıyor
+DEVIR_KIRMIZI = 200_000  # ölçülen devir eşiği (soguk_onbellek.devir_esik_token): kırmızı + DEVİR
+_RENK = {"sari": "\x1b[33m", "kirmizi": "\x1b[1;31m", "son": "\x1b[0m"}
+
+
+def _baglam_tokeni(girdi: dict) -> int | None:
+    """Oturumun şu anki bağlam boyutu (token). Önce durum satırı girdisindeki `context_window`, yoksa transkriptteki son
+    ana ajan çağrısı. Bilinmiyorsa None (durum satırı bozulmaz)."""
+    cw = girdi.get("context_window")
+    if isinstance(cw, dict):
+        u = cw.get("current_usage")
+        if isinstance(u, dict):
+            n = sum(int(u.get(k) or 0) for k in ("input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens"))
+            if n:
+                return n
+    try:
+        import soguk_onbellek
+        s = soguk_onbellek.son_cagri(girdi.get("transcript_path"))
+        return int(s["baglam"]) if s else None
+    except Exception:
+        return None
+
+
+def baglam_parcasi(token: int | None) -> str:
+    """`bağlam 148k` (150k'dan sonra sarı, 200k'dan sonra kırmızı ve DEVİR); token bilinmiyorsa boş."""
+    if not token:
+        return ""
+    metin = f"bağlam {token // 1000}k"
+    if token >= DEVIR_KIRMIZI:
+        return f"{_RENK['kirmizi']}{metin} · DEVİR ÖNER (/orkestra:devir){_RENK['son']}"
+    if token >= DEVIR_SARI:
+        return f"{_RENK['sari']}{metin} · devir yaklaşıyor{_RENK['son']}"
+    return metin
+
+
 def satir(girdi: dict, nokta: dict | None) -> str:
     m = girdi.get("model")
     model = (m.get("display_name") or "").strip() if isinstance(m, dict) else ""
     parca = [model] if model else []
+    try:
+        b = baglam_parcasi(_baglam_tokeni(girdi))
+    except Exception:
+        b = ""
+    if b:
+        parca.append(b)
     if nokta and nokta.get("bes_saat"):
         b = nokta["bes_saat"]
         parca.append(f"5 sa %{b['yuzde']:.0f} (sıfırlanma {_saat(b['sifirlanma'])})")

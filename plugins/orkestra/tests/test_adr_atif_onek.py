@@ -25,7 +25,8 @@ def test_kurallar_md_oneksiz_adr_yok_ve_blok_json_ile_tutarli():
     with open(os.path.join(KOK, "KURALLAR.md"), encoding="utf-8") as f:
         md = f.read().replace("\r\n", "\n")
     assert not ONEKSIZ.search(md)
-    blok = md.split("<!-- eklenti-kurallari:basla -->")[1].split("<!-- eklenti-kurallari:bitis -->")[0]
+    with open(os.path.join(KOK, "KURALLAR_KAYITLI.md"), encoding="utf-8") as f:  # tam metin ayrı dosyada (I-401 P3)
+        blok = f.read()
     blok = re.sub(r"\s+", " ", blok)
     for r in _kurallar():
         if r.get("durum") == "etkin":

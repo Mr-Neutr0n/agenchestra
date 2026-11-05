@@ -18,13 +18,13 @@ Komut: `/orkestra:<ad>`. Kaynak: `skills/<ad>/SKILL.md`.
 | `competitive-analysis` | Analyze competitors with feature comparison matrices, positioning analysis, and strategic implications. |  |
 | `db-olcum` | >- | "<soru ya da hipotez> [şema ...] [--ortam kopya\|prod]" |
 | `defter` | Orkestra ortak defterini göster — herkesin (ana ajan, işçiler, denetçiler, perspektif) ne yaptığının son kayıtları; isteğe bağlı olarak tek bir görevin geçmişi. | "[görev id, ör. G-007] [son N]" |
-| `devir` | "Bu sohbeti sıfır bağlamlı yeni bir sohbete kayıpsız devreden, yapıştırılmaya hazır bir devir belgesi üretir: güncel hedef, kısıtlar, kesinleşmiş kararlar, elenen seçenekler, mevcut durum, birebir taşınması gereken içer… |  |
+| `devir` | "Sohbeti sıfır bağlamlı yeni sohbete devreden yapıştırılabilir devir belgesi üretir. |  |
 | `find-skills` | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. |  |
 | `frontend-design` | Create distinctive, production-grade frontend interfaces with high design quality. |  |
 | `harita-kur` | >- | "[proje-kökü]" |
-| `iddia-dogrula` | >- | "<iddia listesi: dosya yolu (csv/md/xlsx sayfası) ya da sohbetteki maddeler>" |
+| `iddia-dogrula` | "İddia ya da eksiklik listesini madde madde kanıtla doğrular (DOĞRULANDI/KISMEN/ÇÜRÜTÜLDÜ/TEYİT/BELİRSİZ); rapor ayrı denetçiden geçer. | "<iddia listesi: dosya yolu (csv/md/xlsx sayfası) ya da sohbetteki maddeler>" |
 | `is` | Orkestra ile bir işi yürüt — ana ajan planlar (görev kartları), işleri maliyet basamağına göre işçilere dağıtır, her çıktıyı AYRI bir denetçiden geçirir, bağımsız işleri paralel koşturur ve onaylı sonucu toplayıp getiri… | "<istek>" |
-| `is-anlati` | >- | "<I-nnn \| Jira anahtarı \| klasör no \| all> [--yaz]" |
+| `is-anlati` | "Bir orkestra işini (I-nnn) kanıttan 'Ne yaptım?' ve 'Nasıl yaptım?' başlıklı iki Türkçe paragrafta anlatır. | "<I-nnn \| Jira anahtarı \| klasör no \| all> [--yaz]" |
 | `jira-yaz` | "Jira'ya yorum, açıklama ya da issue yazarken (Atlassian connector) metni doğru biçimde ve onayla yazar. |  |
 | `literature-review` | Conduct comprehensive, systematic literature reviews using multiple academic databases (PubMed, arXiv, bioRxiv, Semantic Scholar, etc.). |  |
 | `madde-senkron` | >- | "tara <KIMLIK...> \| uygula <plan.json> [--kuru] \| dogrula <kayit.json> \| geri-al <kayit.json>" |
@@ -35,15 +35,15 @@ Komut: `/orkestra:<ad>`. Kaynak: `skills/<ad>/SKILL.md`.
 | `perspektif` | Orkestra perspektifi (hafıza bakımı) — arka planda üretilen perspektif raporunu gösterir, kullanıcının onayladığı önerileri hafıza bakımcısı ajanla uygular; istenirse perspektifi şimdi başlatır. | "[şimdi]" |
 | `root-cause-first` | Evidence-driven troubleshooting and safe-change discipline for software engineering orchestrators. |  |
 | `ruya` | ESKİ AD (takma ad) — "rüya" artık Perspektif'tir. | "[şimdi]" |
-| `sade-excel` | >- | "<girdi.csv\|json> [ikinci.csv] --baslik \"...\" [--sutunlar \"a,b=Yeni ad\"] [--cikti ad] [--masaustu]" |
+| `sade-excel` | "CSV/JSON tabloyu sade Excel'e çevirir: Özet + en çok 2 veri sayfası, donmuş başlık, filtre. | "<girdi.csv\|json> [ikinci.csv] --baslik \"...\" [--sutunlar \"a,b=Yeni ad\"] [--cikti ad] [--masaustu]" |
 | `scientific-brainstorming` | Research ideation partner. |  |
 | `senior-architect` | Comprehensive software architecture skill for designing scalable, maintainable systems using ReactJS, NextJS, NodeJS, Express, React Native, Swift, Kotlin, Flutter, Postgres, GraphQL, Go, Python. |  |
 | `sequential-thinking` | Use when complex problems require systematic step-by-step reasoning with ability to revise thoughts, branch into alternative approaches, or dynamically adjust scope. |  |
 | `skill-avi` | Tekrar eden işleri bul ve kayıtlı skill'e çevir — skill avcısı ajanı günlük, defter ve maliyet kayıtlarından aday çıkarır ve taslak yazar; kullanıcı onaylarsa taslak projenin .claude/skills/ klasörüne taşınır ve ayrı bi… | "[gün sayısı, ör. 14]" |
 | `software-architecture` | Guide for quality focused software architecture. |  |
-| `standart` | "Ekip yapı standartlarını (PR başlığı ve gövdesi, commit mesajı, Conventional Commits türleri, dal adı, review kuralı, Jira Done yorumu) okutur ve uyulmasını sağlar. |  |
+| `standart` | "Ekip standartlarını (PR başlığı/gövdesi, commit mesajı, dal adı, review, Jira Done yorumu) okutur ve uyumu sağlar. |  |
 | `textual` | Expert guidance for building TUI (Text User Interface) applications with the Textual framework. |  |
-| `toplu-etiketle` | >- | "<girdi.csv\|json\|xlsx> <neye göre etiketlenecek> [--id-sutun X] [--sayfa S --baslik-satiri N]" |
+| `toplu-etiketle` | "Yüzlerce satırı kurallara göre etiketler ya da taksonomiye eşler (paralel Haiku işçileri, betikle sayım, örneklem denetimi). | "<girdi.csv\|json\|xlsx> <neye göre etiketlenecek> [--id-sutun X] [--sayfa S --baslik-satiri N]" |
 | `ui-ux-pro-max` | "UI/UX design intelligence. |  |
 | `ultracave` | > |  |
 | `update` | Orkestra eklentisini günceller, LLM çağırmadan: yayın klonunu GitHub'dan çeker, kurulu orkestra plugin'lerini kendi kapsamıyla günceller. |  |

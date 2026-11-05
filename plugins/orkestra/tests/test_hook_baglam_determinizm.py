@@ -1,6 +1,7 @@
 """I-139 P3 (bce F24): aynı girdi, aynı hook bağlamı. İki çalıştırmanın çıktısı baytı baytına eşit olmalı; aksi halde
 istemin önbelleği her turda kırılır. Sabit örnek durum test_hook_baglam_boyut.py'deki gibi kurulur."""
 import os
+os.environ["ORKESTRA_HOOK_TEKIL"] = "0"  # bu test ham hook çıktısını ölçer; satır tekilleştirme (I-401 P4) ayrı test
 import sys
 import unittest
 
