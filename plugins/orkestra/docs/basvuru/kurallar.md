@@ -66,3 +66,4 @@ Kaynak: `kurallar/eklenti_kurallari.json` (her projeye yüklenir). Tam metin kay
 | P-055 | Ajan denetçiyi ya da başka bir süreci beklerken boş durmaz; beklerken başlatılabilecek bağımsız işler mekanik belirlenir. |
 | P-056 | Her sohbet yanıtı ve her plan maddesi, etkilediği kararı ve en az bir uygulanabilir rakip yaklaşımı (mevcut skill, hook, kural dahil) çıkarmadan verilmez; mevcut plana ya da belgeye çıpalanılmaz. |
 | P-057 | Eklenti deposunda (Desktop\Claude-Orchestration, uzak mertdurukan/agenchestra) iş şu akışla yayınlanır: iş kendi dalında commitlenir; hedefli testler geçince dal origin/main üzerine alınır, yerelde main'e fast-forward birleştirilir ve main push edilir. |
+| P-058 | Kullanıcıya verdiğin her sayı, 'var/yok', 'doğrudur/yanlıştır' ve değerlendirme iddiası yazılmadan önce ilgili kaynaktan bu turda komutla doğrulanır; hatırlayarak, konuşma geçmişinden ya da varsayımdan sayı ve değerlendirme yazılmaz. |

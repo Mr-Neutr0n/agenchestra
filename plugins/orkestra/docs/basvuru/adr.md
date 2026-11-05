@@ -75,4 +75,6 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0163](../../../../adr/ADR-0163-kapanis-mesajinda-surec-anlatimi-kapisi.md) | Kapanış mesajında süreç anlatımı kapısı | Kabul edildi |
 | [ADR-0164](../../../../adr/ADR-0164-sohbet-yaniti-ve-plan-maddesi-etkilenen-karar-ve-rakip-yaklasimi-sorar.md) | Sohbet yanıtı ve plan maddesi etkilenen kararı ve rakip yaklaşımı yanıttan önce sorar (P-056) | Kabul edildi |
 | [ADR-0165](../../../../adr/ADR-0165-eklenti-deposunda-pr-yok-yerel-main-birlestirme-ve-main-push.md) | Eklenti deposunda PR açılmaz; dal yerelde main'e birleştirilir ve main push edilir | Kabul edildi |
+| [ADR-0166](../../../../adr/ADR-0166-panel-zaman-penceresi-tek-kaynak-ve-etkin-mod-gostergesi.md) | Panel zaman penceresi tek kaynak ve etkin mod göstergesi | Kabul edildi |
 | [ADR-0167](../../../../adr/ADR-0167-panel-penceresi-son-30-gun-ve-istemci-onbellek-politikasi.md) | Panel penceresi son_30_gun ve istemci önbellek politikası | Kabul edildi |
+| [ADR-0169](../../../../adr/ADR-0169-kaynak-etiketli-iddia-dogrulama-kapisi-golge.md) | Kaynak etiketli iddia doğrulama kapısı (gölge) | Kabul edildi (gölge modda) |

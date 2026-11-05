@@ -57,6 +57,18 @@ def _gercek_istem(m):
     return t
 
 
+def _arac_ciktilari(m, sinir: int = 20000):
+    """Kullanıcı satırındaki tool_result bloklarının metinleri (her biri `sinir` karaktere kısaltılır)."""
+    c = m.get("content")
+    if not isinstance(c, list):
+        return []
+    sonuc = []
+    for b in c:
+        if isinstance(b, dict) and b.get("type") == "tool_result":
+            sonuc.append(_metin(b.get("content"))[:sinir])
+    return sonuc
+
+
 def tur_satirlari(satirlar):
     """Döküm satırlarını (JSONL metni) kullanıcı turlarına böler: {istem, zaman, cagrilar[(ad, girdi)], yanit(son metin)}.
     Yan zincirler atlanır."""
@@ -70,11 +82,13 @@ def tur_satirlari(satirlar):
             continue
         m = e.get("message") or {}
         if e.get("type") == "user":
+            if tur is not None:
+                tur.setdefault("ciktilar", []).extend(_arac_ciktilari(m))
             t = _gercek_istem(m)
             if t is not None:
                 if tur:
                     yield tur
-                tur = {"istem": t, "zaman": e.get("timestamp", ""), "cagrilar": [], "yanit": ""}
+                tur = {"istem": t, "zaman": e.get("timestamp", ""), "cagrilar": [], "yanit": "", "ciktilar": []}
         elif e.get("type") == "assistant" and tur is not None:
             for b in m.get("content") or []:
                 if not isinstance(b, dict):

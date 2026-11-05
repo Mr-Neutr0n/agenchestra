@@ -1,0 +1,22 @@
+{
+  "_aciklama": "ADR-0169: iddia-kaynak kapısı (gölge). Yanıttaki sayı istemde ya da turun araç çıktısında yoksa sayi_kaynaksiz, var/yok/doğru-yanlış iddiası kaynak türü etiketi ya da 'doğrulanmadı' taşımıyorsa etiketsiz_iddia yazar. Yalnız ölçer; uyarı ve bloklama ölçümden sonra ayrı kararla (P-028). Proje durum dizinindeki iddia_kaynak.json anahtar bazında ezer. ORKESTRA_KANIT_KAPISI=0 kapatır.",
+  "mod": "golge",
+  "kuyruk_bayt": 2000000,
+  "min_hane": 2,
+  "max_bulgu": 10,
+  "alinti_max_karakter": 120,
+  "etiketler": ["Veritabanı", "Kod", "Doküman", "Eski sohbet", "Eski oturum", "Ölçüm çıktısı", "Ölçüm", "Jira", "Web", "Kullanıcı sözü", "Hafıza"],
+  "ayiklama_kaliplari": [
+    "```.*?```",
+    "`[^`\\n]*`",
+    "https?://\\S+",
+    "\\b\\d{1,2}[./]\\d{1,2}[./]\\d{2,4}\\b",
+    "\\b\\d{1,2}:\\d{2}\\b",
+    "\\b\\d{1,3}(?:\\.\\d{1,3}){3}\\b",
+    "(?<=\\w):\\d+\\b",
+    "\\b[A-Za-zÇĞİÖŞÜçğıöşü]+-?\\d+\\b",
+    "(?m)^\\s*\\d+[.)]\\s"
+  ],
+  "iddia_kalibi": "\\b(var|yok|mevcut|bulunmuyor|çalışıyor|çalışmıyor|yapılmadı|yapıldı|eksik|yanlış|doğru|geçti|kurulu|açık|kapalı|değil|gidiyor)\\b",
+  "muaf_kalibi": "doğrulanmad[ıi]|tahmin|genel bilgi|\\]\\(|^(mevcut durum|plan|todo|sözleşme|özet|açık|hayır|evet)\\b|\\b(push|commit)\\b|işçisi|denetçi|arka planda|dokunulmad|:$|\\?$"
+}

@@ -57,7 +57,7 @@ Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_JIRA_BAGIMLILIK_KAPISI` | is_sirasi.py |
 | `ORKESTRA_KABUK_PROFILI` | kabuk_profili.py |
 | `ORKESTRA_KALITE_KAPISI` | is_sirasi.py |
-| `ORKESTRA_KANIT_KAPISI` | kanitsiz_iddia.py |
+| `ORKESTRA_KANIT_KAPISI` | iddia_kaynak.py, kanitsiz_iddia.py |
 | `ORKESTRA_KAPANIS_BIRLESTIRME` | dal_temizle.py |
 | `ORKESTRA_KAPANIS_KAPISI` | hook.py |
 | `ORKESTRA_KAPANIS_SUREC` | kapanis_surec.py |

@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 93 ayar; `açıklama yok` işaretli: 31.
+Toplam 94 ayar; `açıklama yok` işaretli: 32.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -41,6 +41,7 @@ Toplam 93 ayar; `açıklama yok` işaretli: 31.
 | `hata_onleme_siniflari` | — | ADR-0151 P4: tekrar eden hata imzası → önleme basamağı (standartlar/onleme_merdiveni.md L0-L6) ve sahip (sorunun doğduğu kaynak). |
 | `hedef` | — | açıklama yok |
 | `iddia_dogrula` | — | iddia-dogrula skill varsayılanları. |
+| `iddia_kaynak` | golge | açıklama yok |
 | `is_baglama` | etkin | açıklama yok |
 | `is_esleme` | — | açıklama yok |
 | `istek_defteri` | golge | ADR-0112 istek defteri kapısı. |

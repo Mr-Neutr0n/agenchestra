@@ -1899,6 +1899,26 @@ def _kapanis_surec_yanit(sd: str, oid, inp: dict) -> None:
         return
 
 
+def _iddia_kaynak_yanit(sd: str, oid, inp: dict) -> None:
+    """ADR-0169 / P-058: yanıttaki sayı aynı turun araç çıktısında ya da isteminde yoksa, iddia cümlesi kaynak türü etiketi
+    taşımıyorsa günlüğe `kapi_golge / iddia_kaynak` yazılır. Yalnız ölçer (gölge): engellemez, uyarı vermez.
+    Ayar `ayarlar/iddia_kaynak.json`; hatada sessiz geçer."""
+    try:
+        import iddia_kaynak as IKA
+        if IKA.mod(IKA.ayar_oku(sd)) == "kapali":
+            return
+        bulgu = IKA.degerlendir(inp.get("transcript_path"), inp.get("last_assistant_message"), sd)
+        if bulgu:
+            say = {}
+            for b in bulgu:
+                say[b["tur"]] = say.get(b["tur"], 0) + 1
+            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kapi_golge",
+                                                             "kapi": IKA.KAPI, "is": _oturum_isi(sd, oid),
+                                                             "bulgu_sayilari": say, "ornek": bulgu[0]["alinti"]})
+    except Exception:
+        return
+
+
 def _yapamam_yanit(sd: str, oid, inp: dict) -> None:
     """ADR-0153 / P-045: yanıtta denenen komut ya da engel kanıtı olmadan yazılmış gerçek yapamama iddiası günlüğe
     `kapi_golge / yapamam_kaniti` olarak yazılır. Yalnız ölçer (gölge): engellemez, uyarı vermez.
@@ -2079,7 +2099,7 @@ def stop(inp: dict):
             konu_defteri.stop_kontrol(sd, oid)
     except Exception:
         pass
-    try:  # ADR-0156: istek için niyet yazılmadıysa gölge kaydı (engellemez)
+    try:  # ADR-0169: istek için niyet yazılmadıysa gölge kaydı (engellemez)
         import niyet_defteri_kapi
         if not inp.get("agent_id"):
             niyet_defteri_kapi.stop_kontrol(sd, oid)
@@ -2172,6 +2192,7 @@ def stop(inp: dict):
         _onleme_yanit(sd, oid, inp)
         _kapanis_surec_yanit(sd, oid, inp)
         _yapamam_yanit(sd, oid, inp)
+        _iddia_kaynak_yanit(sd, oid, inp)
         _cikti_butce_yanit(sd, oid, inp)
         _cikti_sirasi_yanit(sd, oid, inp)
         _kapanis_kapisi(sd, oid, inp)
@@ -3310,7 +3331,7 @@ def user_prompt_submit(inp: dict):
             if ne:
                 istek["ne"] = ne
         L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": inp.get("session_id"), "tur": "istek",
-                                                         "uzunluk": len(metin), **istek})  # ham mesaj yazılmaz (ADR-0156)
+                                                         "uzunluk": len(metin), **istek})  # ham mesaj yazılmaz (ADR-0169)
         # Niyet kaydı: kullanıcı yazdı → Claude çalışıyor. Sistem iletileri (<agent-message>, <task-notification>) istek metni sayılmaz.
         import niyet
         sistem = metin.lstrip().startswith("<")
@@ -3327,7 +3348,7 @@ def user_prompt_submit(inp: dict):
                         _yonlendirme_ipucu(sd, inp.get("session_id"), metin, L.proje_dizini(inp.get("cwd")),
                                            cwd=inp.get("cwd"))]
             _niyet_otomatik(sd, inp.get("session_id"), L.proje_dizini(inp.get("cwd")), metin)  # iş açıldıktan sonra
-            try:  # ADR-0156: niyet defteri yönergesi (ajan mesajdaki niyetleri yazar); hata hook'u düşürmez
+            try:  # ADR-0169: niyet defteri yönergesi (ajan mesajdaki niyetleri yazar); hata hook'u düşürmez
                 import niyet_defteri_kapi
                 ny = niyet_defteri_kapi.yonerge(sd, istek.get("istek_id"), metin) if not inp.get("agent_id") else ""
                 if ny:
