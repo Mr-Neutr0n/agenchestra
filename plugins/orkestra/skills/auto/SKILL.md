@@ -34,6 +34,12 @@ description: "Orkestra'da /auto modunu açar: kullanıcının mesajı onay yerin
   - **Geri alma:** kararı geri almanın yolu.
 - **Çözülemeyenler:** parola girişi, değeri yalnız kullanıcıda olan sır ve hesap açma otomatik çözülmez (kesin sınır). Bunlar "Kullanıcıya kalanlar" altında, ne yapıldığı ve uygulanan güvenli varsayılanla birlikte sıralanır; koşu durmaz.
 
+## Kapanış mesajı (ADR-0163)
+
+- Sohbet kapanışı yalnız çalışma özetinin 'Ne yapıldı', 'Ana sayı' ve 'Açık kalanlar' alanlarından üretilir.
+- 'Plandan sapmalar' ve 'Otomatik kararlar' bölümleri sohbete taşınmaz; kendi onay ya da karar sürecini ('kendim çalıştırdım', 'gerekçem') anlatma.
+- `orkestra is onayla` ajan için PreToolUse'ta reddedilir; onayı kullanıcı mesajı ya da hook verir.
+
 ## Sınırlar
 
 `/auto` aşağıdakileri gevşetmez; hepsi aynen geçerlidir:

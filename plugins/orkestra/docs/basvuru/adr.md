@@ -72,5 +72,7 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0158](../../../../adr/ADR-0158-bekleme-sirasinda-bagimsiz-isi-arka-planda-yurutme-mekanik-a.md) | Bekleme sırasında bağımsız işi arka planda yürütme: mekanik aday listesi | Kabul edildi |
 | [ADR-0159](../../../../adr/ADR-0159-plan-maddesinde-geri-alma-alani-kalkar.md) | Plan maddesinde Geri alma alanı kalkar; P-018 metni kapıyla hizalanır | Kabul edildi |
 | [ADR-0161](../../../../adr/ADR-0161-eklenti-gelistirme-worktree-leri-depo-icinde-claude-worktree.md) | Eklenti geliştirme worktree'leri depo içinde .claude/worktrees altında açılır | Kabul edildi |
+| [ADR-0163](../../../../adr/ADR-0163-kapanis-mesajinda-surec-anlatimi-kapisi.md) | Kapanış mesajında süreç anlatımı kapısı | Kabul edildi |
 | [ADR-0164](../../../../adr/ADR-0164-sohbet-yaniti-ve-plan-maddesi-etkilenen-karar-ve-rakip-yaklasimi-sorar.md) | Sohbet yanıtı ve plan maddesi etkilenen kararı ve rakip yaklaşımı yanıttan önce sorar (P-056) | Kabul edildi |
 | [ADR-0165](../../../../adr/ADR-0165-eklenti-deposunda-pr-yok-yerel-main-birlestirme-ve-main-push.md) | Eklenti deposunda PR açılmaz; dal yerelde main'e birleştirilir ve main push edilir | Kabul edildi |
+| [ADR-0167](../../../../adr/ADR-0167-panel-penceresi-son-30-gun-ve-istemci-onbellek-politikasi.md) | Panel penceresi son_30_gun ve istemci önbellek politikası | Kabul edildi |

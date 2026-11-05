@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 124 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 126 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -60,6 +60,7 @@ Kaynakta geçen 124 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_KANIT_KAPISI` | kanitsiz_iddia.py |
 | `ORKESTRA_KAPANIS_BIRLESTIRME` | dal_temizle.py |
 | `ORKESTRA_KAPANIS_KAPISI` | hook.py |
+| `ORKESTRA_KAPANIS_SUREC` | kapanis_surec.py |
 | `ORKESTRA_KARAR_KAPISI` | karar_kapisi.py |
 | `ORKESTRA_KART_KONTROL` | kart.py, test_paralel.py |
 | `ORKESTRA_KAYNAK_KIRA` | kaynak_kira.py |
@@ -94,6 +95,7 @@ Kaynakta geçen 124 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_OZET_ESITZAMANLI` | ozet.py |
 | `ORKESTRA_OZET_KAPISI` | isler.py |
 | `ORKESTRA_PANEL_ALAN_KAPISI` | panel.py |
+| `ORKESTRA_PANEL_GZIP` | panel.py |
 | `ORKESTRA_PANEL_ISCI` | panel_isci.py |
 | `ORKESTRA_PANEL_ISITMA` | panel.py |
 | `ORKESTRA_PANEL_PORT` | cfg.py, doktor.py |

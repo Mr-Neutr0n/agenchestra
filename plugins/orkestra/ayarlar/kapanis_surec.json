@@ -1,0 +1,17 @@
+{
+  "aciklama": "ADR-0163 (I-387, P-014, P-045): kullanıcıya giden son mesajda ajanın kendi iç sürecini anlatan cümleler günlüğe kural_ihlal / kapanis_surec düşer. Yalnız ölçer. Kural kimliği ya da komut adı tek başına ihlal değildir; kalıplar ajanın kendi eylemini ya da gerekçesini anlatan biçimleri hedefler.",
+  "mod": "golge",
+  "mod_aciklama": "golge: yalnız gunluk.jsonl; engelleme ve kullanıcı uyarısı yok. İhlal moduna geçiş P-028'e göre ölçümden sonra ayrı kararla: 30 Stop örneği ve 0 yanlış pozitif (elle sınıflama). Ölçüm: python scripts/kapanis_surec.py rapor",
+  "gecis_esigi": {"ornek": 30, "yanlis_pozitif": 0},
+  "kaliplar": [
+    "\\bkendim\\b",
+    "\\bkendi\\s+kararımla\\b",
+    "\\bgerekçem\\b",
+    "\\b(?:hook|kapı|kural|izin)\\w*\\s+(?:beni|bana)\\b",
+    "\\bhook\\w*\\s+(?:reddet|engelle|durdur)\\w*",
+    "\\b[pk]-\\d{3}\\b[^.!?\\n]{0,30}(?:gereği|gereğince|uyarınca|nedeniyle|yüzünden)",
+    "\\badr-\\d{4}\\b[^.!?\\n]{0,30}(?:gereği|gereğince|uyarınca|nedeniyle|yüzünden)",
+    "orkestra\\s+is\\s+\\w+\\W{0,3}[^.!?\\n]{0,30}\\b(?:çalıştırdım|kullandım|çalıştırıp)",
+    "çalışma\\s+özetine\\s+(?:de\\s+)?yaz"
+  ]
+}

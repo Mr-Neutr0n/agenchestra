@@ -845,6 +845,14 @@ def _durum_satiri(sd: str, oid) -> str:
 def _onay_kapisi(sd: str, oid, proje: str, tam: str = "", tirnaksiz: str = "") -> None:
     """P-016: iş onay beklerken (ana ve alt ajan) işin belgeleri dışında dosya yazılmaz; kabukta commit, bağımlılık
     kurma ve onay komutu çalışmaz. Hatada serbest; ORKESTRA_ONAY_KAPISI=0 kapatır."""
+    if tirnaksiz:  # ADR-0163: ajan kendi onayını veremez; komut onay durumundan bağımsız reddedilir
+        try:
+            import is_onay
+            neden = is_onay.onayla_engeli(tirnaksiz)
+        except Exception:
+            neden = ""
+        if neden:
+            reddet(neden)
     kayit = _onay_kaydi(sd, oid)
     if not kayit:
         return
@@ -1876,6 +1884,21 @@ def _onleme_yanit(sd: str, oid, inp: dict) -> None:
         return
 
 
+def _kapanis_surec_yanit(sd: str, oid, inp: dict) -> None:
+    """ADR-0163 / P-014 / P-045: son mesajda ajanın kendi iç sürecini anlatan cümle varsa günlüğe
+    `kural_ihlal / kapanis_surec` yazılır. Yalnız ölçer (gölge). Ayar `ayarlar/kapanis_surec.json`; hatada sessiz geçer."""
+    try:
+        import kapanis_surec as KS
+        bulgu = KS.degerlendir(inp.get("last_assistant_message"), sd)
+        if bulgu:
+            L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kural_ihlal",
+                                                             "kural": KS.KURAL, "mod": KS.mod(KS.ayar_oku(sd)),
+                                                             "is": _oturum_isi(sd, oid),
+                                                             **_kanit(bulgu["kalip"], bulgu["alinti"])})
+    except Exception:
+        return
+
+
 def _yapamam_yanit(sd: str, oid, inp: dict) -> None:
     """ADR-0153 / P-045: yanıtta denenen komut ya da engel kanıtı olmadan yazılmış gerçek yapamama iddiası günlüğe
     `kapi_golge / yapamam_kaniti` olarak yazılır. Yalnız ölçer (gölge): engellemez, uyarı vermez.
@@ -2147,6 +2170,7 @@ def stop(inp: dict):
         _auto_devam_yanit(sd, oid, inp)
         _kanitsiz_iddia_yanit(sd, oid, inp)
         _onleme_yanit(sd, oid, inp)
+        _kapanis_surec_yanit(sd, oid, inp)
         _yapamam_yanit(sd, oid, inp)
         _cikti_butce_yanit(sd, oid, inp)
         _cikti_sirasi_yanit(sd, oid, inp)

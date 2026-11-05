@@ -727,6 +727,18 @@ def _git_izinli_mi(eslesme: str) -> bool:
     return eslesme.split()[-1].lower() in GIT_IZINLI
 
 
+ONAYLA_KOMUT = re.compile(r"(?:^|[;&|(`]\s*|\s)orkestra(?:\.py|\.cmd)?\s+is\s+onayla\b", re.I)
+
+
+def onayla_engeli(tirnaksiz_komut: str) -> str:
+    """ADR-0163: ajan `orkestra is onayla` çalıştıramaz (onayı kullanıcı mesajı ya da hook verir); iş onay durumundan
+    bağımsız. ORKESTRA_ONAY_KAPISI=0 kapatır."""
+    if not kapi_acik() or not ONAYLA_KOMUT.search(tirnaksiz_komut or ""):
+        return ""
+    return ("ajan kendi onayını veremez (ADR-0002, ADR-0163): `orkestra is onayla` çalıştırılmaz; onayı kullanıcı mesajı "
+            "ya da /auto belgeleri tamamlanınca hook verir.")
+
+
 def kabuk_engeli(tirnaksiz_komut: str, git_izni: bool = False) -> str:
     import izin_politikasi
     metin = izin_politikasi.komut_govdesi(tirnaksiz_komut)  # I-224: veri heredoc gövdesindeki "git push" metni komut değildir

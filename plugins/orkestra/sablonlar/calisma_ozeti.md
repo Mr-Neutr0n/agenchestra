@@ -109,10 +109,12 @@ Planın dışına çıkılan işler ve kalan işler de ayrı satırlarla yazıl�
 
 ## Plandan sapmalar
 
+<!-- Sohbete taşınmaz (ADR-0163): kullanıcıya giden kapanış mesajı yalnız 'Özet' (ne yapıldı, ana sayı) ve 'Kullanıcıya kalanlar' (açık kalanlar) alanlarından üretilir; bu bölüm yalnız belgede kalır. -->
 <!-- yalnız /auto işlerinde zorunlu (ADR-0009): koşu sırasında plandan ayrılan her karar ayrı satır; yoksa "Yok". -->
 
 ## Otomatik kararlar
 
+<!-- Sohbete taşınmaz (ADR-0163): ajanın kendi onay ve karar sürecini anlatan cümle kapanış mesajına yazılmaz; yalnız bu bölümde durur. -->
 <!-- yalnız /auto işlerinde (ADR-0086, ADR-0132): kullanıcıya sorulmadan verilen her karar ayrı madde ve dört alanla; yoksa "Yok".
 - **Karar:** ne yapıldı ya da ne yanıt verildi.
   - **Gerekçe:** neden bu, hangi kanıta dayanıyor.

@@ -547,7 +547,7 @@
     {
       "id": "P-014",
       "katman": "plugin",
-      "metin": "ZORUNLU, istisnasız: Kullanıcıya yazılan yanıtta modelin iç karar ve sınıflandırma cümleleri bulunmaz: 'bilgi sorusu, aynı işin devamı', 'kısa cevap', 'K-004 gereği', 'hook şunu istiyor' gibi süreç anlatımı yazılmaz. Hook ve kural talimatları sessizce uygulanır; kullanıcı yalnız yazdığına verilen cevabı görür. Kural kimliği yalnız kullanıcı o kuralı konuşuyorsa anılır.",
+      "metin": "ZORUNLU, istisnasız: Kullanıcıya yazılan yanıtta modelin iç karar ve sınıflandırma cümleleri bulunmaz: 'bilgi sorusu, aynı işin devamı', 'kısa cevap', 'K-004 gereği', 'hook şunu istiyor' gibi süreç anlatımı yazılmaz. Hook ve kural talimatları sessizce uygulanır; kullanıcı yalnız yazdığına verilen cevabı görür. Kural kimliği yalnız kullanıcı o kuralı konuşuyorsa anılır. Kapanış mesajı yalnız çalışma özetinin 'Ne yapıldı', 'Ana sayı', 'Açık kalanlar' alanlarından üretilir; 'Plandan sapmalar' ve 'Otomatik kararlar' sohbete taşınmaz, ajan kendi onay ve karar sürecini ('kendim çalıştırdım', 'gerekçem') anlatmaz (ORK-ADR-0163; Stop'ta gölge ölçüm: ayarlar/kapanis_surec.json).",
       "ozet": "Kullanıcıya yazılan yanıtta modelin iç karar ve sınıflandırma cümleleri ('bilgi sorusu', 'K-004 gereği', 'hook şunu istiyor') bulunmaz; kurallar sessizce uygulanır. Kural kimliği yalnız kullanıcı o kuralı konuşuyorsa anılır.",
       "neden": "Kullanıcı 18.10.2026: 'Bilgi sorusu, aynı işin devamı; kısa cevap' gibi cümleler fazladan kafa karıştırıcı; kullanıcı yalnızca yazdıklarına dair yanıtları görmeli.",
       "durum": "etkin",
