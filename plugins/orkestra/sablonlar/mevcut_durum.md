@@ -79,3 +79,11 @@
 - Sonra her gap ayrı satır, tam bu biçimde: `- **G1:** hedef → mevcut (MD §n) → fark`.
 - Her satır tek fikir; hedef, mevcut ve fark kısa tutulur.
 - Gap yoksa bile en az bir satır yaz; "fark yok" gerekçesiyle belirt. -->
+
+## Yol kararı
+
+<!-- doldur (ADR-0171, P-052): plan yolunu seçmeden önce giriş noktasından hedef koda her dallanmayı bul; seçilen yolun gerçek trafikte kullanıldığını göster. Belge ("yol sürdürülüyor") kanıt değildir; kod okuması ve ölçüm kanıttır.
+- İlk satır `**Sonuç:**`: kaç yol var, hangisi gerçek trafikte, karar ne (tek cümle).
+- `### Giriş noktası ve dallanmalar`: giriş noktasından hedef koda kadar her dallanma ayrı madde, sonunda (dosya:satır). Dağıtıcı/sınıflayıcı adayları için `orkestra yol dallanma <kök>` çalıştır ve çıktıyı doğrula. "Tek yol" iddiası giriş noktasının (dosya:satır) gösterilmesini ister; örnek sorunun izlediği yol giriş noktası sayılmaz.
+- `### Gerçek trafik`: yollara düşen gerçek istek payı, ölçülen örnek (sayı, koşu sayısı, ölçüm saati) ya da `ölçülemedi — <engel>`; ölçülemediyse bunu kapatacak plan maddesi (P<n>) yazılır ve karar o maddeye bağlı "açık karar" olarak işaretlenir.
+- `### Karar`: `sürdür` | `başka yol` | `yeni yol` ve her aday yol için rakip gerekçe, ayrı madde. -->
