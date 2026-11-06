@@ -20,6 +20,10 @@ Plan `**LLM çıktısı:** kullanıcıya gider — Doğrulama: <yol>[::<test ad�
 
 Beyan `yok — <neden>` ise bu satır istenmez. Kapı yol ve test adının varlığını yoklar; kısıtın yakalandığını denetçi ve test kanıtı gösterir.
 
+## Yol kanıtı (ADR-0171, P-052)
+
+Denetçi altıncı satırı yanıtlar: `**Yol kanıtı:** ✔|✘ — gerekçe`. Planın dayandığı yol gerçek trafikte kullanılıyor mu? Kanıt belge değil, giriş noktasından dallanma listesi (dosya:satır) ve ölçülen trafik (ya da ölçülemedi + kapatan plan maddesi) olmalıdır. Mevcut durumun `## Yol kararı` bölümü yoksa ya da yalnız örnek sorunun yolunu izliyorsa ✘.
+
 ## Üretim noktası (K-006, ADR-0069)
 
 `uretim: true` taşıyan sıralı işte her plan maddesi sorunun nerede doğduğunu ve orada nasıl önleneceğini yazar. Alan üç türdür:

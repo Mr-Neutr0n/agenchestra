@@ -80,3 +80,4 @@ Kaynak: depo kökündeki `adr/`.
 | [ADR-0168](../../../../adr/ADR-0168-mcp-sunuculari-kullanim-sinifina-gore-kapsamlanir.md) | MCP sunucuları kullanım sınıfına göre kapsamlanır | Kabul edildi |
 | [ADR-0169](../../../../adr/ADR-0169-kaynak-etiketli-iddia-dogrulama-kapisi-golge.md) | Kaynak etiketli iddia doğrulama kapısı (gölge) | Kabul edildi (gölge modda) |
 | [ADR-0170](../../../../adr/ADR-0170-arsiv-dugmesi-is-kalmayinca-wrap-up-kutusu-tek-arsivle-dugme.md) | Arşiv düğmesi: iş kalmayınca wrap_up kutusu tek Arşivle düğmesi | Kabul edildi |
+| [ADR-0171](../../../../adr/ADR-0171-plan-oncesi-yol-dogrulama-kapisi-yol-karari-bolumu-gercek-tr.md) | Plan öncesi yol doğrulama kapısı: Yol kararı bölümü, gerçek trafik kanıtı | Kabul edildi |

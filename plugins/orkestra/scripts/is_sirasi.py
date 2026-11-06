@@ -681,6 +681,75 @@ def gorunum_olcumu_uyari(klasor: str) -> list[str]:
     return KM.ihlal_ver(klasor, "gorunum_olcumu", gorunum_olcumu_eksikleri(klasor))
 
 
+# ADR-0171 / P-052: yeni sıralı işin mevcut durumu `## Yol kararı` taşır (giriş noktasından dallanmalar, gerçek trafik, karar).
+# Gölge kapı (P-028): plan öncesi uyarır ve `kapi_golge` kaydı düşer. Kapsam: is.json `yol: true` (bayraksız eski işler muaf).
+_YOL_BASLIK = re.compile(r"^##[ \t]+Yol kararı[ \t]*$(.*?)(?=^##[ \t]|\Z)", re.M | re.S)
+_YOL_ALT = re.compile(r"^###[ \t]+(.+?)[ \t]*$", re.M)
+_DOSYA_SATIR = re.compile(r"[\w./\-]+\.\w{1,5}:\d+")
+_YOL_KARAR = re.compile(r"sürdür|başka yol|yeni yol", re.I)
+_YOL_OLCULEMEDI = re.compile(r"ölçülemedi\s*—\s*\S+.*\bP\d+\b", re.I | re.S)
+_YOL_SAYI = re.compile(r"\d+\s*/\s*\d+|\d+\s*%|%\s*\d+|\d+\s*(?:koşu|istek|adet|örnek|çağrı|soru|kayıt|satır)", re.I)  # sürüm adı (V2) sayı sayılmaz
+
+
+def yol_kapisi_acik() -> bool:
+    return os.environ.get("ORKESTRA_YOL_KAPISI") != "0"
+
+
+def yol_kapsaminda_mi(klasor: str) -> bool:
+    """ADR-0171: iş sıralı ve is.json `yol: true` taşıyor (bayraksız eski işler muaf)."""
+    if not yol_kapisi_acik() or not sirali_mi(klasor):
+        return False
+    try:
+        with open(os.path.join(klasor, "is.json"), encoding="utf-8") as f:
+            return json.load(f).get("yol") is True
+    except (OSError, ValueError):
+        return False
+
+
+def _yol_altlar(govde: str) -> dict[str, str]:
+    parcalar = _YOL_ALT.split(govde)
+    return {parcalar[i].strip().lower(): parcalar[i + 1] for i in range(1, len(parcalar) - 1, 2)}
+
+
+def yol_karari_metin_eksikleri(metin: str) -> list[str]:
+    """Mevcut durum metninin `## Yol kararı` eksikleri (saf işlev; test ve kapı bunu çağırır)."""
+    m = _YOL_BASLIK.search(_YORUM.sub("", metin))
+    if not m or not m.group(1).strip():
+        return ["mevcut durum: `## Yol kararı` bölümü yok ya da boş (giriş noktası, gerçek trafik, karar; ADR-0171)"]
+    altlar = _yol_altlar(m.group(1))
+    eksik = []
+    giris = next((v for k, v in altlar.items() if k.startswith("giriş noktası")), "")
+    trafik = next((v for k, v in altlar.items() if k.startswith("gerçek trafik")), "")
+    karar = next((v for k, v in altlar.items() if k.startswith("karar")), "")
+    if not _DOSYA_SATIR.search(giris):
+        eksik.append("Yol kararı: `### Giriş noktası ve dallanmalar` dosya:satır kanıtı taşımıyor (örnek sorunun yolu giriş noktası sayılmaz)")
+    if not (_YOL_SAYI.search(trafik) or _YOL_OLCULEMEDI.search(trafik)):
+        eksik.append("Yol kararı: `### Gerçek trafik` ölçülen sayı ya da `ölçülemedi — <engel>` + kapatan plan maddesi (P<n>) taşımıyor")
+    if not _YOL_KARAR.search(karar):
+        eksik.append("Yol kararı: `### Karar` sürdür | başka yol | yeni yol içermiyor")
+    return eksik
+
+
+def yol_karari_eksikleri(klasor: str) -> list[str]:
+    yol = mevcut_durum_yolu(klasor)
+    metin = _oku(yol) if yol else None
+    if metin is None:
+        return []  # mevcut durum yok: mevcut_durum_eksikleri bunu zaten bildirir
+    eksik = yol_karari_metin_eksikleri(metin)
+    plan = _plan_oku(klasor)
+    if plan is not None and BIC_DENETIM_BASLIK.search(plan) and not re.search(r"^- \*\*Yol kanıtı:\*\*", plan, re.M):
+        eksik.append("plan.md: `## Best in class denetimi` bloğunda `**Yol kanıtı:**` satırı yok (denetçi altıncı satır; ADR-0171)")
+    return eksik
+
+
+def yol_karari_uyari(klasor: str) -> list[str]:
+    """Sesli kapı: gölge modunda uyarır ve `kapi_golge` kaydı düşer; ihlal modunda eksikleri döndürür."""
+    if not yol_kapsaminda_mi(klasor):
+        return []
+    import kapi_mod as KM
+    return KM.ihlal_ver(klasor, "yol_karari", yol_karari_eksikleri(klasor))
+
+
 # ADR-0080: plan paralellik kapısı (`**Önce:**` gerekçeli bağımlılık, `**Yazma alanı:**`, dalga kesişimi, tam sıralı gerekçe).
 def paralellik_kapisi_acik() -> bool:
     return os.environ.get("ORKESTRA_PARALELLIK_KAPISI") != "0"
@@ -1320,7 +1389,7 @@ def adim(klasor: str) -> tuple[str, list[str]]:
 
 def plan_onkosulu(klasor: str) -> list[str]:
     """plan.md yazımı için ön koşul: sözleşme (ihlal modunda) ve mevcut durum tamam; gölge modunda sözleşme eksiği uyarılır."""
-    return sozlesme_uyari(klasor, baglanti=False) + mevcut_durum_eksikleri(klasor)
+    return sozlesme_uyari(klasor, baglanti=False) + mevcut_durum_eksikleri(klasor) + yol_karari_uyari(klasor)  # ADR-0171: gölge modda yol kararı uyarısı
 
 
 def todo_onkosulu(klasor: str) -> list[str]:

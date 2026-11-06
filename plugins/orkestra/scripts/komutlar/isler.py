@@ -239,6 +239,8 @@ def cmd_is_sira(a):
         print(f"  uyarı (best in class): {e}")
     for e in ik.SIRA.gorunum_olcumu_uyari(kayit["klasor"]) if not eksik else []:  # P-044: gölge modunda uyarı + kapi_golge kaydı
         print(f"  uyarı (görünüm ölçümü): {e}")
+    for e in ik.SIRA.yol_karari_uyari(kayit["klasor"]) if not eksik else []:  # ADR-0171: gölge modunda uyarı + kapi_golge kaydı
+        print(f"  uyarı (yol kararı): {e}")
 
 
 def cmd_is_onayla(a):

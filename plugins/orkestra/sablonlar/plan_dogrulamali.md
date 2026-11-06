@@ -100,6 +100,7 @@ Plan yazarından AYRI `orkestra:denetci` dört soruyu yanıtlar (`orkestra stand
 - **Kapsam özü:** bekliyor
 - **Ölçüm:** bekliyor
 - **Üretim noktası:** bekliyor
+- **Yol kanıtı:** bekliyor
 
 **Denetçi:** bekliyor (`orkestra:denetci <agent_id>`)
 

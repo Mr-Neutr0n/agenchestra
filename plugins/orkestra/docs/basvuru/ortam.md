@@ -2,7 +2,7 @@
 
 # Ortam değişkenleri
 
-Kaynakta geçen 130 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
+Kaynakta geçen 131 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 
 | Değişken | Geçtiği betikler |
 |---|---|
@@ -134,5 +134,6 @@ Kaynakta geçen 130 değişken. `…_KAPISI=0` ilgili kapıyı kapatır.
 | `ORKESTRA_UYGULAMA_GUNLUGU` | cokus_kaydi.py, hata.py |
 | `ORKESTRA_YAPAMAM_KANITI` | yapamam_kaniti.py |
 | `ORKESTRA_YAYIN` | cfg.py |
+| `ORKESTRA_YOL_KAPISI` | is_sirasi.py |
 | `ORKESTRA_YOL_NOTU` | soru_sinif.py |
 | `ORKESTRA_YONTEM_ENJEKSIYONU` | yontem_enjeksiyonu.py |

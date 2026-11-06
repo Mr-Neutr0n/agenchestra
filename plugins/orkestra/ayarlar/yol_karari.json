@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "mod: golge = yeni sıralı işin mevcut durumunda `## Yol kararı` (giriş noktasından dallanmalar dosya:satır, gerçek trafik ölçümü ya da ölçülemedi + kapatan plan maddesi, karar) yoksa ya da eksikse plan öncesi uyarılır ve gunluk.jsonl'a kapi_golge düşer, iş engellenmez; ihlal = plan yazımı engellenir. Geçiş: kapı sonrası 10 yeni işte bölümün dolu ve kanıtlı oranı ve yanlış pozitifler elle sınıflandıktan sonra ayrı kararla (P-028). Kapatma: ORKESTRA_YOL_KAPISI=0. Proje ezmesi: .claude/orkestra/yol_karari.json (ADR-0171, P-052)."
+}

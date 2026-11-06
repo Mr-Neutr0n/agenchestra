@@ -4,7 +4,7 @@
 
 Kaynak: `ayarlar/*.json`. Proje ezmesi: `.claude/orkestra/<ad>.json`. `mod`: `golge` (uyarır, engellemez), `ihlal` (reddeder), `kapali`.
 
-Toplam 96 ayar; `açıklama yok` işaretli: 33.
+Toplam 97 ayar; `açıklama yok` işaretli: 33.
 
 | Ayar | Mod | Açıklama |
 |---|---|---|
@@ -102,5 +102,6 @@ Toplam 96 ayar; `açıklama yok` işaretli: 33.
 | `uretim_olcum` | — | ADR-0111 etki ölçümü. |
 | `yapamam_kaniti` | golge | ADR-0153 (P-045): yanıtta gerçek yapamama iddiası denenen komut ya da engel kanıtı olmadan yazılmışsa günlüğe kapi_golge / yapamam_kaniti düşer. |
 | `yetki` | — | Yeni işlerin ve iş bağlanmamış oturumların varsayılan çalışma modu: plan \| auto. |
+| `yol_karari` | golge | mod: golge = yeni sıralı işin mevcut durumunda `## Yol kararı` (giriş noktasından dallanmalar dosya:satır, gerçek trafik ölçümü ya da ölçülemedi + kapatan plan maddesi, karar) yoksa ya da eksikse plan öncesi uyarılır ve… |
 | `yontem_enjeksiyonu` | etkin | ADR-0068: best in class yöntemi (standartlar/best_in_class.md '## Üretim anı' bölümü) iş mesajlarında ana ajana, kartlı işçilerde SubagentStart'ta bağlama eklenir. |
 | `zaman_etkin` | — | I-257/I-259: ana tur süresi (zaman.jsonl tur=ana sure_ms) bu eşiği (dakika) aşarsa kullanıcı beklemesi sayılır ve etkin_ms 0 yazılır; eşiğin altındaki turda etkin_ms = sure_ms. |

@@ -1339,18 +1339,23 @@
     {
       "id": "P-052",
       "katman": "plugin",
-      "metin": "ZORUNLU, istisnasız: İşte iki yol varsa (örn. eski sürümü geliştirmeye devam etmek ya da yeni sürüme taşımak), plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir (hangisi yaşıyor, hangisi emekli, taşıma maliyeti ve riski). Karar \"Kararlar\" bölümünde ilk maddedir. Seçilmeyen yola yatırım yapılmaz; yapılıyorsa gerekçesi aynı bölümde yazılır. Yanlış yapıyı doğru biçimde sürdürmek best in class sayılmaz. Zorlama: sablonlar/plan*.md Kararlar yönergesi ve plan denetçisinin sorusu; mekanik kapı yoktur. (ORK-ADR-0136)",
-      "ozet": "İşte iki yol varsa (eski sürümü sürdürmek ya da yenisine taşımak) plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir; karar 'Kararlar' bölümünün ilk maddesidir. Seçilmeyen yola yatırım yapılmaz, yapılıyorsa gerekçesi yazılır.",
+      "metin": "ZORUNLU, istisnasız: İşte iki yol varsa (örn. eski sürümü geliştirmeye devam etmek ya da yeni sürüme taşımak), plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir (hangisi yaşıyor, hangisi emekli, taşıma maliyeti ve riski). Karar \"Kararlar\" bölümünde ilk maddedir. Seçilmeyen yola yatırım yapılmaz; yapılıyorsa gerekçesi aynı bölümde yazılır. Yanlış yapıyı doğru biçimde sürdürmek best in class sayılmaz. Tetik ajanın yargısına bırakılmaz: yeni sıralı her işte mevcut durum '## Yol kararı' bölümünü taşır (giriş noktasından hedef koda her dallanma dosya:satır; 'tek yol' iddiası giriş noktası kanıtı ister, örnek sorunun yolu giriş noktası sayılmaz; gerçek trafik = ölçülen örnek ya da 'ölçülemedi — engel' + bunu kapatan plan maddesi, belge ya da 'yol sürdürülüyor' cümlesi kanıt değildir; karar sürdür | başka yol | yeni yol ve her aday için rakip gerekçe). Dallanma adayları 'orkestra yol dallanma <kök>' ile betikten türetilir. Plan denetçisi altıncı satırı yanıtlar: 'Seçilen yol gerçek trafikte kullanılıyor mu; kanıt?'. Zorlama: sablonlar/mevcut_durum.md '## Yol kararı' yönergesi, is_sirasi.yol_karari_eksikleri (ayarlar/yol_karari.json, mod: golge, P-028; ORKESTRA_YOL_KAPISI=0 kapatır), standartlar/best_in_class.md. (ORK-ADR-0136, ORK-ADR-0171)",
+      "ozet": "İşte iki yol varsa (eski sürümü sürdürmek ya da yenisine taşımak) plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir; karar 'Kararlar' bölümünün ilk maddesidir. Seçilmeyen yola yatırım yapılmaz. Yeni sıralı işte mevcut durum '## Yol kararı' taşır (dallanmalar dosya:satır, trafik ölçümü, karar); gölge kapı, ORKESTRA_YOL_KAPISI=0 kapatır.",
       "neden": "Plan eski sürümde geliştirmeyi sürdürürken yeni sürüme taşıma hiç tartışılmamıştı (01.11.2026).",
       "durum": "etkin",
       "kaynak": "cli",
       "olusturma": "2026-11-01T12:48:25+03:00",
-      "guncelleme": "2026-11-01T12:48:25+03:00",
+      "guncelleme": "2026-11-06T10:40:00+03:00",
       "gecmis": [
         {
           "zaman": "2026-11-01T12:48:25+03:00",
           "olay": "eklendi",
           "metin": "ZORUNLU, istisnasız: İşte iki yol varsa (örn. eski sürümü geliştirmeye devam etmek ya da yeni sürüme taşımak), plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir (hangisi yaşıyor, hangisi emekli, taşıma maliyeti ve riski). Karar \"Kararlar\" bölümünde ilk maddedir. Seçilmeyen yola yatırım yapılmaz; yapılıyorsa gerekçesi aynı bölümde yazılır. Yanlış yapıyı doğru biçimde sürdürmek best in class sayılmaz. Zorlama: sablonlar/plan*.md Kararlar yönergesi ve plan denetçisinin sorusu; mekanik kapı yoktur. (ORK-ADR-0136)"
+        },
+        {
+          "zaman": "2026-11-06T10:40:00+03:00",
+          "olay": "güncellendi",
+          "metin": "ZORUNLU, istisnasız: İşte iki yol varsa (örn. eski sürümü geliştirmeye devam etmek ya da yeni sürüme taşımak), plan önce hangi yolun geleceğe taşınacağına mevcut durumdaki kanıtla karar verir (hangisi yaşıyor, hangisi emekli, taşıma maliyeti ve riski). Karar \"Kararlar\" bölümünde ilk maddedir. Seçilmeyen yola yatırım yapılmaz; yapılıyorsa gerekçesi aynı bölümde yazılır. Yanlış yapıyı doğru biçimde sürdürmek best in class sayılmaz. Tetik ajanın yargısına bırakılmaz: yeni sıralı her işte mevcut durum '## Yol kararı' bölümünü taşır (giriş noktasından hedef koda her dallanma dosya:satır; 'tek yol' iddiası giriş noktası kanıtı ister, örnek sorunun yolu giriş noktası sayılmaz; gerçek trafik = ölçülen örnek ya da 'ölçülemedi — engel' + bunu kapatan plan maddesi, belge ya da 'yol sürdürülüyor' cümlesi kanıt değildir; karar sürdür | başka yol | yeni yol ve her aday için rakip gerekçe). Dallanma adayları 'orkestra yol dallanma <kök>' ile betikten türetilir. Plan denetçisi altıncı satırı yanıtlar: 'Seçilen yol gerçek trafikte kullanılıyor mu; kanıt?'. Zorlama: sablonlar/mevcut_durum.md '## Yol kararı' yönergesi, is_sirasi.yol_karari_eksikleri (ayarlar/yol_karari.json, mod: golge, P-028; ORKESTRA_YOL_KAPISI=0 kapatır), standartlar/best_in_class.md. (ORK-ADR-0136, ORK-ADR-0171)"
         }
       ],
       "etkinlesme": "2026-11-01T12:48:25+03:00"
