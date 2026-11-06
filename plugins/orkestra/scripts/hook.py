@@ -1243,6 +1243,12 @@ def pre_tool_use(inp: dict):
                    "değişiklik gerekiyorsa ana ajan `orkestra kart test-kilit-ac` ile kilidi açar.")
         _bicim_kapisi(sd, inp, arac, girdi, tam, oid)
         _sira_kapisi(arac, girdi, tam)
+        try:  # ADR-0158 (I-410): kart açılmadan eşik aşan iş; gölge log, engellemez, hata aracı bozmaz
+            _kart_golge_kapisi(sd, oid, aid, proje, tam)
+        except SystemExit:
+            raise
+        except Exception:
+            pass
         if aid:
             gorev, surec = ajan_gorevi(sd, inp)
             if gorev != "-":
@@ -2592,6 +2598,80 @@ def _bolme_kapisi(sd: str, arac: str, oid, aid) -> None:
     if mod == "ihlal":
         reddet("bağlı işten farklı konu: önce `mcp__ccd_session__start_session` ile ayrı sohbet aç (K-004); aynı işin devamıysa "
                "bunu belirtip yeniden dene.")
+
+
+_KART_GOLGE_DOSYA = "kart_golge_bekleyen.json"
+
+
+def _kart_golge_oku(sd: str) -> dict:
+    try:
+        with open(os.path.join(sd, _KART_GOLGE_DOSYA), encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def _kart_golge_yaz(sd: str, d: dict) -> None:
+    try:
+        L.atomik_yaz(os.path.join(sd, _KART_GOLGE_DOSYA), json.dumps(d, ensure_ascii=False))
+    except Exception:
+        pass
+
+
+def _kart_golge_esik(sd: str) -> int:
+    """plan_yolu.json `dogrudan_max_okunacak_dosya` eşiği (proje ezmesi önce); okunamazsa 3 (ADR-0158).
+    Eşiğin sayısal tanımı burada değiştirilmez, yalnız okunur (I-410 kapsam dışı)."""
+    kok = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for yol in (os.path.join(sd, "plan_yolu.json"), os.path.join(kok, "skills", "is", "plan_yolu.json")):
+        try:
+            with open(yol, encoding="utf-8") as f:
+                d = json.load(f)
+            v = (d.get("esikler") or {}).get("dogrudan_max_okunacak_dosya")
+            if isinstance(v, int) and v > 0:
+                return v
+        except Exception:
+            continue
+    return 3
+
+
+def _kart_acik_mi(sd: str, is_id: str) -> bool:
+    try:
+        return any(str(k.get("is")) == str(is_id) and L.kart_durumu_hesapla(k) in L.ACIK_DURUMLAR + ("beklemede",)
+                   for k in L.kartlar(sd))
+    except Exception:
+        return False  # hata: kapı serbest bırakır (fail-open), kaydı bozmaz
+
+
+def _kart_golge_kapisi(sd: str, oid, aid, proje: str, tam: str) -> None:
+    """ADR-0158 (I-410): eşik aşan iş kartsız yürütülürse PreToolUse hook'u gunluk.jsonl'e kapi_golge/kart_acilma
+    yazar; yazma İŞLEMİ ENGELLENMEZ (gölge mod, P-028). `ORKESTRA_KART_GOLGE=0` kapatır. Alt ajan çağrıları muaf
+    (kart zaten görev kartıyla gelir). Açık/beklemede kart görülürse bu işin takibi sıfırlanır."""
+    if aid or not oid or os.environ.get("ORKESTRA_KART_GOLGE") == "0":
+        return
+    is_id = _bagli_is(sd, oid)
+    if not is_id:
+        return
+    d = _kart_golge_oku(sd)
+    k = d.get(str(is_id)) or {"dosyalar": [], "bildirildi": False}
+    if _kart_acik_mi(sd, is_id):
+        if k.get("dosyalar") or k.get("bildirildi"):
+            d.pop(str(is_id), None)
+            _kart_golge_yaz(sd, d)
+        return
+    try:
+        rel = os.path.relpath(tam, proje).replace("\\", "/")
+    except ValueError:
+        rel = tam
+    if rel not in k["dosyalar"]:
+        k["dosyalar"].append(rel)
+    esik = _kart_golge_esik(sd)
+    if len(k["dosyalar"]) > esik and not k.get("bildirildi"):
+        L.jsonl_ekle(os.path.join(sd, "gunluk.jsonl"), {"zaman": L.simdi(), "oturum": oid, "tur": "kapi_golge",
+                     "kapi": "kart_acilma", "is": str(is_id), "dosya_sayisi": len(k["dosyalar"]), "esik": esik})
+        k["bildirildi"] = True
+    d[str(is_id)] = k
+    _kart_golge_yaz(sd, d)
 
 
 def _soru_kaymasi(sd: str, oid, bagli, istek: str, guncel_konu: str) -> bool:
