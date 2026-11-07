@@ -13,7 +13,7 @@
   "denetci": {"azami_model": "sonnet", "opus_ret_esigi": 2, "baslangic": "2026-10-29"},
   "yukseltme_sirasi": ["effort", "model"],
   "routing_v2": {
-    "durum": "kapali",
+    "durum": "golge",
     "route_profiles": {
       "mechanical": {
         "model": "haiku",

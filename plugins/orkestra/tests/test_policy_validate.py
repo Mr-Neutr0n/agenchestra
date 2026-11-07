@@ -26,7 +26,7 @@ class DogrulamaTesti(unittest.TestCase):
     def test_gercek_dosya_gecerli_ve_kapali(self):
         c = cfg()
         self.assertTrue(PV.dogrula(c, MP.yasak_mi)["gecerli"])
-        self.assertEqual(c["routing_v2"]["durum"], "kapali")
+        self.assertEqual(c["routing_v2"]["durum"], "golge")
 
     def test_v1_alanlari_degismedi(self):
         c = cfg()
@@ -79,8 +79,8 @@ class DogrulamaTesti(unittest.TestCase):
 
 
 class V2DurumTesti(unittest.TestCase):
-    def test_varsayilan_kapali(self):
-        self.assertEqual(MP.v2_durum()["durum"], "kapali")
+    def test_varsayilan_golge(self):
+        self.assertEqual(MP.v2_durum()["durum"], "golge")
 
     def test_proje_ezmesi_acar_ama_gecersizse_kapanir(self):
         with tempfile.TemporaryDirectory() as sd:
