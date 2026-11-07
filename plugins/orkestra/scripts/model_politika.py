@@ -75,3 +75,17 @@ def yasak_mi(model, sd: str | None = None) -> bool:
         if y in m or m in y or (aile and aile in m):
             return True
     return False
+
+
+def v2_durum(sd: str | None = None) -> dict:
+    """Yönlendirme v2 durumu (I-419, Faz 04): {'durum': kapali|golge|acik, 'gecerli': bool, 'hatalar': [...]}.
+
+    Fail-closed: blok geçersizse ya da ORKESTRA_ROUTING_V2=0 ise durum 'kapali' döner ve v1 basamak tablosu kullanılır.
+    """
+    import policy_validate as PV
+    cfg = yukle(sd)
+    sonuc = PV.dogrula(cfg, lambda m: yasak_mi(m, sd))
+    durum = (cfg.get("routing_v2") or {}).get("durum", "kapali")
+    if os.environ.get("ORKESTRA_ROUTING_V2") == "0" or not sonuc["gecerli"]:
+        durum = "kapali"
+    return {"durum": durum, "gecerli": sonuc["gecerli"], "hatalar": sonuc["hatalar"]}

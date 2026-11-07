@@ -11,5 +11,52 @@
   },
   "karar": {"min_n": 20, "ilk_gecis_fark": 0.05, "usd_fark": 0.10, "dk_fark": 0.10},
   "denetci": {"azami_model": "sonnet", "opus_ret_esigi": 2, "baslangic": "2026-10-29"},
-  "yukseltme_sirasi": ["effort", "model"]
+  "yukseltme_sirasi": ["effort", "model"],
+  "routing_v2": {
+    "durum": "kapali",
+    "route_profiles": {
+      "mechanical": {
+        "model": "haiku",
+        "effort": "low",
+        "risk_ceiling": 1,
+        "verify_required": true
+      },
+      "scoped": {
+        "model": "haiku",
+        "effort": "medium",
+        "risk_ceiling": 1,
+        "verify_required": true
+      },
+      "standard": {
+        "model": "sonnet",
+        "effort": "medium",
+        "risk_ceiling": 2,
+        "verify_required": true
+      },
+      "complex": {
+        "model": "sonnet",
+        "effort": "high",
+        "risk_ceiling": 2,
+        "verify_required": true
+      },
+      "architecture": {
+        "model": "opus",
+        "effort": "medium",
+        "risk_ceiling": 3,
+        "verify_required": true
+      },
+      "frontier": {
+        "model": "opus",
+        "effort": "high",
+        "risk_ceiling": 3,
+        "verify_required": true
+      }
+    },
+    "routing_defaults": {
+      "unknown_complexity": "standard",
+      "unknown_risk": 3,
+      "unknown_verifiability": "partial",
+      "unknown_effective_model": "UNVERIFIED"
+    }
+  }
 }

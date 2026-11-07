@@ -164,6 +164,8 @@ def _kart_kur(sd, d: dict, onbellek: dict | None = None) -> dict:
         k["genislet_onay"] = True
     if risk is not None:
         k["risk"] = risk
+    import routing_golge as RG  # I-419: v2 yönlendirme gölge kaydı (kapalıyken hiçbir şey yapmaz)
+    RG.kaydet(sd, k)
     if effort is not None:
         k["effort"] = effort
     if butce is not None:
