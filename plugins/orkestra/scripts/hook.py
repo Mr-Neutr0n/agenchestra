@@ -687,6 +687,40 @@ def _bagli_is(sd: str, oid):
         return None
 
 
+BAGSIZ_OTOMATIK_KAPI = "bagsiz_otomatik_bagla"
+
+
+def _bagsiz_net_esleme(puanlar: list, ayar: dict):
+    """I-421: tek net eşleşme: en yüksek puan >= `yuksek` (varsayılan 0.6) ve ikinciden en az `net_fark` (0.2) yüksek.
+    `puanlar` puana göre azalandır; net eşleşme yoksa None (ret sürer)."""
+    try:
+        if not puanlar:
+            return None
+        yuksek, fark = float(ayar.get("yuksek", 0.6)), float(ayar.get("net_fark", 0.2))
+        ilk = float(puanlar[0].get("puan", 0))
+        ikinci = float(puanlar[1].get("puan", 0)) if len(puanlar) > 1 else 0.0
+        return str(puanlar[0]["id"]) if ilk >= yuksek and ilk - ikinci >= fark else None
+    except Exception:
+        return None
+
+
+def _bagsiz_otomatik_bagla(sd: str, oid, proje: str, tam: str, is_id: str) -> bool:
+    """I-421: bağsız yazımda tek net eşleşen açık işe bağlanır (iş açmaz; ADR-0162 her mesajda iş açmayı eledi).
+    Kapı `kapi_mod` ayarından çalışır: golge = yalnız kapi_golge kaydı (bağlamaz, ret sürer), ihlal = bağlar.
+    ORKESTRA_BAGSIZ_OTOMATIK_BAGLA=0 kapatır. Hatada False (ret sürer)."""
+    if os.environ.get("ORKESTRA_BAGSIZ_OTOMATIK_BAGLA") == "0":
+        return False
+    try:
+        import kapi_mod
+        yol = _rel(proje, tam) or tam
+        if kapi_mod.mod(BAGSIZ_OTOMATIK_KAPI, proje) != "ihlal":
+            kapi_mod.kaydet(proje, BAGSIZ_OTOMATIK_KAPI, f"tek net eşleşme {is_id}: {yol}")
+            return False
+        return bool(_otomatik_is_ac(sd, oid, yol, proje, is_id=is_id, guven="otomatik-düşük"))
+    except Exception:
+        return False
+
+
 def _is_kapisi(sd: str, oid, proje: str, tam: str, kabuk: str | None = None) -> None:
     """P4-P5: bağsız oturumda ana ajanın yazması (Write/Edit/MultiEdit/NotebookEdit; plan.md/todo.md dahil) reddedilir;
     red metni bağlanma komutlarını ve en yakın iki işi söyler. ORKESTRA_IS_KAPISI=0 kapatır. Fail-open: oturum
