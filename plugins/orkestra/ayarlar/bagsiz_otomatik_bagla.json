@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "mod: ihlal = bağsız oturumda yazılan yol tek net açık işle örtüşüyorsa oturum o işe bağlanır ve yazım reddedilmez; golge = yalnız kapi_golge kaydı, ret sürer (P-028: ihlal geçişi ölçümden sonra ayrı kararla). Kapatma: ORKESTRA_BAGSIZ_OTOMATIK_BAGLA=0. Proje ezmesi: <durum>/bagsiz_otomatik_bagla.json (I-421)."
+}
