@@ -49,6 +49,13 @@ def girdi_donustur(cursor_olay, g):
         _yol_duzelt(kokler[0]) if kokler else "")
     if proje and not c.get("cwd"):
         c["cwd"] = proje
+    # I-421: Cursor alt ajan türünü `subagent_type`, kimliğini `subagent_id` ile verir (cursor.com/docs/hooks);
+    # hook.py rol tespiti (denetçi vb.) Claude'un `agent_type`/`agent_id` alanlarını okur. Araç çağrısı olaylarında
+    # Cursor alt ajanı belirten alan göndermez; rol yalnız SubagentStart/SubagentStop'ta bilinir.
+    if not c.get("agent_type") and isinstance(g.get("subagent_type"), str) and g.get("subagent_type"):
+        c["agent_type"] = g["subagent_type"]
+    if not c.get("agent_id") and isinstance(g.get("subagent_id"), str) and g.get("subagent_id"):
+        c["agent_id"] = g["subagent_id"]
     ad = g.get("tool_name")
     if ad in ARAC_ESLEME:
         c["tool_name"] = ARAC_ESLEME[ad]
