@@ -711,6 +711,9 @@ def _is_kapisi(sd: str, oid, proje: str, tam: str, kabuk: str | None = None) -> 
                                                           _esleme_ayari(sd)) if p.get("puan", 0) > 0]
         except Exception:
             puanlar = []
+        bagla = _bagsiz_net_esleme(puanlar, _esleme_ayari(sd))
+        if bagla and _bagsiz_otomatik_bagla(sd, oid, proje, tam, bagla):
+            return  # I-421: yazılan yol tek net işle örtüşüyor; oturum bağlandı, yazım reddedilmez
         neden = _bagsiz_secim_satiri(acik, puanlar, bas=(
             "bu oturum bir işe bağlı değil; bağsız oturumda dosya yazılmaz (plan.md/todo.md dahil). Önce bağlan: "
             "`orkestra is devam <id>` ya da `orkestra is ac \"<başlık>\" --klasor <klasör>`, sonra yazımı tekrarla."))
