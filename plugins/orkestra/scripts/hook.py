@@ -3599,6 +3599,11 @@ def user_prompt_submit(inp: dict):
                 parcalar.append(kabuk_profili.ana_ajan_metni(metin, sd, inp.get("session_id")))
             except Exception:
                 pass
+            try:  # I-421: yazma niyetinde üretimden önce iskelet kuralı + worktree yazma kökü; hata hook'u düşürmez
+                import yazma_kurali
+                parcalar.append(yazma_kurali.ana_ajan_metni(metin, inp.get("cwd")))
+            except Exception:
+                pass
             try:  # ADR-0107: karar cümlesi yazılmadan önce P-029 düğme yönergesi; hata hook'u düşürmez
                 import secim_ekrani_hatirlatma
                 parcalar.append(secim_ekrani_hatirlatma.tur_basi_metni(sd))
