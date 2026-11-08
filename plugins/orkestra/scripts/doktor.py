@@ -31,6 +31,7 @@ from typing import Callable, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cfg  # noqa: E402
+import cursor_kur  # noqa: E402
 
 DURUMLAR = ("gecti", "uyari", "hata", "onarildi", "atlandi")
 EN_AZ_PYTHON = (3, 9)
@@ -446,6 +447,103 @@ def o_cursor_siniri(b, s):
     return Onarim("C", ".cursor/hooks.json dosyasını BOM'suz UTF-8 olarak yeniden yaz", komut="orkestra doktor")
 
 
+_EKLENTI_KOKU = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _kabuk_path_dizinleri() -> list[str]:
+    """Cursor'un açacağı Shell'in PATH'i. Claude oturumunun kendi PATH'i değildir: Claude eklenti bin klasörünü yalnız kendi
+    Bash'ine ekler, o PATH ile ölçmek 'komut var' diye yanıltır (08.11.2026'da Cursor CLI temiz ortam ölçümünde 'yok' çıktı).
+    Windows'ta kullanıcı ve makine PATH'i kayıt defterinden; diğerlerinde süreç PATH'i eklenti bin klasörü çıkarılarak."""
+    bin_yolu = os.path.normcase(os.path.join(_EKLENTI_KOKU, "bin"))
+    if sys.platform == "win32":
+        try:
+            import winreg
+            dizinler: list[str] = []
+            for kovan, alt in ((winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"),
+                               (winreg.HKEY_CURRENT_USER, "Environment")):
+                try:
+                    with winreg.OpenKey(kovan, alt) as k:
+                        deger, _tur = winreg.QueryValueEx(k, "Path")
+                    dizinler += os.path.expandvars(deger).split(os.pathsep)
+                except OSError:
+                    pass
+            return [d for d in dizinler if d]
+        except ImportError:
+            pass
+    return [d for d in os.environ.get("PATH", "").split(os.pathsep) if d and os.path.normcase(d.rstrip("\\/")) != bin_yolu]
+
+
+def _skill_sayisi(kok: str) -> int:
+    d = os.path.join(kok, "skills")
+    try:
+        return sum(1 for a in os.listdir(d) if os.path.isfile(os.path.join(d, a, "SKILL.md")))
+    except OSError:
+        return 0
+
+
+def _claude_orkestra_kurulu() -> bool:
+    return bool(glob.glob(os.path.join(os.path.expanduser("~"), ".claude", "plugins", "cache", "*", "orkestra")))
+
+
+def k_cursor_kurulum(b: Baglam) -> Sonuc:
+    """Cursor kurulumunun üç sessiz kırığı: Shell'de `orkestra` komutu yok, yerel Cursor kopyası bayat, Claude kopyasıyla çift
+    yükleme. Üçü de hata vermeden Orkestra'yı kırar (kart/niyet/is komutları bulunamaz, kapılar çift yazar, skill'ler eksik)."""
+    if not _cursor_izleri(b):
+        return Sonuc("atlandi", "Cursor izi yok")
+    sorunlar: list[str] = []
+    yerel = os.path.join(os.path.expanduser("~"), ".cursor", "plugins", "local", "orkestra")
+    if not shutil.which("orkestra", path=os.pathsep.join(_kabuk_path_dizinleri())) and not _adaptor_komutu_yaziyor(yerel):
+        sorunlar.append("Cursor Shell'inde `orkestra` komutu yok (PATH'te eklenti bin klasörü yok) ve Cursor adaptörü komutu yeniden yazmıyor: "
+                        "kart, niyet ve is komutları 'bulunamadı' verir")
+    if os.path.isdir(yerel):
+        kaynak_n, yerel_n = _skill_sayisi(_EKLENTI_KOKU), _skill_sayisi(yerel)
+        if yerel_n < kaynak_n:
+            sorunlar.append(f"yerel Cursor kopyası bayat: {yerel_n}/{kaynak_n} skill ({yerel})")
+        if os.path.isfile(os.path.join(_EKLENTI_KOKU, ".mcp.json")) and not os.path.isfile(os.path.join(yerel, ".mcp.json")):
+            sorunlar.append("yerel Cursor kopyasında .mcp.json yok (postgres MCP sunucuları yüklenmez)")
+        if yerel_n >= kaynak_n and not cursor_kur.baglanti_mi(yerel):
+            eksik, degisen = cursor_kur.fark(_EKLENTI_KOKU, yerel)
+            if eksik or degisen:
+                sorunlar.append(f"yerel Cursor kopyası kaynaktan farklı: {len(eksik)} eksik, {len(degisen)} değişen dosya "
+                                f"(örn. {', '.join((eksik + degisen)[:3])})")
+        if _claude_orkestra_kurulu():
+            sorunlar.append("Orkestra hem yerel Cursor kopyası hem Claude eklentisi olarak kurulu: Cursor'da 'Include Third-Party Plugins' "
+                            "açıksa iki kez yüklenir (hook çıktısı ve defter yazımı çift)")
+    if sorunlar:
+        return _uyari("Cursor kurulumu: " + "; ".join(sorunlar), sorunlar=sorunlar)
+    return _ok("Cursor kurulumu: orkestra komutu PATH'te, yerel kopya güncel, çift yükleme izi yok")
+
+
+def _adaptor_komutu_yaziyor(yerel: str) -> bool:
+    """Cursor'un çalıştıracağı adaptör (yerel kopya varsa o, yoksa kaynak) preToolUse'ta `orkestra` komutunu açık yola yazıyor mu."""
+    for kok in ((yerel,) if os.path.isdir(yerel) else (_EKLENTI_KOKU,)):
+        try:
+            with open(os.path.join(kok, "scripts", "cursor_hook.py"), encoding="utf-8") as f:
+                kaynak = f.read()
+        except OSError:
+            return False
+        if "def kabuk_komutu_duzelt" not in kaynak:
+            return False
+    return os.environ.get("ORKESTRA_CURSOR_KOMUT_YAZ") != "0"
+
+
+def o_cursor_kurulum(b, s):
+    yerel = os.path.join(os.path.expanduser("~"), ".cursor", "plugins", "local", "orkestra")
+    if os.path.isdir(yerel) and not cursor_kur.baglanti_mi(yerel):
+        eksik, degisen = cursor_kur.fark(_EKLENTI_KOKU, yerel)
+        if eksik or degisen:
+            yedek_kok = os.path.join(cfg.ev_dizini(), "cursor_yedek")
+
+            def uygula() -> str:
+                return cursor_kur.guncelle(_EKLENTI_KOKU, yerel, yedek_kok)[0]
+            ozel = Onarim("B", f"yerel Cursor kopyasını eklenti kaynağıyla eşle ({len(eksik)} yeni, {len(degisen)} değişen dosya; yedek alınır, "
+                               "`orkestra doktor --geri-al` yedeği geri koyar)", uygula=uygula, komut="orkestra doktor --duzelt --evet")
+            ozel.geri_al = {"tur": "dizin", "yol": yerel, "yedek_kok": yedek_kok}
+            return ozel
+    return Onarim("C", "`orkestra` bin klasörünü kullanıcı PATH'ine ekle (adaptör bu sürümde komutu zaten yeniden yazar), "
+                       "Cursor Ayarları > Plugins'te üçüncü taraf eklenti içe aktarımını kapat (çift yükleme)", komut="orkestra doktor")
+
+
 def _uzak_var(kok):
     kod, cikti = _calistir(["git", "-C", kok, "remote"], 30)
     return kod == 0 and bool(cikti.strip())
@@ -504,6 +602,7 @@ KONTROLLER: list[Kontrol] = [
     Kontrol("panel_port", "panel portu", "opsiyonel", k_panel_port, o_panel_port),
     Kontrol("pazar_klonu", "pazar (yayın) klonu", "opsiyonel", k_pazar_klonu, o_pazar_klonu),
     Kontrol("cursor_siniri", "Cursor hook sınırları", "opsiyonel", k_cursor_siniri, o_cursor_siniri),
+    Kontrol("cursor_kurulum", "Cursor kurulumu (komut, kopya, çift yükleme)", "opsiyonel", k_cursor_kurulum, o_cursor_kurulum),
 ]
 
 
@@ -548,6 +647,12 @@ def _geri_al_uygula(spec: dict) -> str:
         with open(yol, "w", encoding="utf-8", newline="\n") as f:
             f.write(onceki)
         return f"eski içerik yazıldı: {yol}"
+    if spec.get("tur") == "dizin":  # en yeni yedek, hedefin yerine konur (cursor_kur.guncelle yedeği yedek_kok/<zaman>/orkestra'ya alır)
+        kok = spec["yedek_kok"]
+        yedekler = sorted(d for d in os.listdir(kok) if os.path.isdir(os.path.join(kok, d, "orkestra"))) if os.path.isdir(kok) else []
+        if not yedekler:
+            return f"geri alınacak yedek yok: {kok}"
+        return cursor_kur.geri_yukle(spec["yol"], os.path.join(kok, yedekler[-1], "orkestra"))
     if spec.get("tur") == "komut":
         kod, cikti = _calistir(spec["argv"], 600)
         if kod != 0:
@@ -671,17 +776,35 @@ def argumanlar(ap) -> None:
     ap.add_argument("--kuru", action="store_true", help="hiçbir şey yazma ya da değiştirme")
     ap.add_argument("--geri-al", action="store_true", help="son doktor onarımlarını geri al")
     ap.add_argument("--arka-plan", action="store_true", help="otomatik koşu: projedeki doktor.d kontrolleri yüklenmez")
+    ap.add_argument("--cursor-sonda", action="store_true",
+                    help="Cursor CLI ile gerçek ajan koşusu: komutun Shell'de çalışması, oturum kimliği eşliği (model kullanır, ~1 dk)")
+
+
+def _b_onayi_sor(aciklama: str) -> bool:
+    """B sınıfı onarım onayı. Windows'ta NUL aygıtı da isatty() True döner; yanıt okunamazsa (EOF) onay verilmemiş sayılır,
+    doktor çökmez. Arka plan koşusu (--arka-plan) hiç sormaz: B onarımı yalnız kullanıcı onayıyla ya da --evet ile yapılır."""
+    try:
+        return input(f"B sınıfı onarım (makineyi değiştirir): {aciklama}. Uygulansın mı? [e/H] ").strip().lower() in ("e", "evet", "y", "yes")
+    except EOFError:
+        return False
 
 
 def calistir(a) -> int:
+    if getattr(a, "cursor_sonda", False):
+        import cursor_sonda
+        s = cursor_sonda.calistir()
+        print(json.dumps(s, ensure_ascii=False, indent=2) if a.json else s["mesaj"] + "".join(
+            f"\n  {o['ad']}: {o['durum']} — {o['ayrinti']}" for o in s["olcumler"]) + (
+                f"\n  ajan çıktısı (kanıt değil): {s['ajan_cikti']}" if s.get("ajan_cikti") else ""))
+        return 1 if s["durum"] == "basarisiz" else 0
     if a.geri_al:
         for s in geri_al_son() or ["geri alınacak kayıt yok"]:
             print(s)
         return 0
     proje = a.proje or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
     onay = None
-    if a.duzelt and not a.evet and not a.json and sys.stdin.isatty():
-        onay = lambda ac: input(f"B sınıfı onarım (makineyi değiştirir): {ac}. Uygulansın mı? [e/H] ").strip().lower() in ("e", "evet", "y", "yes")
+    if a.duzelt and not a.evet and not a.json and not a.arka_plan and sys.stdin.isatty():
+        onay = _b_onayi_sor
     sonuc = kos(Baglam(proje=proje, kuru=a.kuru, proje_kod=not a.arka_plan), duzelt=a.duzelt, evet_b=a.evet, onay=onay)
     print(json.dumps(sonuc, ensure_ascii=False, indent=2) if a.json else metin(sonuc))
     return 1 if sonuc["zorunlu_hata"] else 0

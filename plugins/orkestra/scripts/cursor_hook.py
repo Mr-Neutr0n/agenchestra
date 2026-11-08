@@ -7,10 +7,13 @@ hook.py değişmez; Cursor'a özgü tüm farklar burada toplanır:
 - çıktı: hookSpecificOutput → Cursor alanları (additional_context, permission, followup_message)
 - salt okuma araçları ve ilgisiz PostToolUse çağrıları hook.py başlatılmadan geçilir (süre tasarrufu)
 """
+import hashlib
 import json
 import os
 import subprocess
 import sys
+import tempfile
+import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cfg  # noqa: E402
 
@@ -111,6 +114,65 @@ def cikti_donustur(cursor_olay, claude):
     return {}
 
 
+def komutu_yeniden_yaz(komut, onek):
+    """Tırnak dışında, komut konumundaki (başta ya da ; & | ( satırsonu sonrası) çıplak `orkestra` sözcüğünü `onek` ile değiştirir.
+    Tırnak içindeki metne, argümanlara ve `xorkestra` gibi sözcüklere dokunmaz."""
+    cikti, i, n, tirnak, konum = [], 0, len(komut), None, True
+    while i < n:
+        c = komut[i]
+        if tirnak:
+            cikti.append(c)
+            if c == "\\" and tirnak == '"' and i + 1 < n:
+                cikti.append(komut[i + 1])
+                i += 1
+            elif c == tirnak:
+                tirnak = None
+            i += 1
+            continue
+        if c in "'\"":
+            tirnak, konum = c, False
+        elif c in ";&|(\n":
+            konum = True
+        elif not c.isspace():
+            if konum and komut.startswith("orkestra", i) and (i + 8 >= n or komut[i + 8].isspace() or komut[i + 8] in ";&|)"):
+                cikti.append(onek)
+                i += 8
+                konum = False
+                continue
+            konum = False
+        cikti.append(c)
+        i += 1
+    return "".join(cikti)
+
+
+def cli_onegi():
+    """Kabuğa bağımlı olmayan çağrı: PowerShell, cmd ve bash'te aynı çalışır; PATH'te `orkestra` komutu aranmaz."""
+    betik = os.path.join(_kok_dizin(), "scripts", "orkestra.py").replace("\\", "/")
+    return f'python "{betik}"'
+
+
+def kabuk_komutu_duzelt(g, cikti):
+    """Cursor Shell'inde `orkestra` komutu PATH'te değildir (Claude Code eklenti bin klasörünü yalnız kendi Bash'ine ekler).
+    preToolUse'ta komut, eklentinin kendi CLI betiğine açık yolla yeniden yazılır (updated_input, 08.11.2026'da Cursor CLI'de
+    tek başına ve permission ile birlikte uygulandığı ölçüldü). Reddedilen komuta dokunulmaz; ORKESTRA_CURSOR_KOMUT_YAZ=0 kapatır."""
+    if os.environ.get("ORKESTRA_CURSOR_KOMUT_YAZ") == "0" or g.get("tool_name") != "Shell" or cikti.get("permission") == "deny":
+        return cikti
+    taban = g.get("tool_input") if isinstance(g.get("tool_input"), dict) else {}
+    taban = dict(taban)
+    if isinstance(cikti.get("updated_input"), dict):
+        taban.update(cikti["updated_input"])
+    komut = taban.get("command")
+    if not isinstance(komut, str) or "orkestra" not in komut:
+        return cikti
+    yeni = komutu_yeniden_yaz(komut, cli_onegi())
+    if yeni == komut:
+        return cikti
+    taban["command"] = yeni
+    sonuc = dict(cikti)
+    sonuc["updated_input"] = taban
+    return sonuc
+
+
 def _hook_py():
     return os.environ.get("ORKESTRA_CURSOR_HOOK_PY") or os.path.join(_kok_dizin(), "scripts", "hook.py")
 
@@ -137,18 +199,121 @@ def calistir(cursor_olay, ham):
         claude = json.loads(cikis) if cikis else None
     except ValueError:
         claude = None
-    return json.dumps(cikti_donustur(cursor_olay, claude), ensure_ascii=False), p.returncode, p.stderr.decode("utf-8", "replace")
+    cikti = cikti_donustur(cursor_olay, claude)
+    if cursor_olay == "preToolUse":
+        cikti = kabuk_komutu_duzelt(dict(g, tool_input=claude_girdi.get("tool_input")), cikti)  # girdi_donustur dizgiyi sözlüğe çevirmişti
+    return json.dumps(cikti, ensure_ascii=False), p.returncode, p.stderr.decode("utf-8", "replace")
+
+
+TEKIL_BEKLEME_SN = 8.0   # cursor-hooks.json zaman aşımı 10 sn; bekleyen kopya ondan önce bırakır
+TEKIL_TAZE_SN = 15.0     # bu süreden eski kilit kardeş değil, aynı yükün yeni olayıdır
+TEKIL_OMUR_SN = 600
+
+
+def _tekil_dizin():
+    return os.environ.get("ORKESTRA_CURSOR_TEKIL_DIZIN") or os.path.join(tempfile.gettempdir(), "orkestra_cursor_tekil")
+
+
+def tekil(cursor_olay, ham, calistir_fn=None):
+    """Aynı Cursor olayını birden çok Orkestra kopyası işlemez (tek uçuş).
+
+    Neden: Cursor aynı hook olayını, yüklü her eklenti kopyası için ayrı süreçle paralel çalıştırır. 08.11.2026 ölçümü:
+    yerel Cursor kopyası, Claude eklenti önbelleği ve proje hook'u aynı preToolUse'a birlikte yanıt verdi (sessionStart,
+    postToolUse, sessionEnd de ikişer kez); hook'lar birbirinin çıktısını görmez ve çakışan updated_input uygulanmadı.
+    Kopyalar defteri ve kapıları çift yazıyordu. Aynı yükü alan ilk süreç sahiptir ve hook.py'yi bir kez çalıştırır;
+    diğerleri sahibin çıktısını aynen yazar, böylece Cursor hangisinin yanıtını alırsa alsın sonuç aynıdır.
+    Bu korumayı taşımayan eski kopyaları etkilemez (doktor onları bayat kopya olarak bildirir). ORKESTRA_CURSOR_TEKIL=0 kapatır."""
+    calistir_fn = calistir_fn or calistir
+    if os.environ.get("ORKESTRA_CURSOR_TEKIL") == "0":
+        return calistir_fn(cursor_olay, ham)
+    try:
+        g = json.loads(ham.decode("utf-8-sig") or "{}")
+    except ValueError:
+        g = None
+    if not isinstance(g, dict) or atla(cursor_olay, g):
+        return calistir_fn(cursor_olay, ham)
+    dizin = _tekil_dizin()
+    anahtar = hashlib.sha1(cursor_olay.encode("utf-8") + b"\0" + ham).hexdigest()
+    kilit, sonuc = os.path.join(dizin, anahtar + ".kilit"), os.path.join(dizin, anahtar + ".json")
+    try:
+        os.makedirs(dizin, exist_ok=True)
+        if _kilit_eski(kilit):  # önceki aynı yükün kalıntısı: yeni olaydır, tekrar sayılmaz
+            _sil(sonuc)
+            _sil(kilit)
+        fd = os.open(kilit, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        os.close(fd)
+        sahip = True
+    except FileExistsError:
+        sahip = False
+    except OSError:
+        return calistir_fn(cursor_olay, ham)
+    if sahip:
+        try:
+            _eskileri_temizle(dizin)
+            cikti = calistir_fn(cursor_olay, ham)
+        except BaseException:
+            _sil(kilit)  # bekleyenler kendi başına çalışsın
+            raise
+        gecici = sonuc + ".%d.tmp" % os.getpid()
+        try:
+            with open(gecici, "w", encoding="utf-8") as f:
+                json.dump(list(cikti), f, ensure_ascii=False)
+            os.replace(gecici, sonuc)
+        except OSError:
+            _sil(gecici)
+        return cikti
+    bitis = time.monotonic() + TEKIL_BEKLEME_SN
+    while time.monotonic() < bitis:
+        try:
+            with open(sonuc, encoding="utf-8") as f:
+                metin, kod, _hata = json.load(f)
+            return metin, kod, ""
+        except (OSError, ValueError):
+            if not os.path.exists(kilit):
+                break  # sahip hata ile bıraktı
+            time.sleep(0.03)
+    return calistir_fn(cursor_olay, ham)  # sahip takıldı ya da öldü: kopya kendi çalışır
+
+
+def _kilit_eski(kilit):
+    """Kardeş kopyalar aynı olaya milisaniyeler içinde gelir; TEKIL_TAZE_SN'den eski kilit aynı yükün yeni bir olayıdır."""
+    try:
+        return time.time() - os.path.getmtime(kilit) > TEKIL_TAZE_SN
+    except OSError:
+        return False
+
+
+def _sil(yol):
+    try:
+        os.remove(yol)
+    except OSError:
+        pass
+
+
+def _eskileri_temizle(dizin):
+    sinir = time.time() - TEKIL_OMUR_SN
+    try:
+        for ad in os.listdir(dizin):
+            yol = os.path.join(dizin, ad)
+            if os.path.getmtime(yol) < sinir:
+                _sil(yol)
+    except OSError:
+        pass
 
 
 def main():
     cursor_olay = sys.argv[1] if len(sys.argv) > 1 else ""
     ham = sys.stdin.buffer.read()
-    metin, kod, hata = calistir(cursor_olay, ham)
+    metin, kod, hata = tekil(cursor_olay, ham)
     gunluk = os.environ.get("ORKESTRA_CURSOR_DEBUG")  # tanı: hangi olay geldi, ne döndü (dosya yolu)
     if gunluk:
         try:
+            try:
+                yeni_komut = (json.loads(metin).get("updated_input") or {}).get("command")  # kısaltılan 'cikti' bunu kesebilir
+            except (ValueError, AttributeError):
+                yeni_komut = None
             with open(gunluk, "a", encoding="utf-8") as f:
-                f.write(json.dumps({"olay": cursor_olay, "kod": kod, "cikti": metin[:300], "hata": hata[-300:],
+                f.write(json.dumps({"olay": cursor_olay, "kod": kod, "cikti": metin[:300], "yeni_komut": yeni_komut, "hata": hata[-300:],
                                     "kok": os.environ.get("CURSOR_PLUGIN_ROOT"), "cwd": os.getcwd()}, ensure_ascii=False) + "\n")
         except OSError:
             pass

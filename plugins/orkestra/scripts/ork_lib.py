@@ -30,6 +30,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cfg  # noqa: E402
 
 PLUGIN_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Oturum kimliğini host'un kabuk ortamından veren değişkenler, öncelik sırasıyla. Claude Code ilk ikisini, Cursor
+# CURSOR_CONVERSATION_ID'yi koyar (Cursor CLI 2026.10.16 Shell'inde ölçüldü; hook yükünde session_id == conversation_id).
+OTURUM_ORTAM_DEGISKENLERI = ("ORKESTRA_OTURUM", "CLAUDE_CODE_SESSION_ID", "CLAUDE_SESSION_ID", "CURSOR_CONVERSATION_ID")
+
+
+def oturum_kimligi(ortam=None):
+    """Çalışan oturumun kimliği (host'tan bağımsız tek çözümleyici); yoksa None. CLI ve betikler bunu kullanır."""
+    ortam = os.environ if ortam is None else ortam
+    for ad in OTURUM_ORTAM_DEGISKENLERI:
+        deger = (ortam.get(ad) or "").strip()
+        if deger:
+            return deger
+    return None
+
+
 SURECLER = (
     "triyaj", "plan", "is", "denetim", "duzeltme", "yukseltme", "sentez",
     "arsiv", "perspektif", "skill-avi", "arastirma", "orkestrasyon", "test-yaz", "on-kontrol", "test-kapisi", "bilinmiyor",
@@ -2081,7 +2096,7 @@ def defter_ekle(sd: str, kayit: dict) -> None:
     kayit = dict(kayit)
     kayit.setdefault("zaman", simdi())
     if not kayit.get("oturum"):  # CLI/perspektif yolu: yazan oturumun kimliği ortamdan (alt ajanda üst oturum)
-        kayit["oturum"] = os.environ.get("CLAUDE_CODE_SESSION_ID") or os.environ.get("CLAUDE_SESSION_ID") or None
+        kayit["oturum"] = oturum_kimligi()
     for alan in ("yaptim", "sonuc", "not"):
         if kayit.get(alan):
             kayit[alan] = maskele(str(kayit[alan]))[:900]

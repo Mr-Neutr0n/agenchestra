@@ -688,7 +688,7 @@ def _oturum_projesi(oturum: str) -> str | None:
 
 
 def cmd(a) -> None:
-    oturum = a.oturum or os.environ.get("CLAUDE_CODE_SESSION_ID") or os.environ.get("CLAUDE_SESSION_ID")
+    oturum = a.oturum or L.oturum_kimligi()
     if a.goster:
         g = gorunum()
         for r in g["oturumlar"]:
@@ -699,7 +699,7 @@ def cmd(a) -> None:
     if getattr(a, "ajan_id", None) and not ana:
         sys.exit("niyet: yalnız ana ajan yazar (alt ajanlar kart özetini kullanır).")
     if not oturum:
-        sys.exit("niyet: oturum kimliği bulunamadı (CLAUDE_CODE_SESSION_ID yok); --oturum ver.")
+        sys.exit("niyet: oturum kimliği bulunamadı (CLAUDE_CODE_SESSION_ID, CURSOR_CONVERSATION_ID, ORKESTRA_OTURUM yok); --oturum ver.")
     proje = _oturum_projesi(oturum) or L.proje_dizini()
     if a.ne or a.neden:
         if not (a.ne and a.neden):
@@ -719,7 +719,7 @@ def ekle_ayristirici(alt) -> None:
     p.add_argument("--neden", help="neye yarayacak, hangi hedefe hizmet ediyor (≤15 kelime)")
     p.add_argument("--baglam", help="isteğe bağlı: çalışılan klasör bağlamı 'Proje/Süreç/Görev' (maliyet/defter kayıtlarında yedek)")
     p.add_argument("--sonuc", help="iş bitince ne çıktı (≤15 kelime)")
-    p.add_argument("--oturum", help="oturum kimliği (varsayılan: CLAUDE_CODE_SESSION_ID)")
+    p.add_argument("--oturum", help="oturum kimliği (varsayılan: CLAUDE_CODE_SESSION_ID ya da CURSOR_CONVERSATION_ID)")
     p.add_argument("--goster", action="store_true", help="bütün sohbetlerin şu anki durumunu yaz")
     p.set_defaults(f=cmd)
 

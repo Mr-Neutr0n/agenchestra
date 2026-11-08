@@ -103,7 +103,7 @@ def imza(tur: str, ileti: str) -> str:
 
 
 def _oturum() -> str:
-    return os.environ.get("CLAUDE_CODE_SESSION_ID") or os.environ.get("CLAUDE_SESSION_ID") or "-"
+    return L.oturum_kimligi() or "-"
 
 
 # Ret bağlamı (I-224, R7): hook reddi kaydına araç, hedef dosya, ajan, deneme sayısı, maskeli metin parçası ve R1–R9
