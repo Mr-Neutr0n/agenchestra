@@ -60,6 +60,7 @@ def onbellek(sd: str) -> dict:
 
 def _adimlar(sd: str, cwd: str) -> list:
     """(ad, çağrılabilir) listesi; dönen değer varsa önbelleğe ad anahtarıyla yazılır."""
+    import arsiv_surec
     import dal_temizle
     import etki
     import panel_servis
@@ -70,6 +71,7 @@ def _adimlar(sd: str, cwd: str) -> list:
         ("dal_temizle", lambda: dal_temizle.calistir(cwd or os.getcwd(), kaynak="oturum_bakim") and None),
         ("etki_izle", lambda: etki.izle(sd) and None),
         ("bayatlik", L.bayatlik),
+        ("arsiv_surec", lambda: arsiv_surec.calistir(sd, cwd)),  # ADR-0174: arşivli oturum süreçleri (gölge modda yalnız kayıt)
     ]
 
 

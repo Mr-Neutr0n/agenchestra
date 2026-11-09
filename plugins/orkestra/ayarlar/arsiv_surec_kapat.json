@@ -1,0 +1,4 @@
+{
+  "mod": "golge",
+  "aciklama": "mod: ihlal = arşivli oturumun `--resume` kimliğiyle eşleşen claude.exe süreç ağacı bakım turunda kapatılır; golge = yalnız kapi_golge kaydı (P-028: ihlal geçişi >=7 gün gölge, yanlış eşleşme 0 ölçümünden sonra ayrı kararla). Kapatma: ORKESTRA_ARSIV_SUREC_KAPAT=0. Proje ezmesi: <durum>/arsiv_surec_kapat.json (I-423, ADR-0174)."
+}
