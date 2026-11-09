@@ -123,7 +123,8 @@ def calistir(zaman_asimi=300, ajan_komutu=None):
         ortam = _temiz_ortam({"ORK_SONDA_YUK": yuk, "ORKESTRA_CURSOR_DEBUG": ayiklama, "PYTHONUTF8": "1"})
         try:
             p = subprocess.run([ajan, "-p", "--force", "--trust", "--output-format", "text", istem], cwd=gecici, env=ortam,
-                               capture_output=True, timeout=zaman_asimi)
+                               capture_output=True, timeout=zaman_asimi,
+                               **({"creationflags": 0x08000000} if os.name == "nt" else {}))  # CREATE_NO_WINDOW (cfg.PENCERESIZ)
         except subprocess.TimeoutExpired:
             return {"durum": "belirsiz", "mesaj": f"Cursor ajanı {zaman_asimi} sn içinde bitmedi", "olcumler": []}
         except OSError as e:
